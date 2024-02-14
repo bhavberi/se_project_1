@@ -32,7 +32,7 @@ public class LocaleUtil {
         }
         return new Locale(language, country, variant);
     }
-    
+
     /**
      * Extracts the ID of the locale from the HTTP Accept-Language header.
      * 

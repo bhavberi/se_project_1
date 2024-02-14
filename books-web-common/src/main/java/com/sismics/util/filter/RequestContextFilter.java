@@ -41,7 +41,7 @@ public class RequestContextFilter implements Filter {
         // Injects the webapp root
         String webappRoot = filterConfig.getServletContext().getRealPath("/");
         EnvironmentUtil.setWebappRoot(webappRoot);
-        
+
         // Initialize the app directory
         File baseDataDirectory = null;
         try {
@@ -52,7 +52,7 @@ public class RequestContextFilter implements Filter {
         if (log.isInfoEnabled()) {
             log.info(MessageFormat.format("Using base data directory: {0}", baseDataDirectory.toString()));
         }
-        
+
         // Initialize file logger
         RollingFileAppender fileAppender = new RollingFileAppender();
         fileAppender.setName("FILE");
@@ -64,7 +64,7 @@ public class RequestContextFilter implements Filter {
         fileAppender.setMaxBackupIndex(5);
         fileAppender.activateOptions();
         org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
-        
+
         // Initialize the application context
         TransactionUtil.handle(new Runnable() {
             @Override
@@ -80,9 +80,10 @@ public class RequestContextFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
         EntityManager em = null;
-        
+
         try {
             em = EMF.get().createEntityManager();
         } catch (Exception e) {
@@ -92,22 +93,23 @@ public class RequestContextFilter implements Filter {
         context.setEntityManager(em);
         EntityTransaction tx = em.getTransaction();
         tx.begin();
-        
+
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             ThreadLocalContext.cleanup();
-            
+
             // IOException are thrown if the client closes the connection before completion
             if (!(e instanceof IOException)) {
                 log.error("An exception occured, rolling back current transaction", e);
 
-                // If an unprocessed error comes up from the application layers (Jersey...), rollback the transaction (should not happen)
+                // If an unprocessed error comes up from the application layers (Jersey...),
+                // rollback the transaction (should not happen)
                 if (em.isOpen()) {
                     if (em.getTransaction() != null && em.getTransaction().isActive()) {
                         em.getTransaction().rollback();
                     }
-                    
+
                     try {
                         em.close();
                     } catch (Exception ce) {
@@ -117,10 +119,11 @@ public class RequestContextFilter implements Filter {
                 throw new ServletException(e);
             }
         }
-        
+
         ThreadLocalContext.cleanup();
 
-        // No error processing the request : commit / rollback the current transaction depending on the HTTP code
+        // No error processing the request : commit / rollback the current transaction
+        // depending on the HTTP code
         if (em.isOpen()) {
             if (em.getTransaction() != null && em.getTransaction().isActive()) {
                 HttpServletResponse r = (HttpServletResponse) response;
@@ -135,7 +138,7 @@ public class RequestContextFilter implements Filter {
                 } else {
                     em.getTransaction().rollback();
                 }
-                
+
                 try {
                     em.close();
                 } catch (Exception e) {

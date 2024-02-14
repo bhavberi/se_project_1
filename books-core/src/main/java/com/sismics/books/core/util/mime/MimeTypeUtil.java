@@ -21,11 +21,11 @@ public class MimeTypeUtil {
         is.mark(headerBytes.length);
         int readCount = is.read(headerBytes);
         is.reset();
-        
+
         if (readCount <= 0) {
             throw new Exception("Cannot read input file");
         }
-        
+
         return guessMimeType(headerBytes);
     }
 
@@ -38,22 +38,26 @@ public class MimeTypeUtil {
      */
     public static String guessMimeType(byte[] headerBytes) throws UnsupportedEncodingException {
         String header = new String(headerBytes, "US-ASCII");
-        
+
         if (header.startsWith("PK")) {
             return MimeType.APPLICATION_ZIP;
         } else if (header.startsWith("GIF87a") || header.startsWith("GIF89a")) {
             return MimeType.IMAGE_GIF;
         } else if (headerBytes[0] == ((byte) 0xff) && headerBytes[1] == ((byte) 0xd8)) {
             return MimeType.IMAGE_JPEG;
-        } else if (headerBytes[0] == ((byte) 0x89) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x4e) && headerBytes[3] == ((byte) 0x47) &&
-                headerBytes[4] == ((byte) 0x0d) && headerBytes[5] == ((byte) 0x0a) && headerBytes[6] == ((byte) 0x1a) && headerBytes[7] == ((byte) 0x0a)) {
+        } else if (headerBytes[0] == ((byte) 0x89) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x4e)
+                && headerBytes[3] == ((byte) 0x47) &&
+                headerBytes[4] == ((byte) 0x0d) && headerBytes[5] == ((byte) 0x0a) && headerBytes[6] == ((byte) 0x1a)
+                && headerBytes[7] == ((byte) 0x0a)) {
             return MimeType.IMAGE_PNG;
-        } else if (headerBytes[0] == ((byte) 0x00) && headerBytes[1] == ((byte) 0x00) && headerBytes[2] == ((byte) 0x01) && headerBytes[3] == ((byte) 0x00)) {
+        } else if (headerBytes[0] == ((byte) 0x00) && headerBytes[1] == ((byte) 0x00) && headerBytes[2] == ((byte) 0x01)
+                && headerBytes[3] == ((byte) 0x00)) {
             return MimeType.IMAGE_X_ICON;
-        } else if (headerBytes[0] == ((byte) 0x25) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x44) && headerBytes[3] == ((byte) 0x46)) {
+        } else if (headerBytes[0] == ((byte) 0x25) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x44)
+                && headerBytes[3] == ((byte) 0x46)) {
             return MimeType.APPLICATION_PDF;
         }
-        
+
         return null;
     }
 }

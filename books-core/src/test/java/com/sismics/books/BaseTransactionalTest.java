@@ -11,7 +11,7 @@ import javax.persistence.EntityTransaction;
 /**
  * Base class of tests with a transactional context.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public abstract class BaseTransactionalTest {
     @Before

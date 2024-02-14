@@ -24,7 +24,7 @@ public interface IPrincipal extends Principal {
      * @return ID of the connected user
      */
     public String getId();
-    
+
     /**
      * Returns the locale of the principal.
      *

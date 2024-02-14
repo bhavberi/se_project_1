@@ -3,7 +3,7 @@
 /**
  * Book add manually controller.
  */
-App.controller('BookAddManual', function($scope, $state, $stateParams, Restangular) {
+App.controller('BookAddManual', function ($scope, $state, $stateParams, Restangular) {
   $scope.isEdit = false;
   $scope.book = {
     tags: []
@@ -12,11 +12,11 @@ App.controller('BookAddManual', function($scope, $state, $stateParams, Restangul
   /**
    * Create the new book.
    */
-  $scope.edit = function() {
+  $scope.edit = function () {
     $scope.book.publish_date = Date.parse($scope.book.publish_date_year + '-01-01');
-    Restangular.one('book/manual', $stateParams.id).put($scope.book).then(function(data) {
+    Restangular.one('book/manual', $stateParams.id).put($scope.book).then(function (data) {
       $state.transitionTo('bookview', { id: data.id });
-    }, function(data) {
+    }, function (data) {
       alert(data.data.message);
     });
   };
@@ -24,7 +24,7 @@ App.controller('BookAddManual', function($scope, $state, $stateParams, Restangul
   /**
    * Cancel the manual add and go back to the book add main page.
    */
-  $scope.cancel = function() {
+  $scope.cancel = function () {
     $state.transitionTo('bookadd');
   };
 });

@@ -5,6 +5,7 @@
   cursor: crosshair;
   float: left;
 }
+
 .colorpicker-saturation i {
   display: block;
   height: 5px;
@@ -16,6 +17,7 @@
   left: 0;
   margin: -4px 0 0 -4px;
 }
+
 .colorpicker-saturation i b {
   display: block;
   height: 5px;
@@ -23,6 +25,7 @@
   border: 1px solid #fff;
   border-radius: 5px;
 }
+
 .colorpicker-hue,
 .colorpicker-alpha {
   width: 15px;
@@ -32,6 +35,7 @@
   margin-left: 4px;
   margin-bottom: 4px;
 }
+
 .colorpicker-hue i,
 .colorpicker-alpha i {
   display: block;
@@ -44,16 +48,20 @@
   width: 100%;
   margin-top: -1px;
 }
+
 .colorpicker-hue {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAMAAABw8qpSAAABLFBMVEUA/z8AuP//JAAA/33/3AAA/1ABAv8A/7r/AH7/jgD2AP8A//j/AEHmAP/XAP/HAP+4AP//ALyoAP+aAP+JAP97AP9rAP9cAP9MAP8+AP8tAP8fAP8PAP8ATv//AG7/cAD/vgD/APoAmv//ADH/AKwB/wMA5//4Eg4AL///AOr/UQD/nwAA/27/7AAA/+kAe/8Ayf8A/5sA/zEA/6z/ABEAEP8A/17/MgAA/9n/ACL/gAD/AJ0AXP8Aqv//AMoA/yHqFBb/zAD/AGD/ANsA9//1/wDk/wDV/wDF/wC3/wD/AI2m/wD/FACY/wCI/wB5/wBp/wD/YgBb/wBK/wA8/wAs/wAd/wAN/wAAPv8A/xH/AFAAi///rQAA/8r/+gAA1///QwAAH/8Abf8A/43c/JNGAAAAiUlEQVR4AQXBg2EDAAAAsMy2bds2ttp2+/8PTby79mDLsKJPq/oFPdk24dWXAxsGjRg1ZtykKdNmzJozb8GiJct63WjYl7fiWdOZkk0vOpyr2fVtyKl7FX2uXGjpcuxWDy69KdiRk5WRlpIUFxMVERLw78+vH1Unun1YV3ZkwKM1CYfq7nQK22sD03ITV2Aqp0IAAAAASUVORK5CYII=');
 }
+
 .colorpicker-alpha {
   display: none;
 }
+
 .colorpicker-alpha,
 .colorpicker-color {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABkCAMAAACIElGlAAADAFBMVEUAAADT09PT09P////T09P////e3t7q6urT09Px8fHT09P////////T09PT09P////////T09PT09P////////////T09PT09P////////////T09P////T09PT09PT09P////T09PT09P////////////////T09P////T09PT09P////T09PT09PT09PT09PT09PT09P////T09P////T09PT09P////////////T09P////T09P////////////T09PT09P////T09P////////////////////T09P////////T09PT09P////////////////////////T09PT09P////////////////////////T09PT09P////T09PT09P////////T09P////////////T09P////////T09P////T09P////T09P////T09PT09PT09PT09P////T09PT09PT09PT09PT09PT09P////T09P////T09PT09P////////////T09PT09PT09P////T09PT09PT09PT09PT09PT09PT09P////////////////T09PT09P////////////T09P////////T09P////T09PT09PT09P////////T09P////////T09P////T09PT09P////////////////T09PT09PT09PT09P////T09PT09PT09PT09PT09PT09PT09P////T09P////T09PT09PT09PT09PT09P////////////////////////////////////T09P////T09P////T09P////T09PT09P////////////T09P////T09P////T09P////////////T09PT09P////////////////T09PT09P////T09P////T09PT09P////T09P////T09PT09P////T09PT09PT09PT09P////T09PT09P////////////T09PT09P////T09P////////T09MQsm1FAAABAHRSTlMAgJN8/vcDAfcCnJyGaZmZlomGk4yJOmM/eTxs8wY0YDFC7HNdLx18n5/7aUvzCcW9+qKiK8P0ZiltRwfdw/n8Px3WduJjItj78ss5PDHUNELbwP5wplA2FglEVwvkqNarCs4Z7b2sDLgQ0xNdyLrr0eLLUeW1Vs5TWQLwjPI3ZvQGdvxFyFrAeevaLCLvGd0kpRskGyf4qK605xKvFrGyDRHnBYMEkJaDkIBvB/gpH99O6CrbIC4nH3Lg2SXp4A7Qul/GDEgPSlMQ6LjqFU0SjyCCj5V/gnBN7xglL3O70WBU7gjFFEfft0sPTo1ndRipwXr2yRemWRVENq+ytbGuxGaWGQAAAnpJREFUeNpNxmdcDHAAxvEHOWXvmXX23ntv2XvvMg/Z44x0KaRBSnfcKSqlnYZKp1QqGpT20KZh783/eePj+3vzw3/q/AM9iURPTy6XS+RwcXNzcZMQTE1dTE3bE7y9S0u9xxD600rCGtpI2ErOsbGxzoiMrIqscnaOi4vDdnp4XYSrguwxQSb7KpMllycnl2MFaTSaTxrY5NrY5BoKb2BnZ2doZ29vb2OPSdSd4Bcc7OcXGhqamgqrYCsrq+mEiEtC3gUBDg55Dg53IkQYSYG+gb6+GEqB5wV0o5D8/JAQdKK5hA40n3BS+L6c0JJmE+ZQW8JEak1YQJ0Jq+jbaQEPnotGE+IrK+Pj+xKqU6pTUrIDAgKysZ+WEY5QQkJxcQIO0WrCUbL4YmFhgZ3UlVAUHR1d1JEwjVoRRpDJKxMTE/ShBoRR1I6whLyyvLyyUFAQFhbWhTCFFArFawXOCu/bEHpQLYKnZ0aGZw2CR1qah0dmpqurK+pTU0ILakJoTi+PC7j5RHTrqQg1qRkh3T3d3b0xoSE1ItSleoSe1IswmIYQPl8UlhLWkaOj41tHbKENBLX6j1qt/KFUKnFN+Onk9NvJCQdJpfqlUqGiIjExcRthN91/JsJmGkhYRO/OCBhHwwgxMWUxZQMIu8j8o7m5OfbRLMJh2kTYQ1FRhYVR2EHzCOtpMmEG3SUsJEvLoKAg2Prb2tqOJYSH+/uH33shwlTaS1hLBwhX6AYX2tuiRwStVntOa5yUZJwEqbREKjUi5Bjl5BhZW1uXWOMYGRBOnNDX1zfoxz1FwwkfSJfgo6vr41P7soBBNJ7Qm2YSzHTMzMwmEHRoMf0Fm5mYOUrzNBYAAAAASUVORK5CYII=');
 }
+
 .colorpicker {
   *zoom: 1;
   top: 0;
@@ -63,6 +71,7 @@
   margin-top: 1px;
   border-radius: 4px;
 }
+
 .colorpicker:after {
   clear: both;
   content: '';
@@ -74,6 +83,7 @@
   top: -6px;
   left: 7px;
 }
+
 .colorpicker:before {
   content: '';
   display: inline-block;
@@ -85,24 +95,30 @@
   top: -7px;
   left: 6px;
 }
+
 .colorpicker div {
   position: relative;
 }
+
 .colorpicker.alpha {
   min-width: 140px;
 }
+
 .colorpicker.alpha .colorpicker-alpha {
   display: block;
 }
+
 .colorpicker-color {
   height: 10px;
   margin-top: 5px;
   clear: both;
   background-position: 0 100%;
 }
+
 .colorpicker-color div {
   height: 10px;
 }
+
 .input-append.color .add-on i,
 .input-prepend.color .add-on i {
   display: block;

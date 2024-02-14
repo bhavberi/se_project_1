@@ -15,43 +15,43 @@ public class UserPrincipal implements IPrincipal {
      * ID of the user.
      */
     private String id;
-    
+
     /**
      * Username of the user.
      */
     private String name;
-    
+
     /**
      * Locale of the principal.
      */
     private Locale locale;
-    
+
     /**
      * Timezone of the principal.
      */
     private DateTimeZone dateTimeZone;
-    
+
     /**
      * Email of the principal.
      */
     private String email;
-    
+
     /**
      * User base functions.
      */
     private Set<String> baseFunctionSet;
-    
+
     /**
      * Constructor of UserPrincipal.
      * 
-     * @param id ID of the user
+     * @param id   ID of the user
      * @param name Usrename of the user
      */
     public UserPrincipal(String id, String name) {
         this.id = id;
         this.name = name;
     }
-    
+
     @Override
     public boolean isAnonymous() {
         return false;
@@ -117,7 +117,7 @@ public class UserPrincipal implements IPrincipal {
     public String getEmail() {
         return email;
     }
-    
+
     /**
      * Setter of email.
      *

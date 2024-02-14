@@ -45,7 +45,7 @@ public class TagResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         TagDao tagDao = new TagDao();
         List<Tag> tagList = tagDao.getByUserId(principal.getId());
         JSONObject response = new JSONObject();
@@ -60,7 +60,7 @@ public class TagResource extends BaseResource {
         response.put("tags", items);
         return Response.ok().entity(response).build();
     }
-    
+
     /**
      * Creates a new tag.
      * 
@@ -76,35 +76,35 @@ public class TagResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, false);
         ValidationUtil.validateHexColor(color, "color", true);
-        
+
         // Don't allow spaces
         if (name.contains(" ")) {
             throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
         }
-        
+
         // Get the tag
         TagDao tagDao = new TagDao();
         Tag tag = tagDao.getByName(principal.getId(), name);
         if (tag != null) {
             throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
         }
-        
+
         // Create the tag
         tag = new Tag();
         tag.setName(name);
         tag.setColor(color);
         tag.setUserId(principal.getId());
         String tagId = tagDao.create(tag);
-        
+
         JSONObject response = new JSONObject();
         response.put("id", tagId);
         return Response.ok().entity(response).build();
     }
-    
+
     /**
      * Update a tag.
      * 
@@ -122,29 +122,29 @@ public class TagResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, true);
         ValidationUtil.validateHexColor(color, "color", true);
-        
+
         // Don't allow spaces
         if (name.contains(" ")) {
             throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
         }
-        
+
         // Get the tag
         TagDao tagDao = new TagDao();
         Tag tag = tagDao.getByTagId(principal.getId(), id);
         if (tag == null) {
             throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
         }
-        
+
         // Check for name duplicate
         Tag tagDuplicate = tagDao.getByName(principal.getId(), name);
         if (tagDuplicate != null && !tagDuplicate.getId().equals(id)) {
             throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
         }
-        
+
         // Update the tag
         if (!StringUtils.isEmpty(name)) {
             tag.setName(name);
@@ -152,12 +152,12 @@ public class TagResource extends BaseResource {
         if (!StringUtils.isEmpty(color)) {
             tag.setColor(color);
         }
-        
+
         JSONObject response = new JSONObject();
         response.put("id", id);
         return Response.ok().entity(response).build();
     }
-    
+
     /**
      * Delete a tag.
      * 
@@ -173,17 +173,17 @@ public class TagResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Get the tag
         TagDao tagDao = new TagDao();
         Tag tag = tagDao.getByTagId(principal.getId(), tagId);
         if (tag == null) {
             throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", tagId));
         }
-        
+
         // Delete the tag
         tagDao.delete(tagId);
-        
+
         JSONObject response = new JSONObject();
         response.put("status", "ok");
         return Response.ok().entity(response).build();

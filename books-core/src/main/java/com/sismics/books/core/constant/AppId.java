@@ -6,6 +6,6 @@ package com.sismics.books.core.constant;
  * @author jtremeaux
  */
 public enum AppId {
-    
+
     FACEBOOK,
 }

@@ -1,9 +1,9 @@
 package com.sismics.books.core.constant;
 
 /**
- * Configuration parameters. 
+ * Configuration parameters.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public enum ConfigType {
     /**

@@ -23,43 +23,43 @@ public class UserApp {
     @Id
     @Column(name = "USA_ID_C", length = 36)
     private String id;
-    
+
     /**
      * User ID.
      */
     @Column(name = "USA_IDUSER_C", nullable = false, length = 36)
     private String userId;
-    
+
     /**
      * Connected pplication ID.
      */
     @Column(name = "USA_IDAPP_C", nullable = false, length = 20)
     private String appId;
-    
+
     /**
      * OAuth access token.
      */
     @Column(name = "USA_ACCESSTOKEN_C", length = 255)
     private String accessToken;
-    
+
     /**
      * User's username in the application.
      */
     @Column(name = "USA_USERNAME_C", length = 100)
     private String username;
-    
+
     /**
      * User's ID in the application.
      */
     @Column(name = "USA_EXTERNALID_C", length = 50)
     private String externalId;
-    
+
     /**
      * User's email in the application.
      */
     @Column(name = "USA_EMAIL_C", length = 100)
     private String email;
-    
+
     /**
      * Share on this application.
      */
@@ -71,7 +71,7 @@ public class UserApp {
      */
     @Column(name = "USA_CREATEDATE_D", nullable = false)
     private Date createDate;
-    
+
     /**
      * Deletion date.
      */

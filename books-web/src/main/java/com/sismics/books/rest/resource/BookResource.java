@@ -261,6 +261,7 @@ public class BookResource extends BaseResource {
     }
 
     private void updateTags(String userBookId, List<String> tagList) throws JSONException {
+
         if (tagList != null) {
             TagDao tagDao = new TagDao();
             Set<String> tagSet = new HashSet<>();

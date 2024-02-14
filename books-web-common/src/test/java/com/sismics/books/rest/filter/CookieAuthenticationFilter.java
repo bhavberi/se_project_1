@@ -17,11 +17,11 @@ import java.util.List;
  */
 public class CookieAuthenticationFilter extends ClientFilter {
     private String authToken;
-    
+
     public CookieAuthenticationFilter(String authToken) {
         this.authToken = authToken;
     }
-    
+
     @Override
     public ClientResponse handle(ClientRequest request) throws ClientHandlerException {
         Cookie cookie = new Cookie(TokenBasedSecurityFilter.COOKIE_NAME, authToken);

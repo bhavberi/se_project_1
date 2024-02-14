@@ -3,14 +3,14 @@ package com.sismics.books.core.util.jpa;
 /**
  * Sort criteria of a query.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class SortCriteria {
     /**
      * Index of the column to sort (first is 0).
      */
     private int column;
-    
+
     /**
      * Sort in increasing order (or else decreasing).
      */
@@ -27,7 +27,7 @@ public class SortCriteria {
             this.asc = asc;
         }
     }
-    
+
     /**
      * Getter of column.
      *

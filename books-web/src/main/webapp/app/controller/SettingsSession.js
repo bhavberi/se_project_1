@@ -3,24 +3,24 @@
 /**
  * Settings session controller.
  */
-App.controller('SettingsSession', function($scope, Restangular) {
+App.controller('SettingsSession', function ($scope, Restangular) {
   /**
    * Load sessions.
    */
-  $scope.loadSession = function() {
-    Restangular.one('user/session').get().then(function(data) {
+  $scope.loadSession = function () {
+    Restangular.one('user/session').get().then(function (data) {
       $scope.sessions = data.sessions;
     });
   };
-  
+
   /**
    * Clear all active sessions.
    */
-  $scope.deleteSession = function() {
-    Restangular.one('user/session').remove().then(function() {
+  $scope.deleteSession = function () {
+    Restangular.one('user/session').remove().then(function () {
       $scope.loadSession();
     })
   };
-  
+
   $scope.loadSession();
 });

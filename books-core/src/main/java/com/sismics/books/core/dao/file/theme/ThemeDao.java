@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Theme DAO.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class ThemeDao {
     private final static FilenameFilter CSS_FILTER = new FilenameFilter() {
@@ -20,7 +20,7 @@ public class ThemeDao {
             return name.endsWith(".css") || name.endsWith(".less");
         }
     };
-    
+
     /**
      * Return the list of all themes.
      * 

@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Query parameters.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class QueryParam {
 
@@ -13,7 +13,7 @@ public class QueryParam {
      * Query string.
      */
     private String queryString;
-    
+
     /**
      * Query parameters.
      */
@@ -22,7 +22,7 @@ public class QueryParam {
     /**
      * Constructor of QueryParam.
      * 
-     * @param queryString Query string
+     * @param queryString  Query string
      * @param parameterMap Query parameters
      */
     public QueryParam(String queryString, Map<String, Object> parameterMap) {
@@ -47,5 +47,5 @@ public class QueryParam {
     public Map<String, Object> getParameterMap() {
         return parameterMap;
     }
-    
+
 }

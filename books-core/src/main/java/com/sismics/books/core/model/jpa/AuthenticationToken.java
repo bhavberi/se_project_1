@@ -28,13 +28,13 @@ public class AuthenticationToken {
      */
     @Column(name = "AUT_IDUSER_C", nullable = false, length = 36)
     private String userId;
-    
+
     /**
      * Remember the user next time (long lasted session).
      */
     @Column(name = "AUT_LONGLASTED_B", nullable = false)
     private boolean longLasted;
-    
+
     /**
      * Token creation date.
      */

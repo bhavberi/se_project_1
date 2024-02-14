@@ -39,7 +39,7 @@ public class Locale {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

@@ -38,14 +38,14 @@ import com.sismics.books.core.util.TransactionUtil;
 /**
  * Facebook interaction service.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class FacebookService extends AbstractScheduledService {
-    
+
     private String facebookAppId;
-    
+
     private String facebookAppSecret;
-    
+
     /**
      * Logger.
      */
@@ -80,17 +80,19 @@ public class FacebookService extends AbstractScheduledService {
         if (log.isInfoEnabled()) {
             log.info("Synchronizing all Facebook contacts...");
         }
-        
+
         UserAppDao userAppDao = new UserAppDao();
         List<UserAppDto> userAppList = userAppDao.findByAppId(AppId.FACEBOOK.name());
         for (UserAppDto userApp : userAppList) {
             try {
                 synchronizeContact(userApp.getAccessToken(), userApp.getUserId());
             } catch (Throwable t) {
-                log.error(MessageFormat.format("Error synchronizing Facebook contacts for user {0}", userApp.getUserId()), t);
+                log.error(
+                        MessageFormat.format("Error synchronizing Facebook contacts for user {0}", userApp.getUserId()),
+                        t);
             }
         }
-        
+
         if (log.isInfoEnabled()) {
             log.info("Synchronizing all Facebook contacts : done!");
         }
@@ -112,21 +114,23 @@ public class FacebookService extends AbstractScheduledService {
         FacebookClient facebookClient = new DefaultFacebookClient(accessToken);
         AccessToken extendedAccessToken = null;
         try {
-            extendedAccessToken = facebookClient.obtainExtendedAccessToken(facebookAppId, facebookAppSecret, accessToken);
+            extendedAccessToken = facebookClient.obtainExtendedAccessToken(facebookAppId, facebookAppSecret,
+                    accessToken);
 
             if (log.isDebugEnabled()) {
-                log.debug(MessageFormat.format("Got long lived session token {0} for token {1}", extendedAccessToken, accessToken));
+                log.debug(MessageFormat.format("Got long lived session token {0} for token {1}", extendedAccessToken,
+                        accessToken));
             }
         } catch (FacebookException e) {
             if (e.getMessage().contains("Error validating access token")) {
                 throw new AuthenticationException("Error validating access token");
             }
-                
+
             throw new RuntimeException("Error exchanging short lived token for long lived token", e);
         }
         return extendedAccessToken.getAccessToken();
     }
-    
+
     /**
      * Check user's permissions.
      * 
@@ -167,18 +171,18 @@ public class FacebookService extends AbstractScheduledService {
             throw new PermissionException("Permission not found: read_stream");
         }
     }
-    
+
     /**
      * Synchronize user's contact.
      * 
      * @param accessToken Access token
-     * @param userId User ID
+     * @param userId      User ID
      */
     public void synchronizeContact(String accessToken, String userId) {
         if (log.isDebugEnabled()) {
             log.debug(MessageFormat.format("Synchronizing Facebook contacts for user {0}", userId));
         }
-        
+
         FacebookClient facebookClient = new DefaultFacebookClient(accessToken);
         Connection<User> connection = null;
         connection = facebookClient.fetchConnection("me/friends", User.class);
@@ -190,25 +194,26 @@ public class FacebookService extends AbstractScheduledService {
                 newFriendMap.put(externalId, friendName);
             }
         }
-        
+
         // Load current contacts
         UserContactDao userContactDao = new UserContactDao();
-        List<UserContactDto> currentUserContactList = userContactDao.findByUserIdAndAppId(userId, AppId.FACEBOOK.name());
+        List<UserContactDto> currentUserContactList = userContactDao.findByUserIdAndAppId(userId,
+                AppId.FACEBOOK.name());
         Set<String> currentFriendSet = new HashSet<String>();
         for (UserContactDto userContact : currentUserContactList) {
             currentFriendSet.add(userContact.getExternalId());
         }
-        
+
         // Update contact updated date
         userContactDao.updateByUserIdAndAppId(userId, AppId.FACEBOOK.name());
-        
+
         // Delete unfriended contacts
         for (UserContactDto userContact : currentUserContactList) {
             if (!newFriendMap.containsKey(userContact.getExternalId())) {
                 userContactDao.delete(userContact.getId());
             }
         }
-        
+
         // Add new contacts
         for (Entry<String, String> entry : newFriendMap.entrySet()) {
             if (!currentFriendSet.contains(entry.getKey())) {
@@ -226,7 +231,7 @@ public class FacebookService extends AbstractScheduledService {
      * Updates user's personal informations.
      * 
      * @param accessToken Access token
-     * @param userApp User app (updated by side effect)
+     * @param userApp     User app (updated by side effect)
      */
     public void updateUserData(String accessToken, UserApp userApp) {
         FacebookClient facebookClient = new DefaultFacebookClient(accessToken);
@@ -242,27 +247,30 @@ public class FacebookService extends AbstractScheduledService {
      * @param userBook User book to publish
      */
     public void publishAction(final UserBook userBook) {
-//        FacebookClient facebookClient = new DefaultFacebookClient();
+        // FacebookClient facebookClient = new DefaultFacebookClient();
 
         // TODO Publish a user book
-//        final String trackUrl = UrlUtil.getTrackUrl(track.getId());
-//        String activityId = track.getActivity().getId();
-//        String connection = "me/fitness.runs";
-//        if (ActivityId.RUNNING.name().equals(activityId)) {
-//            connection = "me/fitness.runs";
-//        } else if (ActivityId.CYCLING.name().equals(activityId)) {
-//            connection = "me/fitness.bikes";
-//        } else if (ActivityId.WALKING.name().equals(activityId) || ActivityId.HIKING.name().equals(activityId)) {
-//            connection = "me/fitness.walks";
-//        } 
-//        try {
-//            FacebookType publishResponse = facebookClient.publish(connection, FacebookType.class, Parameter.with("course", trackUrl));
-//
-//            if (log.isInfoEnabled()) {
-//                log.info(MessageFormat.format("Published Facebook action: {0} for user {1}, item id = {2}", connection, user.getUsername(), publishResponse.getId()));
-//            }
-//        } catch (FacebookException e) {
-//            log.error("Error publishing Facebook action", e);
-//        }
+        // final String trackUrl = UrlUtil.getTrackUrl(track.getId());
+        // String activityId = track.getActivity().getId();
+        // String connection = "me/fitness.runs";
+        // if (ActivityId.RUNNING.name().equals(activityId)) {
+        // connection = "me/fitness.runs";
+        // } else if (ActivityId.CYCLING.name().equals(activityId)) {
+        // connection = "me/fitness.bikes";
+        // } else if (ActivityId.WALKING.name().equals(activityId) ||
+        // ActivityId.HIKING.name().equals(activityId)) {
+        // connection = "me/fitness.walks";
+        // }
+        // try {
+        // FacebookType publishResponse = facebookClient.publish(connection,
+        // FacebookType.class, Parameter.with("course", trackUrl));
+        //
+        // if (log.isInfoEnabled()) {
+        // log.info(MessageFormat.format("Published Facebook action: {0} for user {1},
+        // item id = {2}", connection, user.getUsername(), publishResponse.getId()));
+        // }
+        // } catch (FacebookException e) {
+        // log.error("Error publishing Facebook action", e);
+        // }
     }
 }

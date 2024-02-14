@@ -3,7 +3,7 @@ package com.sismics.books.rest.constant;
 /**
  * Base functions.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public enum BaseFunction {
 

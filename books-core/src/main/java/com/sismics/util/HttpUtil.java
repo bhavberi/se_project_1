@@ -54,7 +54,7 @@ public class HttpUtil {
             }
         }
     }
-    
+
     public static String postUrl(URL url, String data) throws IOException {
         OutputStreamWriter wr = null;
         BufferedReader rd = null;
@@ -64,7 +64,7 @@ public class HttpUtil {
             wr = new OutputStreamWriter(conn.getOutputStream());
             wr.write(data);
             wr.flush();
-    
+
             // Get the response
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();

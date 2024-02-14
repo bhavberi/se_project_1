@@ -24,13 +24,13 @@ public abstract class BaseResource {
      */
     @Context
     protected HttpServletRequest request;
-    
+
     /**
      * Application key.
      */
     @QueryParam("app_key")
     protected String appKey;
-    
+
     /**
      * Principal of the authenticated user.
      */
@@ -50,9 +50,10 @@ public abstract class BaseResource {
             return false;
         }
     }
-    
+
     /**
-     * Checks if the user has a base function. Throw an exception if the check fails.
+     * Checks if the user has a base function. Throw an exception if the check
+     * fails.
      * 
      * @param baseFunction Base function to check
      * @throws JSONException
@@ -62,7 +63,7 @@ public abstract class BaseResource {
             throw new ForbiddenClientException();
         }
     }
-    
+
     /**
      * Checks if the user has a base function.
      * 

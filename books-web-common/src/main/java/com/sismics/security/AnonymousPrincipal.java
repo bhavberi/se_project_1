@@ -11,24 +11,24 @@ import java.util.Locale;
  */
 public class AnonymousPrincipal implements IPrincipal {
     public static final String ANONYMOUS = "anonymous";
-    
+
     /**
      * User locale.
      */
     private Locale locale;
-    
+
     /**
      * User timezone.
      */
     private DateTimeZone dateTimeZone;
-    
+
     /**
      * Constructor of AnonymousPrincipal.
      */
     public AnonymousPrincipal() {
         // NOP
     }
-    
+
     @Override
     public String getId() {
         return null;
@@ -67,7 +67,7 @@ public class AnonymousPrincipal implements IPrincipal {
     public String getEmail() {
         return null;
     }
-    
+
     /**
      * Setter of dateTimeZone.
      *

@@ -1,6 +1,5 @@
 package com.sismics.books.core.constant;
 
-
 /**
  * Application constants.
  * 
@@ -16,12 +15,12 @@ public class Constants {
      * Default timezone ID.
      */
     public static final String DEFAULT_TIMEZONE_ID = "Europe/London";
-    
+
     /**
      * Default theme ID.
      */
     public static final String DEFAULT_THEME_ID = "default.less";
-    
+
     /**
      * Administrator's default password ("admin").
      */

@@ -14,7 +14,7 @@ import com.sismics.books.core.util.TransactionUtil;
 /**
  * User app created listener.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class UserAppCreatedAsyncListener {
     /**
@@ -32,21 +32,21 @@ public class UserAppCreatedAsyncListener {
         if (log.isInfoEnabled()) {
             log.info("UserApp created event: " + userAppCreatedEvent.toString());
         }
-        
+
         final UserApp userApp = userAppCreatedEvent.getUserApp();
-        
+
         TransactionUtil.handle(new Runnable() {
             @Override
             public void run() {
                 try {
                     AppId appId = AppId.valueOf(userApp.getAppId());
                     switch (appId) {
-                    case FACEBOOK:
-                        // Synchronize friends contact
-                        final FacebookService facebookService = AppContext.getInstance().getFacebookService();
-                        String facebookAccessToken = userApp.getAccessToken();
-                        facebookService.synchronizeContact(facebookAccessToken, userApp.getUserId());
-                        break;
+                        case FACEBOOK:
+                            // Synchronize friends contact
+                            final FacebookService facebookService = AppContext.getInstance().getFacebookService();
+                            String facebookAccessToken = userApp.getAccessToken();
+                            facebookService.synchronizeContact(facebookAccessToken, userApp.getUserId());
+                            break;
                     }
                 } catch (Exception e) {
                     if (log.isErrorEnabled()) {

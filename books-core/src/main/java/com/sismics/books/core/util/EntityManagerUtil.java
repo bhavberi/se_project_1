@@ -5,7 +5,7 @@ import com.sismics.util.context.ThreadLocalContext;
 /**
  * Entity manager utils.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class EntityManagerUtil {
     /**
