@@ -22,12 +22,12 @@ public abstract class BaseJerseyTest extends JerseyTest {
      * Test HTTP server.
      */
     HttpServer httpServer;
-    
+
     /**
      * Utility class for the REST client.
      */
     protected ClientUtil clientUtil;
-    
+
     /**
      * Constructor of BaseJerseyTest.
      */
@@ -35,16 +35,17 @@ public abstract class BaseJerseyTest extends JerseyTest {
         super(JerseyTestWebAppDescriptorFactory.build());
         this.clientUtil = new ClientUtil(resource());
     }
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
+
         String httpRoot = URLDecoder.decode(new File(getClass().getResource("/").getFile()).getAbsolutePath(), "utf-8");
         httpServer = HttpServer.createSimpleServer(httpRoot, "localhost", 9997);
         // Disable file cache to fix https://java.net/jira/browse/GRIZZLY-1350
-        ((StaticHttpHandler) httpServer.getServerConfiguration().getHttpHandlers().keySet().iterator().next()).setFileCacheEnabled(false);
+        ((StaticHttpHandler) httpServer.getServerConfiguration().getHttpHandlers().keySet().iterator().next())
+                .setFileCacheEnabled(false);
         httpServer.start();
     }
 

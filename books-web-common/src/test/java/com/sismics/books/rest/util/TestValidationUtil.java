@@ -8,7 +8,7 @@ import org.junit.Test;
 /**
  * Test the validations.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class TestValidationUtil {
     @Test

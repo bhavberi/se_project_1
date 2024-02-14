@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Test of the resource utils.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class TestResourceUtil {
 

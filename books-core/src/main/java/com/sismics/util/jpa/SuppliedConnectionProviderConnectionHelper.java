@@ -34,7 +34,7 @@ import java.sql.SQLException;
 
 /**
  * A {@link ConnectionHelper} implementation based on a provided
- * {@link ConnectionProvider}.  Essentially, ensures that the connection
+ * {@link ConnectionProvider}. Essentially, ensures that the connection
  * gets cleaned up, but that the provider itself remains usable since it
  * was externally provided to us.
  *
@@ -53,14 +53,13 @@ class SuppliedConnectionProviderConnectionHelper implements ConnectionHelper {
     public void prepare(boolean needsAutoCommit) throws SQLException {
         connection = provider.getConnection();
         toggleAutoCommit = needsAutoCommit && !connection.getAutoCommit();
-        if ( toggleAutoCommit ) {
+        if (toggleAutoCommit) {
             try {
                 connection.commit();
-            }
-            catch( Throwable ignore ) {
+            } catch (Throwable ignore) {
                 // might happen with a managed connection
             }
-            connection.setAutoCommit( true );
+            connection.setAutoCommit(true);
         }
     }
 
@@ -72,12 +71,12 @@ class SuppliedConnectionProviderConnectionHelper implements ConnectionHelper {
     @Override
     public void release() throws SQLException {
         // we only release the connection
-        if ( connection != null ) {
-            new SqlExceptionHelper().logAndClearWarnings( connection );
-            if ( toggleAutoCommit ) {
-                connection.setAutoCommit( false );
+        if (connection != null) {
+            new SqlExceptionHelper().logAndClearWarnings(connection);
+            if (toggleAutoCommit) {
+                connection.setAutoCommit(false);
             }
-            provider.closeConnection( connection );
+            provider.closeConnection(connection);
             connection = null;
         }
     }

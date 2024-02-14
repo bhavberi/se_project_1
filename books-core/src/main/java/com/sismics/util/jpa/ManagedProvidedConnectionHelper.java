@@ -65,7 +65,8 @@ class ManagedProviderConnectionHelper implements ConnectionHelper {
     private static StandardServiceRegistryImpl createServiceRegistry(Properties properties) {
         Environment.verifyProperties(properties);
         ConfigurationHelper.resolvePlaceHolders(properties);
-        return (StandardServiceRegistryImpl) new ServiceRegistryBuilder().applySettings(properties).buildServiceRegistry();
+        return (StandardServiceRegistryImpl) new ServiceRegistryBuilder().applySettings(properties)
+                .buildServiceRegistry();
     }
 
     @Override

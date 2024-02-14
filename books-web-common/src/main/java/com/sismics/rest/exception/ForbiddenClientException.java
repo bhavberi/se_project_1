@@ -25,7 +25,7 @@ public class ForbiddenClientException extends WebApplicationException {
      */
     public ForbiddenClientException() throws JSONException {
         super(Response.status(Status.FORBIDDEN).entity(new JSONObject()
-            .put("type", "ForbiddenError")
-            .put("message", "You don't have access to this resource")).build());
+                .put("type", "ForbiddenError")
+                .put("message", "You don't have access to this resource")).build());
     }
 }

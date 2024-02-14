@@ -14,11 +14,11 @@ import javax.ws.rs.core.NewCookie;
 /**
  * REST client utilities.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class ClientUtil {
     private WebResource resource;
-    
+
     /**
      * Constructor of ClientUtil.
      * 
@@ -27,7 +27,7 @@ public class ClientUtil {
     public ClientUtil(WebResource resource) {
         this.resource = resource;
     }
-    
+
     /**
      * Creates a user.
      * 
@@ -36,7 +36,7 @@ public class ClientUtil {
     public void createUser(String username) {
         // Login admin to create the user
         String adminAuthenticationToken = login("admin", "admin", false);
-        
+
         // Create the user
         WebResource userResource = resource.path("/user");
         userResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
@@ -47,11 +47,11 @@ public class ClientUtil {
         postParams.putSingle("time_zone", "Asia/Tokyo");
         ClientResponse response = userResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // Logout admin
         logout(adminAuthenticationToken);
     }
-    
+
     /**
      * Connects a user to the application.
      * 
@@ -68,7 +68,7 @@ public class ClientUtil {
         postParams.putSingle("remember", remember.toString());
         ClientResponse response = userResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         return getAuthenticationCookie(response);
     }
 
@@ -81,7 +81,7 @@ public class ClientUtil {
     public String login(String username) {
         return login(username, "12345678", false);
     }
-    
+
     /**
      * Disconnects a user from the application.
      * 

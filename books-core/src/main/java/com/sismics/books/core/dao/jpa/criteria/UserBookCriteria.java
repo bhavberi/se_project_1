@@ -2,33 +2,32 @@ package com.sismics.books.core.dao.jpa.criteria;
 
 import java.util.List;
 
-
 /**
  * User book criteria.
  *
- * @author bgamard 
+ * @author bgamard
  */
 public class UserBookCriteria {
     /**
      * User ID.
      */
     private String userId;
-    
+
     /**
      * Search query.
      */
     private String search;
-    
+
     /**
      * Read state.
      */
     private Boolean read;
-    
+
     /**
      * Tag IDs.
      */
     private List<String> tagIdList;
-    
+
     /**
      * Getter of userId.
      *
@@ -85,6 +84,7 @@ public class UserBookCriteria {
 
     /**
      * Getter of read.
+     * 
      * @return read
      */
     public Boolean getRead() {
@@ -93,6 +93,7 @@ public class UserBookCriteria {
 
     /**
      * Setter of read.
+     * 
      * @param read read
      */
     public void setRead(Boolean read) {

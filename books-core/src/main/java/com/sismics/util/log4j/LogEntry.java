@@ -3,36 +3,36 @@ package com.sismics.util.log4j;
 /**
  * Log entry.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class LogEntry {
     /**
      * Time stamp.
      */
     private long timestamp;
-    
+
     /**
      * Logging level (DEBUG, WARN)...
      */
     private String level;
-    
+
     /**
      * Logger name / tag.
      */
     private String tag;
-    
+
     /**
      * Message logged.
      */
     private String message;
-    
+
     /**
      * Constructor of LogEntry.
      * 
      * @param timestamp Timestamp
-     * @param level Logging level (DEBUG, WARN)...
-     * @param tag Logger name / tag
-     * @param message Message logged
+     * @param level     Logging level (DEBUG, WARN)...
+     * @param tag       Logger name / tag
+     * @param message   Message logged
      */
     public LogEntry(long timestamp, String level, String tag, String message) {
         this.timestamp = timestamp;

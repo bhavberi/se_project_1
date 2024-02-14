@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * Log search criteria.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class LogCriteria {
 
@@ -13,12 +13,12 @@ public class LogCriteria {
      * Logging level (DEBUG, WARN)...
      */
     private String level;
-    
+
     /**
      * Logger name / tag.
      */
     private String tag;
-    
+
     /**
      * Message logged.
      */

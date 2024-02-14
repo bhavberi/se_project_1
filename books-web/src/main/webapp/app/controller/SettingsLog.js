@@ -3,10 +3,10 @@
 /**
  * Settings logs controller.
  */
-App.controller('SettingsLog', function($scope, Restangular) {
+App.controller('SettingsLog', function ($scope, Restangular) {
   Restangular.one('app/log').get({
     limit: 100
-  }).then(function(data) {
+  }).then(function (data) {
     $scope.logs = data.logs;
   });
 });

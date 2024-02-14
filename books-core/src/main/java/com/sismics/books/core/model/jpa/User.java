@@ -22,25 +22,25 @@ public class User {
     @Id
     @Column(name = "USE_ID_C", length = 36)
     private String id;
-    
+
     /**
      * Locale ID.
      */
     @Column(name = "USE_IDLOCALE_C", nullable = false, length = 10)
     private String localeId;
-    
+
     /**
      * Role ID.
      */
     @Column(name = "USE_IDROLE_C", nullable = false, length = 36)
     private String roleId;
-    
+
     /**
      * User's username.
      */
     @Column(name = "USE_USERNAME_C", nullable = false, length = 50)
     private String username;
-    
+
     /**
      * User's password.
      */
@@ -52,13 +52,13 @@ public class User {
      */
     @Column(name = "USE_EMAIL_C", nullable = false, length = 100)
     private String email;
-    
+
     /**
      * Theme.
      */
     @Column(name = "USE_THEME_C", nullable = false, length = 100)
     private String theme;
-    
+
     /**
      * True if the user hasn't dismissed the first connection screen.
      */
@@ -70,13 +70,13 @@ public class User {
      */
     @Column(name = "USE_CREATEDATE_D", nullable = false)
     private Date createDate;
-    
+
     /**
      * Deletion date.
      */
     @Column(name = "USE_DELETEDATE_D")
     private Date deleteDate;
-    
+
     /**
      * Getter of id.
      *
@@ -256,7 +256,7 @@ public class User {
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }
-    
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

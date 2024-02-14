@@ -23,49 +23,49 @@ public class UserContact {
     @Id
     @Column(name = "USC_ID_C", length = 36)
     private String id;
-    
+
     /**
      * User ID.
      */
     @Column(name = "USC_IDUSER_C", nullable = false, length = 36)
     private String userId;
-    
+
     /**
      * Connected application ID.
      */
     @Column(name = "USC_IDAPP_C", nullable = false, length = 20)
     private String appId;
-    
+
     /**
      * Contact ID in the connected application.
      */
     @Column(name = "USC_EXTERNALID_C", nullable = false, length = 50)
     private String externalId;
-    
+
     /**
      * Contact's fullname in the connected application.
      */
     @Column(name = "USC_FULLNAME_C", length = 100)
     private String fullName;
-    
+
     /**
      * Contact's email in the connected application.
      */
     @Column(name = "USC_EMAIL_C", length = 100)
     private String email;
-    
+
     /**
      * Creation date.
      */
     @Column(name = "USC_CREATEDATE_D", nullable = false)
     private Date createDate;
-    
+
     /**
      * Update date.
      */
     @Column(name = "USC_UPDATEDATE_D")
     private Date updateDate;
-    
+
     /**
      * Deletion date.
      */

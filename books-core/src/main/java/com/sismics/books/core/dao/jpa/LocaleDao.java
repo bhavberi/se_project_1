@@ -28,7 +28,7 @@ public class LocaleDao {
             return null;
         }
     }
-    
+
     /**
      * Returns the list of all locales.
      * 

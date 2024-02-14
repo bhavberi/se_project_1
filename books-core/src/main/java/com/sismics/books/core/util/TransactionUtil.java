@@ -11,7 +11,7 @@ import javax.persistence.EntityTransaction;
 /**
  * Database transaction utils.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class TransactionUtil {
     /**
@@ -26,13 +26,13 @@ public class TransactionUtil {
      */
     public static void handle(Runnable runnable) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        
+
         if (em != null) {
             // We are already in a transactional context, nothing to do
             runnable.run();
             return;
         }
-        
+
         try {
             em = EMF.get().createEntityManager();
         } catch (Exception e) {
@@ -42,12 +42,12 @@ public class TransactionUtil {
         context.setEntityManager(em);
         EntityTransaction tx = em.getTransaction();
         tx.begin();
-        
+
         try {
             runnable.run();
         } catch (Exception e) {
             ThreadLocalContext.cleanup();
-            
+
             log.error("An exception occured, rolling back current transaction", e);
 
             // If an unprocessed error comes up, rollback the transaction
@@ -55,7 +55,7 @@ public class TransactionUtil {
                 if (em.getTransaction() != null && em.getTransaction().isActive()) {
                     em.getTransaction().rollback();
                 }
-                
+
                 try {
                     em.close();
                 } catch (Exception ce) {
@@ -64,14 +64,14 @@ public class TransactionUtil {
             }
             return;
         }
-        
+
         ThreadLocalContext.cleanup();
 
         // No error in the current request : commit the transaction
         if (em.isOpen()) {
             if (em.getTransaction() != null && em.getTransaction().isActive()) {
                 em.getTransaction().commit();
-                
+
                 try {
                     em.close();
                 } catch (Exception e) {
@@ -80,7 +80,7 @@ public class TransactionUtil {
             }
         }
     }
-    
+
     /**
      * Commits the current transaction, and flushes the changes to the database.
      */

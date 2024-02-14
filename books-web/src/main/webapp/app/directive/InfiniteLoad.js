@@ -4,13 +4,13 @@
  * Infinite scrolling directive.
  * Thanks to http://jsfiddle.net/vojtajina/U7Bz9/
  */
-App.directive('infiniteLoad', function() {
-  return function(scope, elm, attr) {
+App.directive('infiniteLoad', function () {
+  return function (scope, elm, attr) {
     var margin = parseInt(attr.infiniteMargin);
 
     // Scroll handler
-    var scrollHandler = function() {
-      if ($(this).scrollTop() + $(window).height() + margin >= elm.offset().top +  + elm.height()) {
+    var scrollHandler = function () {
+      if ($(this).scrollTop() + $(window).height() + margin >= elm.offset().top + + elm.height()) {
         scope.$apply(attr.infiniteLoad);
       }
     };
@@ -19,7 +19,7 @@ App.directive('infiniteLoad', function() {
     $(document).bind('scroll', scrollHandler);
 
     // Cleanup handler on destroy
-    scope.$on('$destroy', function() {
+    scope.$on('$destroy', function () {
       $(document).unbind('scroll', scrollHandler);
     })
   };

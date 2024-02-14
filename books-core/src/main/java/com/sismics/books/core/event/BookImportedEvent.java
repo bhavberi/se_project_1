@@ -8,19 +8,19 @@ import com.sismics.books.core.model.jpa.User;
 /**
  * Event raised on request to import books.
  *
- * @author bgamard 
+ * @author bgamard
  */
 public class BookImportedEvent {
     /**
      * User requesting the import.
      */
     private User user;
-    
+
     /**
      * Temporary file to import.
      */
     private File importFile;
-    
+
     /**
      * Getter of user.
      *

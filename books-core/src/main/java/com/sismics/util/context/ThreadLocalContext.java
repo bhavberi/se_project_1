@@ -12,19 +12,19 @@ public class ThreadLocalContext {
      * ThreadLocal to store the context.
      */
     public static final ThreadLocal<ThreadLocalContext> threadLocalContext = new ThreadLocal<ThreadLocalContext>();
-    
+
     /**
      * Entity manager.
      */
     private EntityManager entityManager;
-    
+
     /**
      * Private constructor.
      */
     private ThreadLocalContext() {
         // NOP
     }
-    
+
     /**
      * Returns an instance of this thread context.
      * 
@@ -45,7 +45,7 @@ public class ThreadLocalContext {
     public static void cleanup() {
         threadLocalContext.set(null);
     }
-    
+
     /**
      * Returns true only if the entity manager is defined.
      * 

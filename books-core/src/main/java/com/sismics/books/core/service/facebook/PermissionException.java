@@ -3,7 +3,7 @@ package com.sismics.books.core.service.facebook;
 /**
  * Exception raised on a Facebook permission not found.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class PermissionException extends Exception {
 

@@ -11,9 +11,10 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
- * Generic exception mapper that transforms all unknown exception into ServerError.
+ * Generic exception mapper that transforms all unknown exception into
+ * ServerError.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 @Provider
 public class GenericExceptionMapper implements ExceptionMapper<Exception> {
@@ -23,13 +24,13 @@ public class GenericExceptionMapper implements ExceptionMapper<Exception> {
     private static final Logger log = LoggerFactory.getLogger(GenericExceptionMapper.class);
 
     @Override
-    public Response toResponse(Exception e)  {
+    public Response toResponse(Exception e) {
         if (e instanceof WebApplicationException) {
             return ((WebApplicationException) e).getResponse();
         }
-        
+
         log.error("Unknown error", e);
-        
+
         JSONObject entity = new JSONObject();
         try {
             entity.put("type", "UnknownError");
@@ -37,7 +38,7 @@ public class GenericExceptionMapper implements ExceptionMapper<Exception> {
         } catch (JSONException e2) {
             log.error("Error building response", e2);
         }
-        
+
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(entity)
                 .build();

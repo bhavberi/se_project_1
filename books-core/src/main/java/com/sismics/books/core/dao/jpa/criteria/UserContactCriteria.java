@@ -15,7 +15,7 @@ public class UserContactCriteria {
      * User ID.
      */
     private String userId;
-    
+
     /**
      * Fulltext query.
      */

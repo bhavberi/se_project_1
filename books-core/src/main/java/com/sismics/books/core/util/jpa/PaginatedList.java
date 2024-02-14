@@ -22,17 +22,17 @@ public class PaginatedList<T> {
      * Total number of records.
      */
     private int resultCount;
-    
+
     /**
      * List of records of the current page.
      */
     private List<T> resultList;
-    
+
     /**
      * Constructor of PaginatedList.
      * 
      * @param pageSize Page size
-     * @param offset Offset
+     * @param offset   Offset
      */
     public PaginatedList(int pageSize, int offset) {
         this.limit = pageSize;

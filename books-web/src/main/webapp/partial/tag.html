@@ -2,11 +2,13 @@
   <div class="col-md-4 well text-center">
     <form name="tagForm" class="form-inline" role="form" novalidate ng-class="{ 'has-error': !tagForm.name.$valid }">
       <div class="form-group">
-        <span colorpicker class="btn btn-default" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
+        <span colorpicker class="btn btn-default" data-color="#3a87ad" ng-model="tag.color"
+          ng-style="{ 'background': tag.color }">&nbsp;</span>
       </div>
       <div class="form-group">
-        <input type="text" class="form-control" name="name" placeholder="New bookshelf"
-            ng-maxlength="36" required ng-model="tag.name" ui-validate="{duplicate: 'validateDuplicate($value)', space: '!$value || $value.indexOf(\' \') == -1' }">
+        <input type="text" class="form-control" name="name" placeholder="New bookshelf" ng-maxlength="36" required
+          ng-model="tag.name"
+          ui-validate="{duplicate: 'validateDuplicate($value)', space: '!$value || $value.indexOf(\' \') == -1' }">
       </div>
       <button type="submit" class="btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">Add</button>
       <span class="help-block" ng-show="tagForm.name.$error.duplicate">This bookshelf already exists</span>
@@ -23,8 +25,10 @@
       <tbody>
         <tr ng-repeat="tag in tags | filter:search">
           <td><inline-edit value="tag.name" on-edit="updateTag(tag)" /></td>
-          <td class="col-md-1"><span colorpicker class="btn btn-default" on-hide="updateTag(tag)" data-color="" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span></td>
-          <td class="col-md-1"><button class="btn btn-danger pull-right" ng-click="deleteTag(tag)"><span class="glyphicon glyphicon-trash"></span></button></td>
+          <td class="col-md-1"><span colorpicker class="btn btn-default" on-hide="updateTag(tag)" data-color=""
+              ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span></td>
+          <td class="col-md-1"><button class="btn btn-danger pull-right" ng-click="deleteTag(tag)"><span
+                class="glyphicon glyphicon-trash"></span></button></td>
         </tr>
       </tbody>
     </table>

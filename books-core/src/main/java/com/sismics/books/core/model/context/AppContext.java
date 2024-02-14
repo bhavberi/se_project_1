@@ -19,7 +19,7 @@ import com.sismics.util.EnvironmentUtil;
 /**
  * Global application context.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class AppContext {
     /**
@@ -31,7 +31,7 @@ public class AppContext {
      * Event bus.
      */
     private EventBus eventBus;
-    
+
     /**
      * Generic asynchronous event bus.
      */
@@ -41,47 +41,47 @@ public class AppContext {
      * Asynchronous event bus for mass imports.
      */
     private EventBus importEventBus;
-    
+
     /**
      * Service to fetch book informations.
      */
     private BookDataService bookDataService;
-    
+
     /**
      * Facebook interaction service.
      */
     private FacebookService facebookService;
-    
+
     /**
      * Asynchronous executors.
      */
     private List<ExecutorService> asyncExecutorList;
-    
+
     /**
      * Private constructor.
      */
     private AppContext() {
         resetEventBus();
-        
+
         bookDataService = new BookDataService();
         bookDataService.startAndWait();
-        
+
         facebookService = new FacebookService();
         facebookService.startAndWait();
     }
-    
+
     /**
      * (Re)-initializes the event buses.
      */
     private void resetEventBus() {
         eventBus = new EventBus();
         eventBus.register(new DeadEventListener());
-        
+
         asyncExecutorList = new ArrayList<ExecutorService>();
-        
+
         asyncEventBus = newAsyncEventBus();
         asyncEventBus.register(new UserAppCreatedAsyncListener());
-        
+
         importEventBus = newAsyncEventBus();
         importEventBus.register(new BookImportAsyncListener());
     }
@@ -97,7 +97,7 @@ public class AppContext {
         }
         return instance;
     }
-    
+
     /**
      * Creates a new asynchronous event bus.
      * 
@@ -132,7 +132,7 @@ public class AppContext {
     public EventBus getAsyncEventBus() {
         return asyncEventBus;
     }
-    
+
     /**
      * Getter of importEventBus.
      *
@@ -150,7 +150,7 @@ public class AppContext {
     public BookDataService getBookDataService() {
         return bookDataService;
     }
-    
+
     /**
      * Getter of facebookService.
      * 

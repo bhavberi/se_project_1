@@ -8,8 +8,6 @@ import javax.persistence.Query;
 import com.sismics.books.core.model.jpa.Book;
 import com.sismics.util.context.ThreadLocalContext;
 
-
-
 /**
  * Book DAO.
  * 
@@ -29,7 +27,7 @@ public class BookDao {
         em.persist(book);
         return book.getId();
     }
-    
+
     /**
      * Gets a book by its ID.
      * 

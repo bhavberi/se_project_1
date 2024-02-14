@@ -33,13 +33,13 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONObject json = response.getEntity(JSONObject.class);
         Assert.assertTrue(json.getBoolean("is_default_password"));
-        
+
         // Create alice user
         clientUtil.createUser("alice");
 
         // Login admin
         String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
-        
+
         // List all users
         userResource = resource().path("/user/list");
         userResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
@@ -51,7 +51,7 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONArray users = json.getJSONArray("users");
         Assert.assertTrue(users.length() > 0);
-        
+
         // Create a user KO (login length validation)
         userResource = resource().path("/user");
         userResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
@@ -144,7 +144,7 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertTrue(json.getJSONArray("sessions").length() > 0);
-        
+
         // Delete all sessions
         userResource = resource().path("/user/session");
         userResource.addFilter(new CookieAuthenticationFilter(bobAuthToken));
@@ -158,7 +158,7 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(true, json.getBoolean("anonymous"));
-        
+
         // Check alice user information
         userResource = resource().path("/user");
         userResource.addFilter(new CookieAuthenticationFilter(aliceAuthToken));
@@ -169,7 +169,7 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals("default.less", json.getString("theme"));
         Assert.assertFalse(json.getBoolean("first_connection"));
         Assert.assertFalse(json.getBoolean("is_default_password"));
-        
+
         // Check bob user information
         userResource = resource().path("/user");
         userResource.addFilter(new CookieAuthenticationFilter(bobAuthToken));
@@ -178,7 +178,7 @@ public class TestUserResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("bob@books.com", json.getString("email"));
         Assert.assertEquals("en", json.getString("locale"));
-        
+
         // Test login KO (user not found)
         userResource = resource().path("/user/login");
         postParams.putSingle("username", "intruder");
@@ -204,7 +204,7 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));
-        
+
         // Check the update
         userResource = resource().path("/user");
         userResource.addFilter(new CookieAuthenticationFilter(aliceAuthToken));
@@ -212,13 +212,13 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("alice2@books.com", json.getString("email"));
-        
+
         // Delete user alice
         userResource = resource().path("/user");
         userResource.addFilter(new CookieAuthenticationFilter(aliceAuthToken));
         response = userResource.delete(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // Check the deletion
         userResource = resource().path("/user/login");
         postParams.putSingle("username", "alice");
@@ -234,7 +234,7 @@ public class TestUserResource extends BaseJerseyTest {
      */
     @Test
     public void testUserResourceAdmin() throws JSONException {
-     // Create admin_user1 user
+        // Create admin_user1 user
         clientUtil.createUser("admin_user1");
 
         // Login admin
@@ -282,7 +282,7 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));
-        
+
         // User admin deletes himself: forbidden
         userResource = resource().path("/user");
         userResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
@@ -306,7 +306,7 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));
-        
+
         // User admin deletes user admin_user1 : KO (user doesn't exist)
         userResource = resource().path("/user/admin_user1");
         userResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));

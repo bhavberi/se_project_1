@@ -22,46 +22,46 @@ public class UserBook implements Serializable {
      * Serial version UID.
      */
     private static final long serialVersionUID = 1L;
-    
+
     /**
      * User book ID.
      */
     @Id
     @Column(name = "UBK_ID_C", length = 36)
     private String id;
-    
+
     /**
      * Book ID.
      */
     @Id
     @Column(name = "UBK_IDBOOK_C", nullable = false, length = 36)
     private String bookId;
-    
+
     /**
      * User ID.
      */
     @Id
     @Column(name = "UBK_IDUSER_C", nullable = false, length = 36)
     private String userId;
-    
+
     /**
      * Creation date.
      */
     @Column(name = "UBK_CREATEDATE_D", nullable = false)
     private Date createDate;
-    
+
     /**
      * Deletion date.
      */
     @Column(name = "UBK_DELETEDATE_D")
     private Date deleteDate;
-    
+
     /**
      * Read date.
      */
     @Column(name = "UBK_READDATE_D")
     private Date readDate;
-    
+
     /**
      * Getter of id.
      * 
@@ -169,7 +169,7 @@ public class UserBook implements Serializable {
     public void setReadDate(Date readDate) {
         this.readDate = readDate;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;

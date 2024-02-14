@@ -52,25 +52,25 @@ public class AppResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         ResourceBundle configBundle = ConfigUtil.getConfigBundle();
         String currentVersion = configBundle.getString("api.current_version");
         String minVersion = configBundle.getString("api.min_version");
 
         JSONObject response = new JSONObject();
-        
+
         // General data
         response.put("current_version", currentVersion.replace("-SNAPSHOT", ""));
         response.put("min_version", minVersion);
         response.put("total_memory", Runtime.getRuntime().totalMemory());
         response.put("free_memory", Runtime.getRuntime().freeMemory());
-        
+
         // Specific data
         response.put("api_key_google", ConfigUtil.getConfigStringValue(ConfigType.API_KEY_GOOGLE));
-        
+
         return Response.ok().entity(response).build();
     }
-    
+
     /**
      * Update application configuration.
      * 
@@ -85,28 +85,28 @@ public class AppResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
-        
+
         // Validate input data
         apiKeyGoogle = ValidationUtil.validateLength(apiKeyGoogle, "api_key_google", 1, 250, false);
-        
+
         ConfigDao configDao = new ConfigDao();
         configDao.getById(ConfigType.API_KEY_GOOGLE).setValue(apiKeyGoogle);
-        
+
         AppContext.getInstance().getBookDataService().initConfig();
-        
+
         JSONObject response = new JSONObject();
         response.put("status", "ok");
         return Response.ok().entity(response).build();
     }
-    
+
     /**
      * Retrieve the application logs.
      * 
-     * @param level Filter on logging level
-     * @param tag Filter on logger name / tag
+     * @param level   Filter on logging level
+     * @param tag     Filter on logger name / tag
      * @param message Filter on message
-     * @param limit Page limit
-     * @param offset Page offset
+     * @param limit   Page limit
+     * @param offset  Page offset
      * @return Response
      * @throws JSONException
      */
@@ -131,13 +131,13 @@ public class AppResource extends BaseResource {
             throw new ServerException("ServerError", "MEMORY appender not configured");
         }
         MemoryAppender memoryAppender = (MemoryAppender) appender;
-        
+
         // Find the logs
         LogCriteria logCriteria = new LogCriteria();
         logCriteria.setLevel(StringUtils.stripToNull(level));
         logCriteria.setTag(StringUtils.stripToNull(tag));
         logCriteria.setMessage(StringUtils.stripToNull(message));
-        
+
         PaginatedList<LogEntry> paginatedList = PaginatedLists.create(limit, offset);
         memoryAppender.find(logCriteria, paginatedList);
         JSONObject response = new JSONObject();
@@ -152,7 +152,7 @@ public class AppResource extends BaseResource {
         }
         response.put("total", paginatedList.getResultCount());
         response.put("logs", logs);
-        
+
         return Response.ok().entity(response).build();
     }
 }

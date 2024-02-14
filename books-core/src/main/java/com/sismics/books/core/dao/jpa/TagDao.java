@@ -35,7 +35,7 @@ public class TagDao {
             return null;
         }
     }
-    
+
     /**
      * Returns the list of all tags.
      * 
@@ -44,7 +44,8 @@ public class TagDao {
     @SuppressWarnings("unchecked")
     public List<Tag> getByUserId(String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select t from Tag t where t.userId = :userId and t.deleteDate is null order by t.name");
+        Query q = em
+                .createQuery("select t from Tag t where t.userId = :userId and t.deleteDate is null order by t.name");
         q.setParameter("userId", userId);
         return q.getResultList();
     }
@@ -61,7 +62,7 @@ public class TagDao {
         Query q = em.createQuery("delete UserBookTag bt where bt.userBookId = :userBookId");
         q.setParameter("userBookId", userBookId);
         q.executeUpdate();
-        
+
         // Create new tag links
         for (String tagId : tagIdSet) {
             UserBookTag userBookTag = new UserBookTag();
@@ -75,6 +76,7 @@ public class TagDao {
 
     /**
      * Returns tag list on a user book.
+     * 
      * @param userBookId
      * @return
      */
@@ -85,12 +87,12 @@ public class TagDao {
         sb.append(" join T_TAG t on t.TAG_ID_C = bt.BOT_IDTAG_C ");
         sb.append(" where bt.BOT_IDUSERBOOK_C = :userBookId and t.TAG_DELETEDATE_D is null ");
         sb.append(" order by t.TAG_NAME_C ");
-        
+
         // Perform the query
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("userBookId", userBookId);
         List<Object[]> l = q.getResultList();
-        
+
         // Assemble results
         List<TagDto> tagDtoList = new ArrayList<TagDto>();
         for (Object[] o : l) {
@@ -103,7 +105,7 @@ public class TagDao {
         }
         return tagDtoList;
     }
-    
+
     /**
      * Creates a new tag.
      * 
@@ -114,24 +116,26 @@ public class TagDao {
     public String create(Tag tag) {
         // Create the UUID
         tag.setId(UUID.randomUUID().toString());
-        
+
         // Create the tag
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         tag.setCreateDate(new Date());
         em.persist(tag);
-        
+
         return tag.getId();
     }
 
     /**
      * Returns a tag by name.
+     * 
      * @param userId User ID
-     * @param name Name
+     * @param name   Name
      * @return Tag
      */
     public Tag getByName(String userId, String name) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select t from Tag t where t.name = :name and t.userId = :userId and t.deleteDate is null");
+        Query q = em.createQuery(
+                "select t from Tag t where t.name = :name and t.userId = :userId and t.deleteDate is null");
         q.setParameter("userId", userId);
         q.setParameter("name", name);
         try {
@@ -140,16 +144,18 @@ public class TagDao {
             return null;
         }
     }
-    
+
     /**
      * Returns a tag by ID.
+     * 
      * @param userId User ID
-     * @param tagId Tag ID
+     * @param tagId  Tag ID
      * @return Tag
      */
     public Tag getByTagId(String userId, String tagId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select t from Tag t where t.id = :tagId and t.userId = :userId and t.deleteDate is null");
+        Query q = em
+                .createQuery("select t from Tag t where t.id = :tagId and t.userId = :userId and t.deleteDate is null");
         q.setParameter("userId", userId);
         q.setParameter("tagId", tagId);
         try {
@@ -158,7 +164,7 @@ public class TagDao {
             return null;
         }
     }
-    
+
     /**
      * Deletes a tag.
      * 
@@ -166,12 +172,12 @@ public class TagDao {
      */
     public void delete(String tagId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-            
+
         // Get the tag
         Query q = em.createQuery("select t from Tag t where t.id = :id and t.deleteDate is null");
         q.setParameter("id", tagId);
         Tag tagDb = (Tag) q.getSingleResult();
-        
+
         // Delete the tag
         Date dateNow = new Date();
         tagDb.setDeleteDate(dateNow);
@@ -191,7 +197,8 @@ public class TagDao {
     @SuppressWarnings("unchecked")
     public List<Tag> findByName(String userId, String name) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select t from Tag t where t.name like :name and t.userId = :userId and t.deleteDate is null");
+        Query q = em.createQuery(
+                "select t from Tag t where t.name like :name and t.userId = :userId and t.deleteDate is null");
         q.setParameter("userId", userId);
         q.setParameter("name", "%" + name + "%");
         return q.getResultList();

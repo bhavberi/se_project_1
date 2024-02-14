@@ -10,7 +10,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 /**
- * Jersey exception encapsulating an error from the client (INTERNAL_SERVER_ERROR).
+ * Jersey exception encapsulating an error from the client
+ * (INTERNAL_SERVER_ERROR).
  *
  * @author jtremeaux
  */
@@ -28,9 +29,9 @@ public class ServerException extends WebApplicationException {
     /**
      * Constructor of ClientException.
      * 
-     * @param type Error type (e.g. DatabaseError)
+     * @param type    Error type (e.g. DatabaseError)
      * @param message Human readable error message
-     * @param e Inner exception
+     * @param e       Inner exception
      * @throws JSONException
      */
     public ServerException(String type, String message, Exception e) throws JSONException {
@@ -41,13 +42,13 @@ public class ServerException extends WebApplicationException {
     /**
      * Constructor of ClientException.
      * 
-     * @param type Error type (e.g. DatabaseError)
+     * @param type    Error type (e.g. DatabaseError)
      * @param message Human readable error message
      * @throws JSONException
      */
     public ServerException(String type, String message) throws JSONException {
         super(Response.status(Status.INTERNAL_SERVER_ERROR).entity(new JSONObject()
-            .put("type", type)
-            .put("message", message)).build());
+                .put("type", type)
+                .put("message", message)).build());
     }
 }

@@ -38,10 +38,10 @@ public class DirectoryUtil {
             // Or else (for unit testing), use a temporary directory
             baseDataDir = new File(System.getProperty("java.io.tmpdir"));
         }
-        
+
         return baseDataDir;
     }
-    
+
     /**
      * Returns the database directory.
      * 
@@ -50,7 +50,7 @@ public class DirectoryUtil {
     public static File getDbDirectory() {
         return getDataSubDirectory("db");
     }
-    
+
     /**
      * Returns the book covers directory.
      * 
@@ -59,7 +59,7 @@ public class DirectoryUtil {
     public static File getBookDirectory() {
         return getDataSubDirectory("book");
     }
-    
+
     /**
      * Returns the log directory.
      * 

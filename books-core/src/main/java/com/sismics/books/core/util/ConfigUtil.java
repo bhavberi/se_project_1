@@ -46,7 +46,7 @@ public class ConfigUtil {
      */
     public static int getConfigIntegerValue(ConfigType configType) {
         String value = getConfigStringValue(configType);
-        
+
         return Integer.parseInt(value);
     }
 
@@ -59,7 +59,7 @@ public class ConfigUtil {
      */
     public static boolean getConfigBooleanValue(ConfigType configType) {
         String value = getConfigStringValue(configType);
-        
+
         return Boolean.parseBoolean(value);
     }
 }
