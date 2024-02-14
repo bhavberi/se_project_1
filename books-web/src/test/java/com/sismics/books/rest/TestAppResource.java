@@ -27,7 +27,7 @@ public class TestAppResource extends BaseJerseyTest {
     public void testAppResource() throws JSONException {
         // Login admin
         String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
-        
+
         // Check the application info
         WebResource appResource = resource().path("/app");
         appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
@@ -42,7 +42,7 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertTrue(freeMemory > 0);
         Long totalMemory = json.getLong("total_memory");
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
-        
+
         // Update config
         appResource = resource().path("/app");
         appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
@@ -61,7 +61,7 @@ public class TestAppResource extends BaseJerseyTest {
     public void testLogResource() throws JSONException {
         // Login admin
         String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
-        
+
         // Check the logs (page 1)
         WebResource appResource = resource()
                 .path("/app/log")
@@ -76,11 +76,11 @@ public class TestAppResource extends BaseJerseyTest {
         Long date1 = logs.optJSONObject(0).optLong("date");
         Long date2 = logs.optJSONObject(9).optLong("date");
         Assert.assertTrue(date1 > date2);
-        
+
         // Check the logs (page 2)
         appResource = resource()
                 .path("/app/log")
-                .queryParam("offset",  "10")
+                .queryParam("offset", "10")
                 .queryParam("level", "DEBUG");
         response = appResource.get(ClientResponse.class);
         appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));

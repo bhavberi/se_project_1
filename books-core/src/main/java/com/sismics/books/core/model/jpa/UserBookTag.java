@@ -27,14 +27,14 @@ public class UserBookTag implements Serializable {
     @Id
     @Column(name = "BOT_ID_C", length = 36)
     private String id;
-    
+
     /**
      * User book ID.
      */
     @Id
     @Column(name = "BOT_IDUSERBOOK_C", length = 36)
     private String userBookId;
-    
+
     /**
      * Tag ID.
      */
@@ -59,7 +59,7 @@ public class UserBookTag implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     /**
      * Getter de userBookId.
      *
@@ -95,7 +95,7 @@ public class UserBookTag implements Serializable {
     public void setTagId(String tagId) {
         this.tagId = tagId;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -20,7 +20,7 @@ public class Config {
     @Column(name = "CFG_ID_C", length = 50)
     @Enumerated(EnumType.STRING)
     private ConfigType id;
-    
+
     /**
      * Configuration parameter value.
      */
@@ -62,7 +62,7 @@ public class Config {
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

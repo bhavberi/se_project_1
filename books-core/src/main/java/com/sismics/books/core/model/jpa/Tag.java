@@ -22,31 +22,31 @@ public class Tag {
     @Id
     @Column(name = "TAG_ID_C", length = 36)
     private String id;
-    
+
     /**
      * Tag name.
      */
     @Column(name = "TAG_NAME_C", nullable = false, length = 36)
     private String name;
-    
+
     /**
      * User ID.
      */
     @Column(name = "TAG_IDUSER_C", nullable = false, length = 36)
     private String userId;
-    
+
     /**
      * Creation date.
      */
     @Column(name = "TAG_CREATEDATE_D", nullable = false)
     private Date createDate;
-    
+
     /**
      * Deletion date.
      */
     @Column(name = "TAG_DELETEDATE_D")
     private Date deleteDate;
-    
+
     /**
      * Tag name.
      */
@@ -124,7 +124,7 @@ public class Tag {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
-    
+
     /**
      * Getter of color.
      *

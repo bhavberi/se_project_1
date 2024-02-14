@@ -27,17 +27,17 @@ public class UserAppDao {
      */
     public String create(UserApp userApp) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-            
+
         // Create the user app's UUID
         userApp.setId(UUID.randomUUID().toString());
-        
+
         Date now = new Date();
         userApp.setCreateDate(now);
         em.persist(userApp);
-        
+
         return userApp.getId();
     }
-    
+
     /**
      * Delete a connection.
      * 
@@ -45,7 +45,7 @@ public class UserAppDao {
      */
     public void delete(String id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-            
+
         // Get the user app
         Query q = em.createQuery("select ua from UserApp ua where ua.id = :id and ua.deleteDate is null");
         q.setParameter("id", id);
@@ -59,11 +59,12 @@ public class UserAppDao {
      * Deletes connection linked to a user and an application.
      * 
      * @param userId User ID
-     * @param appId App ID
+     * @param appId  App ID
      */
     public void deleteByUserIdAndAppId(String userId, String appId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("update UserApp ua set ua.deleteDate = :deleteDate where ua.userId = :userId and ua.appId = :appId and ua.deleteDate is null");
+        Query q = em.createQuery(
+                "update UserApp ua set ua.deleteDate = :deleteDate where ua.userId = :userId and ua.appId = :appId and ua.deleteDate is null");
         q.setParameter("deleteDate", new Date());
         q.setParameter("userId", userId);
         q.setParameter("appId", appId);
@@ -91,7 +92,7 @@ public class UserAppDao {
      * Search and returns a non-deleted connection by user and app.
      * 
      * @param userId User ID
-     * @param appId App ID
+     * @param appId  App ID
      * @return User app
      */
     public UserApp getActiveByUserIdAndAppId(String userId, String appId) {
@@ -119,9 +120,11 @@ public class UserAppDao {
     @SuppressWarnings("unchecked")
     public List<UserAppDto> findByUserId(String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select a.APP_ID_C, ua.USA_ID_C, ua.USA_ACCESSTOKEN_C, ua.USA_USERNAME_C, ua.USA_SHARING_B ");
+        StringBuilder sb = new StringBuilder(
+                "select a.APP_ID_C, ua.USA_ID_C, ua.USA_ACCESSTOKEN_C, ua.USA_USERNAME_C, ua.USA_SHARING_B ");
         sb.append(" from T_APP a");
-        sb.append(" left join T_USER_APP ua on(a.APP_ID_C = ua.USA_IDAPP_C and ua.USA_IDUSER_C = :userId and ua.USA_DELETEDATE_D is null)");
+        sb.append(
+                " left join T_USER_APP ua on(a.APP_ID_C = ua.USA_IDAPP_C and ua.USA_IDUSER_C = :userId and ua.USA_DELETEDATE_D is null)");
         sb.append(" order by a.APP_ID_C ");
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("userId", userId);
@@ -139,7 +142,7 @@ public class UserAppDao {
             userAppDto.setSharing(sharing != null ? sharing : false);
             userAppDtoList.add(userAppDto);
         }
-        
+
         return userAppDtoList;
     }
 
@@ -152,8 +155,10 @@ public class UserAppDao {
     @SuppressWarnings("unchecked")
     public List<UserAppDto> findConnectedByUserId(String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select ua.USA_ID_C, ua.USA_IDAPP_C, ua.USA_ACCESSTOKEN_C, ua.USA_USERNAME_C, ua.USA_SHARING_B ");
-        sb.append(" where ua.USA_IDUSER_C = :userId and ua.USA_ACCESSTOKEN_C is not null and ua.USA_DELETEDATE_D is null");
+        StringBuilder sb = new StringBuilder(
+                "select ua.USA_ID_C, ua.USA_IDAPP_C, ua.USA_ACCESSTOKEN_C, ua.USA_USERNAME_C, ua.USA_SHARING_B ");
+        sb.append(
+                " where ua.USA_IDUSER_C = :userId and ua.USA_ACCESSTOKEN_C is not null and ua.USA_DELETEDATE_D is null");
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("userId", userId);
         List<Object[]> l = q.getResultList();
@@ -170,7 +175,7 @@ public class UserAppDao {
             userAppDto.setSharing(sharing != null ? sharing : false);
             userAppDtoList.add(userAppDto);
         }
-        
+
         return userAppDtoList;
     }
 
@@ -183,7 +188,8 @@ public class UserAppDao {
     @SuppressWarnings("unchecked")
     public List<UserAppDto> findByAppId(String appId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select ua.USA_ID_C, ua.USA_IDUSER_C, ua.USA_IDAPP_C, ua.USA_ACCESSTOKEN_C, ua.USA_USERNAME_C, ua.USA_SHARING_B ");
+        StringBuilder sb = new StringBuilder(
+                "select ua.USA_ID_C, ua.USA_IDUSER_C, ua.USA_IDAPP_C, ua.USA_ACCESSTOKEN_C, ua.USA_USERNAME_C, ua.USA_SHARING_B ");
         sb.append(" from T_USER_APP ua ");
         sb.append(" where ua.USA_IDAPP_C = :appId and ua.USA_DELETEDATE_D is null ");
         sb.append(" order by ua.USA_CREATEDATE_D ");
@@ -203,7 +209,7 @@ public class UserAppDao {
             userAppDto.setSharing(sharing != null ? sharing : false);
             userAppDtoList.add(userAppDto);
         }
-        
+
         return userAppDtoList;
     }
 
@@ -215,7 +221,7 @@ public class UserAppDao {
      */
     public UserApp update(UserApp userApp) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        
+
         // Récupère la connexion
         Query q = em.createQuery("select ua from UserApp ua where ua.id = :id and ua.deleteDate is null");
         q.setParameter("id", userApp.getId());

@@ -21,12 +21,13 @@ public class ConfigDao {
      */
     public Config getById(ConfigType id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        
-        // Prevents from getting parameters outside of a transactional context (e.g. jUnit)
+
+        // Prevents from getting parameters outside of a transactional context (e.g.
+        // jUnit)
         if (em == null) {
             return null;
         }
-        
+
         try {
             return em.find(Config.class, id);
         } catch (NoResultException e) {

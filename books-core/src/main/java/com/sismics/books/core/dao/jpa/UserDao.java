@@ -44,7 +44,7 @@ public class UserDao {
             return null;
         }
     }
-    
+
     /**
      * Creates a new user.
      * 
@@ -55,7 +55,7 @@ public class UserDao {
     public String create(User user) throws Exception {
         // Create the user UUID
         user.setId(UUID.randomUUID().toString());
-        
+
         // Checks for user unicity
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select u from User u where u.username = :username and u.deleteDate is null");
@@ -64,15 +64,15 @@ public class UserDao {
         if (l.size() > 0) {
             throw new Exception("AlreadyExistingUsername");
         }
-        
+
         user.setCreateDate(new Date());
         user.setPassword(hashPassword(user.getPassword()));
         user.setTheme(Constants.DEFAULT_THEME_ID);
         em.persist(user);
-        
+
         return user.getId();
     }
-    
+
     /**
      * Updates a user.
      * 
@@ -81,7 +81,7 @@ public class UserDao {
      */
     public User update(User user) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        
+
         // Get the user
         Query q = em.createQuery("select u from User u where u.id = :id and u.deleteDate is null");
         q.setParameter("id", user.getId());
@@ -92,10 +92,10 @@ public class UserDao {
         userFromDb.setEmail(user.getEmail());
         userFromDb.setTheme(user.getTheme());
         userFromDb.setFirstConnection(user.isFirstConnection());
-        
+
         return user;
     }
-    
+
     /**
      * Update the user password.
      * 
@@ -104,7 +104,7 @@ public class UserDao {
      */
     public User updatePassword(User user) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        
+
         // Get the user
         Query q = em.createQuery("select u from User u where u.id = :id and u.deleteDate is null");
         q.setParameter("id", user.getId());
@@ -112,7 +112,7 @@ public class UserDao {
 
         // Update the user
         userFromDb.setPassword(hashPassword(user.getPassword()));
-        
+
         return user;
     }
 
@@ -130,7 +130,7 @@ public class UserDao {
             return null;
         }
     }
-    
+
     /**
      * Gets an active user by its username.
      * 
@@ -147,7 +147,7 @@ public class UserDao {
             return null;
         }
     }
-    
+
     /**
      * Gets an active user by its password recovery token.
      * 
@@ -157,14 +157,15 @@ public class UserDao {
     public User getActiveByPasswordResetKey(String passwordResetKey) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         try {
-            Query q = em.createQuery("select u from User u where u.passwordResetKey = :passwordResetKey and u.deleteDate is null");
+            Query q = em.createQuery(
+                    "select u from User u where u.passwordResetKey = :passwordResetKey and u.deleteDate is null");
             q.setParameter("passwordResetKey", passwordResetKey);
             return (User) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
-    
+
     /**
      * Deletes a user.
      * 
@@ -172,12 +173,12 @@ public class UserDao {
      */
     public void delete(String username) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-            
+
         // Get the user
         Query q = em.createQuery("select u from User u where u.username = :username and u.deleteDate is null");
         q.setParameter("username", username);
         User userFromDb = (User) q.getSingleResult();
-        
+
         // Delete the user
         Date dateNow = new Date();
         userFromDb.setDeleteDate(dateNow);
@@ -197,31 +198,32 @@ public class UserDao {
     protected String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
-    
+
     /**
      * Returns the list of all users.
      * 
      * @param paginatedList List of users (updated by side effects)
-     * @param sortCriteria Sort criteria
+     * @param sortCriteria  Sort criteria
      */
     public void findAll(PaginatedList<UserDto> paginatedList, SortCriteria sortCriteria) {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
-        StringBuilder sb = new StringBuilder("select u.USE_ID_C as c0, u.USE_USERNAME_C as c1, u.USE_EMAIL_C as c2, u.USE_CREATEDATE_D as c3, u.USE_IDLOCALE_C as c4");
+        StringBuilder sb = new StringBuilder(
+                "select u.USE_ID_C as c0, u.USE_USERNAME_C as c1, u.USE_EMAIL_C as c2, u.USE_CREATEDATE_D as c3, u.USE_IDLOCALE_C as c4");
         sb.append(" from T_USER u ");
-        
+
         // Add search criterias
         List<String> criteriaList = new ArrayList<String>();
         criteriaList.add("u.USE_DELETEDATE_D is null");
-        
+
         if (!criteriaList.isEmpty()) {
             sb.append(" where ");
             sb.append(Joiner.on(" and ").join(criteriaList));
         }
-        
+
         // Perform the search
         QueryParam queryParam = new QueryParam(sb.toString(), parameterMap);
         List<Object[]> l = PaginatedLists.executePaginatedQuery(paginatedList, queryParam, sortCriteria);
-        
+
         // Assemble results
         List<UserDto> userDtoList = new ArrayList<UserDto>();
         for (Object[] o : l) {

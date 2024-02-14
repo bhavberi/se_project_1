@@ -3,5 +3,5 @@
 /**
  * Settings default page controller.
  */
-App.controller('SettingsDefault', function() {
+App.controller('SettingsDefault', function () {
 });

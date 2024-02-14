@@ -1,6 +1,5 @@
 package com.sismics.rest.exception;
 
-
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
@@ -29,9 +28,9 @@ public class ClientException extends WebApplicationException {
     /**
      * Constructor of ClientException.
      * 
-     * @param type Error type (e.g. AlreadyExistingEmail, ValidationError)
+     * @param type    Error type (e.g. AlreadyExistingEmail, ValidationError)
      * @param message Human readable error message
-     * @param e Readable error message
+     * @param e       Readable error message
      * @throws JSONException
      */
     public ClientException(String type, String message, Exception e) throws JSONException {
@@ -42,13 +41,13 @@ public class ClientException extends WebApplicationException {
     /**
      * Constructor of ClientException.
      * 
-     * @param type Error type (e.g. AlreadyExistingEmail, ValidationError)
+     * @param type    Error type (e.g. AlreadyExistingEmail, ValidationError)
      * @param message Human readable error message
      * @throws JSONException
      */
     public ClientException(String type, String message) throws JSONException {
         super(Response.status(Status.BAD_REQUEST).entity(new JSONObject()
-            .put("type", type)
-            .put("message", message)).build());
+                .put("type", type)
+                .put("message", message)).build());
     }
 }

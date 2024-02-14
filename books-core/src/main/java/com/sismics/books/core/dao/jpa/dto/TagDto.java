@@ -5,7 +5,7 @@ import javax.persistence.Id;
 /**
  * Tag DTO.
  *
- * @author bgamard 
+ * @author bgamard
  */
 public class TagDto {
     /**
@@ -13,12 +13,12 @@ public class TagDto {
      */
     @Id
     private String id;
-    
+
     /**
      * Name.
      */
     private String name;
-    
+
     /**
      * Color.
      */

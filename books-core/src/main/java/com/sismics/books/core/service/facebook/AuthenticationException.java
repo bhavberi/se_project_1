@@ -3,7 +3,7 @@ package com.sismics.books.core.service.facebook;
 /**
  * Exception raised on a Facebook authentication error.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class AuthenticationException extends Exception {
 

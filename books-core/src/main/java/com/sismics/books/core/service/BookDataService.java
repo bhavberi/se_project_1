@@ -40,7 +40,7 @@ import com.sismics.books.core.util.mime.MimeType;
 import com.sismics.books.core.util.mime.MimeTypeUtil;
 
 /**
- * Service to fetch book informations. 
+ * Service to fetch book informations.
  *
  * @author bgamard
  */
@@ -49,17 +49,17 @@ public class BookDataService extends AbstractIdleService {
      * Logger.
      */
     private static final Logger log = LoggerFactory.getLogger(BookDataService.class);
-    
+
     /**
      * Google Books API Search URL.
      */
     private static final String GOOGLE_BOOKS_SEARCH_FORMAT = "https://www.googleapis.com/books/v1/volumes?q=isbn:%s&key=%s";
-    
+
     /**
      * Open Library API URL.
      */
     private static final String OPEN_LIBRARY_FORMAT = "http://openlibrary.org/api/volumes/brief/isbn/%s.json";
-    
+
     /**
      * Executor for book API requests.
      */
@@ -69,41 +69,41 @@ public class BookDataService extends AbstractIdleService {
      * Google API rate limiter.
      */
     private RateLimiter googleRateLimiter = RateLimiter.create(20);
-    
+
     /**
      * Open Library API rate limiter.
      */
     private RateLimiter openLibraryRateLimiter = RateLimiter.create(0.33332);
-    
+
     /**
      * API key Google.
      */
     private String apiKeyGoogle = null;
-    
+
     /**
      * Parser for multiple date formats;
      */
     private static DateTimeFormatter formatter;
-    
+
     static {
         // Initialize date parser
-        DateTimeParser[] parsers = { 
+        DateTimeParser[] parsers = {
                 DateTimeFormat.forPattern("yyyy").getParser(),
                 DateTimeFormat.forPattern("yyyy-MM").getParser(),
                 DateTimeFormat.forPattern("yyyy-MM-dd").getParser(),
-                DateTimeFormat.forPattern("MMM d, yyyy").getParser()};
-        formatter = new DateTimeFormatterBuilder().append( null, parsers ).toFormatter();
+                DateTimeFormat.forPattern("MMM d, yyyy").getParser() };
+        formatter = new DateTimeFormatterBuilder().append(null, parsers).toFormatter();
     }
-    
+
     @Override
     protected void startUp() throws Exception {
         initConfig();
-        executor = Executors.newSingleThreadExecutor(); 
+        executor = Executors.newSingleThreadExecutor();
         if (log.isInfoEnabled()) {
             log.info("Book data service started");
         }
     }
-    
+
     /**
      * Initialize service configuration.
      */
@@ -125,7 +125,7 @@ public class BookDataService extends AbstractIdleService {
     public Book searchBook(String rawIsbn) throws Exception {
         // Sanitize ISBN (keep only digits)
         final String isbn = rawIsbn.replaceAll("[^\\d]", "");
-        
+
         // Validate ISBN
         if (Strings.isNullOrEmpty(isbn)) {
             throw new Exception("ISBN is empty");
@@ -135,7 +135,7 @@ public class BookDataService extends AbstractIdleService {
         }
 
         Callable<Book> callable = new Callable<Book>() {
-            
+
             @Override
             public Book call() throws Exception {
                 try {
@@ -154,7 +154,7 @@ public class BookDataService extends AbstractIdleService {
         };
         FutureTask<Book> futureTask = new FutureTask<Book>(callable);
         executor.submit(futureTask);
-        
+
         return futureTask.get();
     }
 
@@ -166,11 +166,12 @@ public class BookDataService extends AbstractIdleService {
      */
     private Book searchBookWithGoogle(String isbn) throws Exception {
         googleRateLimiter.acquire();
-        
+
         URL url = new URL(String.format(Locale.ENGLISH, GOOGLE_BOOKS_SEARCH_FORMAT, isbn, apiKeyGoogle));
         URLConnection connection = url.openConnection();
         connection.setRequestProperty("Accept-Charset", "utf-8");
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
+        connection.setRequestProperty("User-Agent",
+                "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(10000);
         InputStream inputStream = connection.getInputStream();
@@ -182,7 +183,7 @@ public class BookDataService extends AbstractIdleService {
         }
         JsonNode item = items.get(0);
         JsonNode volumeInfo = item.get("volumeInfo");
-        
+
         // Build the book
         Book book = new Book();
         book.setId(UUID.randomUUID().toString());
@@ -207,14 +208,14 @@ public class BookDataService extends AbstractIdleService {
         book.setLanguage(volumeInfo.get("language").getTextValue());
         book.setPageCount(volumeInfo.has("pageCount") ? volumeInfo.get("pageCount").getLongValue() : null);
         book.setPublishDate(formatter.parseDateTime(volumeInfo.get("publishedDate").getTextValue()).toDate());
-        
+
         // Download the thumbnail
         JsonNode imageLinks = volumeInfo.get("imageLinks");
         if (imageLinks != null && imageLinks.has("thumbnail")) {
             String imageUrl = imageLinks.get("thumbnail").getTextValue();
             downloadThumbnail(book, imageUrl);
         }
-        
+
         return book;
     }
 
@@ -226,11 +227,12 @@ public class BookDataService extends AbstractIdleService {
      */
     private Book searchBookWithOpenLibrary(String isbn) throws Exception {
         openLibraryRateLimiter.acquire();
-        
+
         URL url = new URL(String.format(Locale.ENGLISH, OPEN_LIBRARY_FORMAT, isbn));
         URLConnection connection = url.openConnection();
         connection.setRequestProperty("Accept-Charset", "utf-8");
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
+        connection.setRequestProperty("User-Agent",
+                "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(10000);
         InputStream inputStream = connection.getInputStream();
@@ -239,11 +241,11 @@ public class BookDataService extends AbstractIdleService {
         if (rootNode instanceof ArrayNode) {
             throw new Exception("No book found for ISBN: " + isbn);
         }
-        
+
         JsonNode bookNode = rootNode.get("records").getElements().next();
         JsonNode details = bookNode.get("details").get("details");
         JsonNode data = bookNode.get("data");
-        
+
         // Build the book
         Book book = new Book();
         book.setId(UUID.randomUUID().toString());
@@ -253,9 +255,14 @@ public class BookDataService extends AbstractIdleService {
             throw new Exception("Book without author for ISBN: " + isbn);
         }
         book.setAuthor(data.get("authors").get(0).get("name").getTextValue());
-        book.setDescription(details.has("first_sentence") ? details.get("first_sentence").get("value").getTextValue() : null);
-        book.setIsbn10(details.has("isbn_10") && details.get("isbn_10").size() > 0 ? details.get("isbn_10").get(0).getTextValue() : null);
-        book.setIsbn13(details.has("isbn_13") && details.get("isbn_13").size() > 0 ? details.get("isbn_13").get(0).getTextValue() : null);
+        book.setDescription(
+                details.has("first_sentence") ? details.get("first_sentence").get("value").getTextValue() : null);
+        book.setIsbn10(details.has("isbn_10") && details.get("isbn_10").size() > 0
+                ? details.get("isbn_10").get(0).getTextValue()
+                : null);
+        book.setIsbn13(details.has("isbn_13") && details.get("isbn_13").size() > 0
+                ? details.get("isbn_13").get(0).getTextValue()
+                : null);
         if (details.has("languages") && details.get("languages").size() > 0) {
             String language = details.get("languages").get(0).get("key").getTextValue();
             LanguageCode languageCode = LanguageCode.getByCode(language.split("/")[2]);
@@ -265,41 +272,45 @@ public class BookDataService extends AbstractIdleService {
         if (!details.has("publish_date")) {
             throw new Exception("Book without publication date for ISBN: " + isbn);
         }
-        book.setPublishDate(details.has("publish_date") ? formatter.parseDateTime(details.get("publish_date").getTextValue()).toDate() : null);
-        
+        book.setPublishDate(details.has("publish_date")
+                ? formatter.parseDateTime(details.get("publish_date").getTextValue()).toDate()
+                : null);
+
         // Download the thumbnail
         if (details.has("covers") && details.get("covers").size() > 0) {
-            String imageUrl = "http://covers.openlibrary.org/b/id/" + details.get("covers").get(0).getLongValue() + "-M.jpg";
+            String imageUrl = "http://covers.openlibrary.org/b/id/" + details.get("covers").get(0).getLongValue()
+                    + "-M.jpg";
             downloadThumbnail(book, imageUrl);
         }
-        
+
         return book;
     }
-    
+
     /**
      * Download and overwrite the thumbnail for a book.
      * 
-     * @param book Book
+     * @param book     Book
      * @param imageUrl Image URL
      * @throws Exception
      */
     public void downloadThumbnail(Book book, String imageUrl) throws Exception {
         URLConnection imageConnection = new URL(imageUrl).openConnection();
-        imageConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
+        imageConnection.setRequestProperty("User-Agent",
+                "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
         imageConnection.setConnectTimeout(10000);
         imageConnection.setReadTimeout(10000);
         try (InputStream inputStream = new BufferedInputStream(imageConnection.getInputStream())) {
             if (MimeTypeUtil.guessMimeType(inputStream) != MimeType.IMAGE_JPEG) {
                 throw new Exception("Only JPEG images are supported as thumbnails");
             }
-            
+
             Path imagePath = Paths.get(DirectoryUtil.getBookDirectory().getPath(), book.getId());
             Files.copy(inputStream, imagePath, StandardCopyOption.REPLACE_EXISTING);
-            
+
             // TODO Rescale to 192px width max if necessary
         }
     }
-    
+
     @Override
     protected void shutDown() throws Exception {
         executor.shutdown();

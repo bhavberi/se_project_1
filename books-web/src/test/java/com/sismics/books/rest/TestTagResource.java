@@ -29,7 +29,7 @@ public class TestTagResource extends BaseJerseyTest {
         // Login tag1
         clientUtil.createUser("tag1");
         String tag1Token = clientUtil.login("tag1");
-        
+
         // Create a tag
         WebResource tagResource = resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
@@ -41,7 +41,7 @@ public class TestTagResource extends BaseJerseyTest {
         JSONObject json = response.getEntity(JSONObject.class);
         String tag3Id = json.optString("id");
         Assert.assertNotNull(tag3Id);
-        
+
         // Create a tag
         tagResource = resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
@@ -53,7 +53,7 @@ public class TestTagResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         String tag4Id = json.optString("id");
         Assert.assertNotNull(tag4Id);
-        
+
         // Create a tag with space (not allowed)
         tagResource = resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
@@ -61,7 +61,7 @@ public class TestTagResource extends BaseJerseyTest {
         postParams.add("name", "Tag 4");
         response = tagResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
-        
+
         // Create a book
         WebResource bookResource = resource().path("/book");
         bookResource.addFilter(new CookieAuthenticationFilter(tag1Token));
@@ -71,7 +71,7 @@ public class TestTagResource extends BaseJerseyTest {
         response = bookResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
-        
+
         // Create a book
         bookResource = resource().path("/book");
         bookResource.addFilter(new CookieAuthenticationFilter(tag1Token));
@@ -81,7 +81,7 @@ public class TestTagResource extends BaseJerseyTest {
         response = bookResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
-        
+
         // Get all tags
         tagResource = resource().path("/tag/list");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
@@ -92,7 +92,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertTrue(tags.length() > 0);
         Assert.assertEquals("Tag4", tags.getJSONObject(1).getString("name"));
         Assert.assertEquals("#00ff00", tags.getJSONObject(1).getString("color"));
-        
+
         // Update a tag
         tagResource = resource().path("/tag/" + tag4Id);
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
@@ -103,7 +103,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(tag4Id, json.getString("id"));
-        
+
         // Get all tags
         tagResource = resource().path("/tag/list");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
@@ -114,7 +114,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertTrue(tags.length() > 0);
         Assert.assertEquals("UpdatedName", tags.getJSONObject(1).getString("name"));
         Assert.assertEquals("#0000ff", tags.getJSONObject(1).getString("color"));
-        
+
         // Deletes a tag
         tagResource = resource().path("/tag/" + tag4Id);
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
@@ -122,7 +122,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));
-        
+
         // Get all tags
         tagResource = resource().path("/tag/list");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));

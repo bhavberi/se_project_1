@@ -22,25 +22,25 @@ public class RoleBaseFunction {
     @Id
     @Column(name = "RBF_ID_C", length = 36)
     private String id;
-    
+
     /**
      * Role ID.
      */
     @Column(name = "RBF_IDROLE_C", nullable = false, length = 36)
     private String roleId;
-    
+
     /**
      * Base function ID.
      */
     @Column(name = "RBF_IDBASEFUNCTION_C", nullable = false, length = 36)
     private String baseFunctionId;
-    
+
     /**
      * Creation date.
      */
     @Column(name = "RBF_CREATEDATE_D", nullable = false)
     private Date createDate;
-    
+
     /**
      * Deletion date.
      */

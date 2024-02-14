@@ -25,7 +25,7 @@ public class TestJpa extends BaseTransactionalTest {
         user.setLocaleId("fr");
         user.setRoleId("admin");
         String id = userDao.create(user);
-        
+
         TransactionUtil.commit();
 
         // Search a user by his ID

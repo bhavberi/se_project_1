@@ -3,29 +3,29 @@ package com.sismics.books.core.dao.jpa.dto;
 /**
  * User DTO.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class UserDto {
     /**
      * User ID.
      */
     private String id;
-    
+
     /**
      * Locale ID.
      */
     private String localeId;
-    
+
     /**
      * Username.
      */
     private String username;
-    
+
     /**
      * Email address.
      */
     private String email;
-    
+
     /**
      * Creation date of this user.
      */

@@ -17,8 +17,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
- * MessageBodyWriter personalized to write JSON despite the text/plain MIME type.
- * Used in particuler in return of a posted form, since IE doesn't knw how to read the application/json MIME type.
+ * MessageBodyWriter personalized to write JSON despite the text/plain MIME
+ * type.
+ * Used in particuler in return of a posted form, since IE doesn't knw how to
+ * read the application/json MIME type.
  * 
  * @author bgamard
  */

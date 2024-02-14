@@ -16,21 +16,23 @@ import java.util.jar.JarFile;
 /**
  * Resource utilities.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class ResourceUtil {
 
     /**
-     * List files inside a directory. The path can be a directory on the filesystem, or inside a JAR.
+     * List files inside a directory. The path can be a directory on the filesystem,
+     * or inside a JAR.
      * 
-     * @param clazz Class
-     * @param path Path
+     * @param clazz  Class
+     * @param path   Path
      * @param filter Filter
      * @return List of files
      * @throws URISyntaxException
      * @throws IOException
      */
-    public static List<String> list(Class<?> clazz, String path, FilenameFilter filter) throws URISyntaxException, IOException {
+    public static List<String> list(Class<?> clazz, String path, FilenameFilter filter)
+            throws URISyntaxException, IOException {
         // Path is a directory on the filesystem
         URL dirUrl = clazz.getResource(path);
         if (dirUrl != null && dirUrl.getProtocol().equals("file")) {
@@ -50,12 +52,12 @@ public class ResourceUtil {
             if (!path.endsWith("/")) {
                 path = path + "/";
             }
-            
+
             // Extract the JAR path
             String jarPath = dirUrl.getPath().substring(5, dirUrl.getPath().indexOf("!"));
             JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
             Set<String> fileSet = new HashSet<String>();
-            
+
             try {
                 Enumeration<JarEntry> entries = jar.entries();
                 while (entries.hasMoreElements()) {
@@ -71,7 +73,7 @@ public class ResourceUtil {
                         if (checkSubdir >= 0) {
                             name = name.substring(0, checkSubdir);
                         }
-                        
+
                         if (filter == null || filter.accept(null, name)) {
                             fileSet.add(name);
                         }
@@ -80,18 +82,19 @@ public class ResourceUtil {
             } finally {
                 jar.close();
             }
-                
+
             return Lists.newArrayList(fileSet);
         }
-        
+
         throw new UnsupportedOperationException(MessageFormat.format("Cannot list files for URL {0}", dirUrl));
     }
 
     /**
-     * List files inside a directory. The path can be a directory on the filesystem, or inside a JAR.
+     * List files inside a directory. The path can be a directory on the filesystem,
+     * or inside a JAR.
      * 
      * @param clazz Class
-     * @param path Path
+     * @param path  Path
      * @return List of files
      * @throws URISyntaxException
      * @throws IOException

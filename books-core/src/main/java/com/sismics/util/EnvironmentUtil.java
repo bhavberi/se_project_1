@@ -3,25 +3,25 @@ package com.sismics.util;
 /**
  * Environment properties utilities.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class EnvironmentUtil {
 
     private static String OS = System.getProperty("os.name").toLowerCase();
-    
+
     private static String TEST_ENV = System.getProperty("test");
 
     private static String WINDOWS_APPDATA = System.getenv("APPDATA");
 
     private static String MAC_OS_USER_HOME = System.getProperty("user.home");
-    
+
     private static String BOOKS_HOME = System.getProperty("books.home");
 
     /**
      * Web application root.
      */
     private static String webappRoot;
-    
+
     /**
      * Returns true if running under Microsoft Windows.
      * 
@@ -48,7 +48,7 @@ public class EnvironmentUtil {
     public static boolean isUnix() {
         return OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") > 0;
     }
-    
+
     /**
      * Returns true if we are in a unit testing environment.
      * 

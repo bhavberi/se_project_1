@@ -54,7 +54,7 @@ public class UserResource extends BaseResource {
      * 
      * @param username User's username
      * @param password Password
-     * @param email E-Mail
+     * @param email    E-Mail
      * @param localeId Locale ID
      * @return Response
      * @throws JSONException
@@ -62,23 +62,23 @@ public class UserResource extends BaseResource {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response register(
-        @FormParam("username") String username,
-        @FormParam("password") String password,
-        @FormParam("locale") String localeId,
-        @FormParam("email") String email) throws JSONException {
+            @FormParam("username") String username,
+            @FormParam("password") String password,
+            @FormParam("locale") String localeId,
+            @FormParam("email") String email) throws JSONException {
 
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
-        
+
         // Validate the input data
         username = ValidationUtil.validateLength(username, "username", 3, 50);
         ValidationUtil.validateAlphanumeric(username, "username");
         password = ValidationUtil.validateLength(password, "password", 8, 50);
         email = ValidationUtil.validateLength(email, "email", 3, 50);
         ValidationUtil.validateEmail(email, "email");
-        
+
         // Create the user
         User user = new User();
         user.setRoleId(Constants.DEFAULT_USER_ROLE);
@@ -87,7 +87,7 @@ public class UserResource extends BaseResource {
         user.setEmail(email);
         user.setCreateDate(new Date());
         user.setLocaleId(Constants.DEFAULT_LOCALE_ID);
-        
+
         // Create the user
         UserDao userDao = new UserDao();
         try {
@@ -99,7 +99,7 @@ public class UserResource extends BaseResource {
                 throw new ServerException("UnknownError", "Unknown Server Error", e);
             }
         }
-        
+
         // Always return OK
         JSONObject response = new JSONObject();
         response.put("status", "ok");
@@ -109,33 +109,34 @@ public class UserResource extends BaseResource {
     /**
      * Updates user informations.
      * 
-     * @param password Password
-     * @param email E-Mail
-     * @param themeId Theme
-     * @param localeId Locale ID
-     * @param firstConnection True if the user hasn't acknowledged the first connection wizard yet.
+     * @param password        Password
+     * @param email           E-Mail
+     * @param themeId         Theme
+     * @param localeId        Locale ID
+     * @param firstConnection True if the user hasn't acknowledged the first
+     *                        connection wizard yet.
      * @return Response
      * @throws JSONException
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
-        @FormParam("password") String password,
-        @FormParam("email") String email,
-        @FormParam("theme") String themeId,
-        @FormParam("locale") String localeId,
-        @FormParam("first_connection") Boolean firstConnection) throws JSONException {
-        
+            @FormParam("password") String password,
+            @FormParam("email") String email,
+            @FormParam("theme") String themeId,
+            @FormParam("locale") String localeId,
+            @FormParam("first_connection") Boolean firstConnection) throws JSONException {
+
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Validate the input data
         password = ValidationUtil.validateLength(password, "password", 8, 50, true);
         email = ValidationUtil.validateLength(email, "email", null, 100, true);
         localeId = ValidationUtil.validateLocale(localeId, "locale", true);
         themeId = ValidationUtil.validateTheme(themeId, "theme", true);
-        
+
         // Update the user
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(principal.getName());
@@ -151,14 +152,14 @@ public class UserResource extends BaseResource {
         if (firstConnection != null && hasBaseFunction(BaseFunction.ADMIN)) {
             user.setFirstConnection(firstConnection);
         }
-        
+
         user = userDao.update(user);
-        
+
         if (StringUtils.isNotBlank(password)) {
             user.setPassword(password);
             userDao.updatePassword(user);
         }
-        
+
         // Always return "ok"
         JSONObject response = new JSONObject();
         response.put("status", "ok");
@@ -170,8 +171,8 @@ public class UserResource extends BaseResource {
      * 
      * @param username Username
      * @param password Password
-     * @param email E-Mail
-     * @param themeId Theme
+     * @param email    E-Mail
+     * @param themeId  Theme
      * @param localeId Locale ID
      * @return Response
      * @throws JSONException
@@ -180,23 +181,23 @@ public class UserResource extends BaseResource {
     @Path("{username: [a-zA-Z0-9_]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
-        @PathParam("username") String username,
-        @FormParam("password") String password,
-        @FormParam("email") String email,
-        @FormParam("theme") String themeId,
-        @FormParam("locale") String localeId) throws JSONException {
-        
+            @PathParam("username") String username,
+            @FormParam("password") String password,
+            @FormParam("email") String email,
+            @FormParam("theme") String themeId,
+            @FormParam("locale") String localeId) throws JSONException {
+
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
-        
+
         // Validate the input data
         password = ValidationUtil.validateLength(password, "password", 8, 50, true);
         email = ValidationUtil.validateLength(email, "email", null, 100, true);
         localeId = ValidationUtil.validateLocale(localeId, "locale", true);
         themeId = ValidationUtil.validateTheme(themeId, "theme", true);
-        
+
         // Check if the user exists
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
@@ -214,15 +215,15 @@ public class UserResource extends BaseResource {
         if (localeId != null) {
             user.setLocaleId(localeId);
         }
-        
+
         user = userDao.update(user);
-        
+
         if (StringUtils.isNotBlank(password)) {
             // Change the password
             user.setPassword(password);
             userDao.updatePassword(user);
         }
-        
+
         // Always return "ok"
         JSONObject response = new JSONObject();
         response.put("status", "ok");
@@ -239,11 +240,11 @@ public class UserResource extends BaseResource {
     @Path("check_username")
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkUsername(
-        @QueryParam("username") String username) throws JSONException {
-        
+            @QueryParam("username") String username) throws JSONException {
+
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
-        
+
         JSONObject response = new JSONObject();
         if (user != null) {
             response.put("status", "ko");
@@ -251,16 +252,17 @@ public class UserResource extends BaseResource {
         } else {
             response.put("status", "ok");
         }
-        
+
         return Response.ok().entity(response).build();
     }
 
     /**
      * This resource is used to authenticate the user and create a user ession.
-     * The "session" is only used to identify the user, no other data is stored in the session.
+     * The "session" is only used to identify the user, no other data is stored in
+     * the session.
      * 
-     * @param username Username
-     * @param password Password
+     * @param username   Username
+     * @param password   Password
      * @param longLasted Remember the user next time, create a long lasted session.
      * @return Response
      */
@@ -268,10 +270,10 @@ public class UserResource extends BaseResource {
     @Path("login")
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(
-        @FormParam("username") String username,
-        @FormParam("password") String password,
-        @FormParam("remember") boolean longLasted) throws JSONException {
-        
+            @FormParam("username") String username,
+            @FormParam("password") String password,
+            @FormParam("remember") boolean longLasted) throws JSONException {
+
         // Validate the input data
         username = StringUtils.strip(username);
         password = StringUtils.strip(password);
@@ -282,14 +284,14 @@ public class UserResource extends BaseResource {
         if (userId == null) {
             throw new ForbiddenClientException();
         }
-            
+
         // Create a new session token
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
         AuthenticationToken authenticationToken = new AuthenticationToken();
         authenticationToken.setUserId(userId);
         authenticationToken.setLongLasted(longLasted);
         String token = authenticationTokenDao.create(authenticationToken);
-        
+
         // Cleanup old session tokens
         authenticationTokenDao.deleteOldSessionToken(userId);
 
@@ -321,25 +323,26 @@ public class UserResource extends BaseResource {
                 }
             }
         }
-        
+
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
         AuthenticationToken authenticationToken = null;
         if (authToken != null) {
             authenticationToken = authenticationTokenDao.get(authToken);
         }
-        
+
         // No token : nothing to do
         if (authenticationToken == null) {
             throw new ForbiddenClientException();
         }
-        
+
         // Deletes the server token
         try {
             authenticationTokenDao.delete(authToken);
         } catch (Exception e) {
-            throw new ServerException("AuthenticationTokenError", "Error deleting authentication token: " + authToken, e);
+            throw new ServerException("AuthenticationTokenError", "Error deleting authentication token: " + authToken,
+                    e);
         }
-        
+
         // Deletes the client token in the HTTP response
         JSONObject response = new JSONObject();
         NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, null);
@@ -357,22 +360,22 @@ public class UserResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Ensure that the admin user is not deleted
         if (hasBaseFunction(BaseFunction.ADMIN)) {
             throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
         }
-        
+
         // Delete the user
         UserDao userDao = new UserDao();
         userDao.delete(principal.getName());
-        
+
         // Always return ok
         JSONObject response = new JSONObject();
         response.put("status", "ok");
         return Response.ok().entity(response).build();
     }
-    
+
     /**
      * Deletes a user.
      * 
@@ -388,30 +391,30 @@ public class UserResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
-        
+
         // Check if the user exists
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         if (user == null) {
             throw new ClientException("UserNotFound", "The user doesn't exist");
         }
-        
+
         // Ensure that the admin user is not deleted
         RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
         Set<String> baseFunctionSet = userBaseFuction.findByRoleId(user.getRoleId());
         if (baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
             throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
         }
-        
+
         // Delete the user
         userDao.delete(user.getUsername());
-        
+
         // Always return ok
         JSONObject response = new JSONObject();
         response.put("status", "ok");
         return Response.ok().entity(response).build();
     }
-    
+
     /**
      * Returns the information about the connected user.
      * 
@@ -442,9 +445,10 @@ public class UserResource extends BaseResource {
             response.put("first_connection", user.isFirstConnection());
             JSONArray baseFunctions = new JSONArray(((UserPrincipal) principal).getBaseFunctionSet());
             response.put("base_functions", baseFunctions);
-            response.put("is_default_password", hasBaseFunction(BaseFunction.ADMIN) && Constants.DEFAULT_ADMIN_PASSWORD.equals(user.getPassword()));
+            response.put("is_default_password",
+                    hasBaseFunction(BaseFunction.ADMIN) && Constants.DEFAULT_ADMIN_PASSWORD.equals(user.getPassword()));
         }
-        
+
         return Response.ok().entity(response).build();
     }
 
@@ -463,30 +467,30 @@ public class UserResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
-        
+
         JSONObject response = new JSONObject();
-        
+
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         if (user == null) {
             throw new ClientException("UserNotFound", "The user doesn't exist");
         }
-        
+
         response.put("username", user.getUsername());
         response.put("email", user.getEmail());
         response.put("theme", user.getTheme());
         response.put("locale", user.getLocaleId());
-        
+
         return Response.ok().entity(response).build();
     }
-    
+
     /**
      * Returns all active users.
      * 
-     * @param limit Page limit
-     * @param offset Page offset
+     * @param limit      Page limit
+     * @param offset     Page offset
      * @param sortColumn Sort index
-     * @param asc If true, ascending sorting, else descending
+     * @param asc        If true, ascending sorting, else descending
      * @return Response
      * @throws JSONException
      */
@@ -502,10 +506,10 @@ public class UserResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
-        
+
         JSONObject response = new JSONObject();
         List<JSONObject> users = new ArrayList<>();
-        
+
         PaginatedList<UserDto> paginatedList = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
 
@@ -521,10 +525,10 @@ public class UserResource extends BaseResource {
         }
         response.put("total", paginatedList.getResultCount());
         response.put("users", users);
-        
+
         return Response.ok().entity(response).build();
     }
-    
+
     /**
      * Returns all active sessions.
      * 
@@ -538,7 +542,7 @@ public class UserResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Get the value of the session token
         String authToken = null;
         if (request.getCookies() != null) {
@@ -548,10 +552,10 @@ public class UserResource extends BaseResource {
                 }
             }
         }
-        
+
         JSONObject response = new JSONObject();
         List<JSONObject> sessions = new ArrayList<>();
-        
+
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
 
         for (AuthenticationToken authenticationToken : authenticationTokenDao.getByUserId(principal.getId())) {
@@ -564,10 +568,10 @@ public class UserResource extends BaseResource {
             sessions.add(session);
         }
         response.put("sessions", sessions);
-        
+
         return Response.ok().entity(response).build();
     }
-    
+
     /**
      * Deletes all active sessions except the one used for this request.
      * 
@@ -581,7 +585,7 @@ public class UserResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Get the value of the session token
         String authToken = null;
         if (request.getCookies() != null) {
@@ -591,11 +595,11 @@ public class UserResource extends BaseResource {
                 }
             }
         }
-        
+
         // Remove other tokens
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
         authenticationTokenDao.deleteByUserId(principal.getId(), authToken);
-        
+
         // Always return ok
         JSONObject response = new JSONObject();
         response.put("status", "ok");

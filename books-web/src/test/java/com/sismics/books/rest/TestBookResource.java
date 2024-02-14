@@ -29,14 +29,14 @@ public class TestBookResource extends BaseJerseyTest {
     /**
      * Test the book resource.
      * 
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBookResource() throws Exception {
         // Login book1
         clientUtil.createUser("book1");
         String book1Token = clientUtil.login("book1");
-        
+
         // Create a tag
         WebResource tagResource = resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -47,8 +47,8 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONObject json = response.getEntity(JSONObject.class);
         String tag3Id = json.optString("id");
-        Assert.assertNotNull(tag3Id);        
-        
+        Assert.assertNotNull(tag3Id);
+
         // Add a book
         WebResource bookResource = resource().path("/book");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -59,7 +59,7 @@ public class TestBookResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         String book1Id = json.optString("id");
         Assert.assertNotNull(book1Id);
-        
+
         // Add the same book (KO)
         bookResource = resource().path("/book");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -67,7 +67,7 @@ public class TestBookResource extends BaseJerseyTest {
         postParams.add("isbn", "9780345376596");
         response = bookResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
-        
+
         // Update a book
         bookResource = resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -78,7 +78,7 @@ public class TestBookResource extends BaseJerseyTest {
         postParams.add("isbn13", "9780345376596");
         response = bookResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // Create the same book manually (KO)
         bookResource = resource().path("/book/manual");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -92,7 +92,7 @@ public class TestBookResource extends BaseJerseyTest {
         postParams.add("isbn13", "9780345376596");
         response = bookResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
-        
+
         // Create a new book manually without ISBN (KO)
         bookResource = resource().path("/book/manual");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -105,7 +105,7 @@ public class TestBookResource extends BaseJerseyTest {
         postParams.add("author", "C. Sagan");
         response = bookResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
-        
+
         // Create a new book manually
         bookResource = resource().path("/book/manual");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -120,7 +120,7 @@ public class TestBookResource extends BaseJerseyTest {
         postParams.add("isbn13", "0123456789012");
         response = bookResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // Set a book as read
         bookResource = resource().path("/book/" + book1Id + "/read");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -128,7 +128,7 @@ public class TestBookResource extends BaseJerseyTest {
         postParams.add("read", true);
         response = bookResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // Update the book cover
         bookResource = resource().path("/book/" + book1Id + "/cover");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -136,7 +136,7 @@ public class TestBookResource extends BaseJerseyTest {
         postParams.add("url", "http://covers.openlibrary.org/b/id/976764-M.jpg");
         response = bookResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // Get the book
         bookResource = resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -162,7 +162,7 @@ public class TestBookResource extends BaseJerseyTest {
         postParams.add("read", false);
         response = bookResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // Get the book
         bookResource = resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -170,7 +170,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertFalse(json.has("read_date"));
-        
+
         // Get the book cover
         bookResource = resource().path("/book/" + book1Id + "/cover");
         response = bookResource.get(ClientResponse.class);
@@ -178,7 +178,7 @@ public class TestBookResource extends BaseJerseyTest {
         InputStream is = response.getEntityInputStream();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(14951, fileBytes.length);
-        
+
         // List all books
         bookResource = resource().path("/book/list");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -188,7 +188,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONArray books = json.getJSONArray("books");
         Assert.assertTrue(books.length() == 2);
-        
+
         // Search the book
         bookResource = resource().path("/book/list");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -201,13 +201,13 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         books = json.getJSONArray("books");
         Assert.assertTrue(books.length() == 1);
-        
+
         // Delete the book
         bookResource = resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         response = bookResource.delete(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // List all books
         bookResource = resource().path("/book/list");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
@@ -218,7 +218,7 @@ public class TestBookResource extends BaseJerseyTest {
         books = json.getJSONArray("books");
         Assert.assertTrue(books.length() == 1);
     }
-    
+
     /**
      * Test the book import resource.
      * 
@@ -229,7 +229,7 @@ public class TestBookResource extends BaseJerseyTest {
         // Login bookimport1
         clientUtil.createUser("bookimport1");
         String bookImport1Token = clientUtil.login("bookimport1");
-        
+
         // Import a Goodreads CSV
         WebResource bookResource = resource().path("/book/import");
         bookResource.addFilter(new CookieAuthenticationFilter(bookImport1Token));
@@ -241,7 +241,7 @@ public class TestBookResource extends BaseJerseyTest {
         form.bodyPart(fdp);
         ClientResponse response = bookResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // List all books
         bookResource = resource().path("/book/list");
         bookResource.addFilter(new CookieAuthenticationFilter(bookImport1Token));
@@ -254,7 +254,7 @@ public class TestBookResource extends BaseJerseyTest {
         JSONArray books = json.getJSONArray("books");
         Assert.assertEquals(10, books.length());
         Assert.assertEquals("owned", books.getJSONObject(2).getJSONArray("tags").getJSONObject(0).getString("name"));
-        
+
         // Get all tags
         WebResource tagResource = resource().path("/tag/list");
         tagResource.addFilter(new CookieAuthenticationFilter(bookImport1Token));

@@ -23,7 +23,7 @@ public class MemoryAppender extends AppenderSkeleton {
      * Maximum size of the queue.
      */
     private int size;
-    
+
     /**
      * Queue of log entries.
      */
@@ -51,10 +51,11 @@ public class MemoryAppender extends AppenderSkeleton {
             LogLog.warn("This appender is already closed, cannot append event.");
             return;
         }
-        
+
         String loggerName = getLoggerName(event);
 
-        LogEntry logEntry = new LogEntry(System.currentTimeMillis(), event.getLevel().toString(), loggerName, event.getMessage().toString());
+        LogEntry logEntry = new LogEntry(System.currentTimeMillis(), event.getLevel().toString(), loggerName,
+                event.getMessage().toString());
         logQueue.add(logEntry);
     }
 
@@ -67,9 +68,7 @@ public class MemoryAppender extends AppenderSkeleton {
     private String getLoggerName(LoggingEvent event) {
         int index = event.getLoggerName().lastIndexOf('.');
 
-        return (index > -1) ?
-            event.getLoggerName().substring(index + 1) :
-            event.getLoggerName();
+        return (index > -1) ? event.getLoggerName().substring(index + 1) : event.getLoggerName();
     }
 
     /**
@@ -94,7 +93,7 @@ public class MemoryAppender extends AppenderSkeleton {
      * Find some logs.
      * 
      * @param criteria Search criteria
-     * @param list Paginated list (modified by side effect)
+     * @param list     Paginated list (modified by side effect)
      */
     public void find(LogCriteria criteria, PaginatedList<LogEntry> list) {
         List<LogEntry> logEntryList = new LinkedList<LogEntry>();
@@ -111,7 +110,7 @@ public class MemoryAppender extends AppenderSkeleton {
                 resultCount++;
             }
         }
-        
+
         int fromIndex = logEntryList.size() - list.getOffset() - list.getLimit();
         if (fromIndex < 0) {
             fromIndex = 0;

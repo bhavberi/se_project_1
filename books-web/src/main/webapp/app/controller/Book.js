@@ -3,7 +3,7 @@
 /**
  * Book controller.
  */
-App.controller('Book', function($scope, $timeout, Restangular, $stateParams) {
+App.controller('Book', function ($scope, $timeout, Restangular, $stateParams) {
   /**
    * View scope variables.
    */
@@ -26,7 +26,7 @@ App.controller('Book', function($scope, $timeout, Restangular, $stateParams) {
   /**
    * Reload books.
    */
-  $scope.loadBooks = function() {
+  $scope.loadBooks = function () {
     $scope.offset = 0;
     $scope.total = -1;
     $scope.books = [];
@@ -36,7 +36,7 @@ App.controller('Book', function($scope, $timeout, Restangular, $stateParams) {
   /**
    * Load books.
    */
-  $scope.pageBooks = function(next) {
+  $scope.pageBooks = function (next) {
     if ($scope.loading || $scope.total == $scope.books.length) {
       // Avoid spamming the server
       return;
@@ -55,17 +55,17 @@ App.controller('Book', function($scope, $timeout, Restangular, $stateParams) {
       search: $scope.search.text,
       read: $scope.search.read ? true : null,
       tag: $stateParams.tag
-    }).then(function(data) {
-          $scope.books = $scope.books.concat(data.books);
-          $scope.total = data.total;
-          $scope.loading = false;
-        });
+    }).then(function (data) {
+      $scope.books = $scope.books.concat(data.books);
+      $scope.total = data.total;
+      $scope.loading = false;
+    });
   };
 
   /**
    * Watch for search scope change.
    */
-  $scope.$watch('search', function() {
+  $scope.$watch('search', function () {
     if (timeoutPromise) {
       // Cancel previous timeout
       $timeout.cancel(timeoutPromise);
@@ -78,7 +78,7 @@ App.controller('Book', function($scope, $timeout, Restangular, $stateParams) {
   }, true);
 
   // Load tags
-  Restangular.one('tag/list').get().then(function(data) {
+  Restangular.one('tag/list').get().then(function (data) {
     $scope.tags = data.tags;
   });
 });

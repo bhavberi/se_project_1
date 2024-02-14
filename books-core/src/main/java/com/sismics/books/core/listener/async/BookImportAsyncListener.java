@@ -51,7 +51,7 @@ public class BookImportAsyncListener {
         if (log.isInfoEnabled()) {
             log.info(MessageFormat.format("Books import requested event: {0}", bookImportedEvent.toString()));
         }
-        
+
         // Create books and tags
         TransactionUtil.handle(new Runnable() {
             @Override
@@ -65,25 +65,25 @@ public class BookImportAsyncListener {
                 } catch (FileNotFoundException e) {
                     log.error("Unable to read CSV file", e);
                 }
-                
+
                 // Goodreads date format
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy/MM/dd");
-                
-                String [] line;
+
+                String[] line;
                 try {
                     while ((line = reader.readNext()) != null) {
                         if (line[0].equals("Book Id")) {
                             // Skip header
                             continue;
                         }
-                        
+
                         // Retrieve ISBN number
                         String isbn = Strings.isNullOrEmpty(line[6]) ? line[5] : line[6];
                         if (Strings.isNullOrEmpty(isbn)) {
                             log.warn("No ISBN number for Goodreads book ID: " + line[0]);
                             continue;
                         }
-                        
+
                         // Fetch the book from database if it exists
                         Book book = bookDao.getByIsbn(isbn);
                         if (book == null) {
@@ -93,11 +93,11 @@ public class BookImportAsyncListener {
                             } catch (Exception e) {
                                 continue;
                             }
-                            
+
                             // Save the new book in database
                             bookDao.create(book);
                         }
-                        
+
                         // Create a new user book if needed
                         UserBook userBook = userBookDao.getByBook(book.getId(), bookImportedEvent.getUser().getId());
                         if (userBook == null) {
@@ -113,7 +113,7 @@ public class BookImportAsyncListener {
                             }
                             userBookDao.create(userBook);
                         }
-                        
+
                         // Create tags
                         String[] bookshelfArray = line[16].split(",");
                         Set<String> tagIdSet = new HashSet<String>();
@@ -122,7 +122,7 @@ public class BookImportAsyncListener {
                             if (Strings.isNullOrEmpty(bookshelf)) {
                                 continue;
                             }
-                            
+
                             Tag tag = tagDao.getByName(bookImportedEvent.getUser().getId(), bookshelf);
                             if (tag == null) {
                                 tag = new Tag();
@@ -131,10 +131,10 @@ public class BookImportAsyncListener {
                                 tag.setUserId(bookImportedEvent.getUser().getId());
                                 tagDao.create(tag);
                             }
-                            
+
                             tagIdSet.add(tag.getId());
                         }
-                        
+
                         // Add tags to the user book
                         if (tagIdSet.size() > 0) {
                             List<TagDto> tagDtoList = tagDao.getByUserBookId(userBook.getId());
@@ -143,7 +143,7 @@ public class BookImportAsyncListener {
                             }
                             tagDao.updateTagList(userBook.getId(), tagIdSet);
                         }
-                        
+
                         TransactionUtil.commit();
                     }
                 } catch (Exception e) {

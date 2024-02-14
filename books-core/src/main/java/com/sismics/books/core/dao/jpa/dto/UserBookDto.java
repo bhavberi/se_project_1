@@ -5,7 +5,7 @@ import javax.persistence.Id;
 /**
  * User book DTO.
  *
- * @author bgamard 
+ * @author bgamard
  */
 public class UserBookDto {
     /**
@@ -13,37 +13,37 @@ public class UserBookDto {
      */
     @Id
     private String id;
-    
+
     /**
      * Title.
      */
     private String title;
-    
+
     /**
      * Subtitle.
      */
     private String subtitle;
-    
+
     /**
      * Author.
      */
     private String author;
-    
+
     /**
      * Language (ISO 639-1).
      */
     private String language;
-    
+
     /**
      * Publication date.
      */
     private Long publishTimestamp;
-    
+
     /**
      * Creation date.
      */
     private Long createTimestamp;
-    
+
     /**
      * Read date.
      */

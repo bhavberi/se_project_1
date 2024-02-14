@@ -56,11 +56,11 @@ public class ConnectResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Search connected applications
         UserAppDao userAppDao = new UserAppDao();
         List<UserAppDto> userAppList = userAppDao.findByUserId(principal.getId());
-        
+
         List<JSONObject> items = new ArrayList<JSONObject>();
         for (UserAppDto userAppDto : userAppList) {
             JSONObject userApp = new JSONObject();
@@ -70,7 +70,7 @@ public class ConnectResource extends BaseResource {
             userApp.put("sharing", userAppDto.isSharing());
             items.add(userApp);
         }
-        
+
         JSONObject response = new JSONObject();
         response.put("apps", items);
         return Response.ok().entity(response).build();
@@ -79,7 +79,7 @@ public class ConnectResource extends BaseResource {
     /**
      * Add a connected application.
      * 
-     * @param appId App ID
+     * @param appId     App ID
      * @param authToken OAuth authorization token
      * @return Response
      * @throws JSONException
@@ -93,56 +93,56 @@ public class ConnectResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Validate input data
         accessToken = ValidationUtil.validateStringNotBlank(accessToken, "access_token");
 
         // Get application to add
         AppId appId = getAppId(appIdString);
-        
+
         UserAppDao userAppDao = new UserAppDao();
         UserApp userApp = null;
         switch (appId) {
-        case FACEBOOK:
-            // Delete old connection to this application
-            userAppDao.deleteByUserIdAndAppId(principal.getId(), appId.name());
+            case FACEBOOK:
+                // Delete old connection to this application
+                userAppDao.deleteByUserIdAndAppId(principal.getId(), appId.name());
 
-            // Exchange the short lived token (2h) for a long lived one (60j)
-            final FacebookService facebookService = AppContext.getInstance().getFacebookService();
-            String extendedAccessToken = null;
-            try {
-                extendedAccessToken = facebookService.getExtendedAccessToken(accessToken);
-            } catch (AuthenticationException e) {
-                throw new ClientException("InvalidAuthenticationToken", "Error validating authentication token", e);
-            }
+                // Exchange the short lived token (2h) for a long lived one (60j)
+                final FacebookService facebookService = AppContext.getInstance().getFacebookService();
+                String extendedAccessToken = null;
+                try {
+                    extendedAccessToken = facebookService.getExtendedAccessToken(accessToken);
+                } catch (AuthenticationException e) {
+                    throw new ClientException("InvalidAuthenticationToken", "Error validating authentication token", e);
+                }
 
-            // Check permissions
-            try {
-                facebookService.validatePermission(extendedAccessToken);
-            } catch (PermissionException e) {
-                throw new ClientException("PermissionNotFound", e.getMessage(), e);
-            }
-            
-            // Create the connection to the application
-            userApp = new UserApp();
-            userApp.setAppId(appId.name());
-            userApp.setAccessToken(extendedAccessToken);
-            userApp.setUserId(principal.getId());
-            userApp.setSharing(true);
-            
-            // Get user's personnal informations
-            facebookService.updateUserData(extendedAccessToken, userApp);
+                // Check permissions
+                try {
+                    facebookService.validatePermission(extendedAccessToken);
+                } catch (PermissionException e) {
+                    throw new ClientException("PermissionNotFound", e.getMessage(), e);
+                }
 
-            userAppDao.create(userApp);
-            
-            break;
+                // Create the connection to the application
+                userApp = new UserApp();
+                userApp.setAppId(appId.name());
+                userApp.setAccessToken(extendedAccessToken);
+                userApp.setUserId(principal.getId());
+                userApp.setSharing(true);
+
+                // Get user's personnal informations
+                facebookService.updateUserData(extendedAccessToken, userApp);
+
+                userAppDao.create(userApp);
+
+                break;
         }
 
         // Raise a user app created event
         UserAppCreatedEvent userAppCreatedEvent = new UserAppCreatedEvent();
         userAppCreatedEvent.setUserApp(userApp);
         AppContext.getInstance().getAsyncEventBus().post(userAppCreatedEvent);
-        
+
         // Always return OK
         JSONObject response = new JSONObject();
         response.put("status", "ok");
@@ -164,10 +164,10 @@ public class ConnectResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Get application to remove
         AppId appId = getAppId(appIdString);
-        
+
         // Delete user app for this application
         UserAppDao userAppDao = new UserAppDao();
         userAppDao.deleteByUserIdAndAppId(principal.getId(), appId.name());
@@ -182,7 +182,7 @@ public class ConnectResource extends BaseResource {
      * Updates connected application.
      * 
      * @param appIdString App ID
-     * @param sharing If true, share on this application
+     * @param sharing     If true, share on this application
      * @return Response
      * @throws JSONException
      */
@@ -195,17 +195,18 @@ public class ConnectResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Get application to update
         AppId appId = getAppId(appIdString);
-        
+
         // Check if the user is connected to this application
         UserAppDao userAppDao = new UserAppDao();
         UserApp userApp = userAppDao.getActiveByUserIdAndAppId(principal.getId(), appId.name());
         if (userApp == null) {
-            throw new ClientException("AppNotConnected", MessageFormat.format("You are not connected to the app {0}", appId.name()));
+            throw new ClientException("AppNotConnected",
+                    MessageFormat.format("You are not connected to the app {0}", appId.name()));
         }
-        
+
         // Update the user app
         userApp.setSharing(sharing);
         userAppDao.update(userApp);
@@ -220,8 +221,8 @@ public class ConnectResource extends BaseResource {
      * Returns contact list on a connected application.
      * 
      * @param appIdString App ID
-     * @param limit Page limit
-     * @param offset Page offset
+     * @param limit       Page limit
+     * @param offset      Page offset
      * @return Response
      * @throws JSONException
      */
@@ -236,15 +237,16 @@ public class ConnectResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Get application
         AppId appId = getAppId(appIdString);
-        
+
         // Check if the user is connected to the application
         UserAppDao userAppDao = new UserAppDao();
         UserApp userApp = userAppDao.getActiveByUserIdAndAppId(principal.getId(), appId.name());
         if (userApp == null) {
-            throw new ClientException("AppNotConnected", MessageFormat.format("You are not connected to the app {0}", appId.name()));
+            throw new ClientException("AppNotConnected",
+                    MessageFormat.format("You are not connected to the app {0}", appId.name()));
         }
 
         JSONObject response = new JSONObject();

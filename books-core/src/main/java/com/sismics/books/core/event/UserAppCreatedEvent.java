@@ -6,7 +6,7 @@ import com.sismics.books.core.model.jpa.UserApp;
 /**
  * User app created event.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class UserAppCreatedEvent {
     /**

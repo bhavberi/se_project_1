@@ -35,11 +35,11 @@ public class AuthenticationTokenDao {
      */
     public String create(AuthenticationToken authenticationToken) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-            
+
         authenticationToken.setId(UUID.randomUUID().toString());
         authenticationToken.setCreationDate(new Date());
         em.persist(authenticationToken);
-        
+
         return authenticationToken.getId();
     }
 
@@ -95,7 +95,7 @@ public class AuthenticationTokenDao {
         q.setParameter("id", id);
         q.executeUpdate();
     }
-    
+
     /**
      * Returns all authentication tokens of an user.
      * 
@@ -109,7 +109,7 @@ public class AuthenticationTokenDao {
         q.setParameter("userId", userId);
         return q.getResultList();
     }
-    
+
     /**
      * Deletes all authentication tokens of an user.
      * 

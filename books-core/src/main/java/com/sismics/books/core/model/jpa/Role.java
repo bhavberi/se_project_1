@@ -22,19 +22,19 @@ public class Role {
     @Id
     @Column(name = "ROL_ID_C", length = 36)
     private String id;
-    
+
     /**
      * Role name.
      */
     @Column(name = "ROL_NAME_C", nullable = false, length = 50)
     private String name;
-    
+
     /**
      * Creation date.
      */
     @Column(name = "ROL_CREATEDATE_D", nullable = false)
     private Date createDate;
-    
+
     /**
      * Deletion date.
      */

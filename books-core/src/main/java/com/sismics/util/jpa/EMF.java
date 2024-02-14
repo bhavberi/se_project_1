@@ -37,7 +37,7 @@ public final class EMF {
             ServiceRegistry reg = new ServiceRegistryBuilder().applySettings(properties).buildServiceRegistry();
 
             DbOpenHelper openHelper = new DbOpenHelper(reg) {
-                
+
                 @Override
                 public void onCreate() throws Exception {
                     executeAllScript(0);
@@ -51,21 +51,21 @@ public final class EMF {
                 }
             };
             openHelper.open();
-            
+
             emfInstance = Persistence.createEntityManagerFactory("transactions-optional", getEntityManagerProperties());
-            
+
         } catch (Throwable t) {
             log.error("Error creating EMF", t);
         }
     }
-    
+
     private static Map<Object, Object> getEntityManagerProperties() {
         // Use properties file if exists
         try {
             URL hibernatePropertiesUrl = EMF.class.getResource("/hibernate.properties");
             if (hibernatePropertiesUrl != null) {
                 log.info("Configuring EntityManager from hibernate.properties");
-                
+
                 InputStream is = hibernatePropertiesUrl.openStream();
                 Properties properties = new Properties();
                 properties.load(is);
@@ -75,7 +75,7 @@ public final class EMF {
         } catch (IOException e) {
             log.error("Error reading hibernate.properties", e);
         }
-        
+
         // Use environment parameters
         log.info("Configuring EntityManager from environment parameters");
         Map<Object, Object> props = new HashMap<Object, Object>();
@@ -92,7 +92,7 @@ public final class EMF {
         props.put("hibernate.cache.use_second_level_cache", "false");
         return props;
     }
-    
+
     /**
      * Private constructor.
      */

@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 /**
  * Query utilities.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class QueryUtil {
 
