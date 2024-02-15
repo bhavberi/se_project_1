@@ -116,11 +116,11 @@ public class ValidationUtil {
      * @param name Name of the parameter
      * @throws JSONException
      */
-    public static void validateEmail(String s, String name) throws JSONException {
-        if (!EMAIL_PATTERN.matcher(s).matches()) {
-            throw new ClientException("ValidationError", MessageFormat.format("{0} must be an email", name));
-        }
-    }
+    // public static void validateEmail(String s, String name) throws JSONException {
+    //     if (!EMAIL_PATTERN.matcher(s).matches()) {
+    //         throw new ClientException("ValidationError", MessageFormat.format("{0} must be an email", name));
+    //     }
+    // }
 
     /**
      * Validates that the provided string matches an URL with HTTP or HTTPS scheme.
@@ -130,13 +130,13 @@ public class ValidationUtil {
      * @return Stripped URL
      * @throws JSONException
      */
-    public static String validateHttpUrl(String s, String name) throws JSONException {
-        s = StringUtils.strip(s);
-        if (!HTTP_URL_PATTERN.matcher(s).matches()) {
-            throw new ClientException("ValidationError", MessageFormat.format("{0} must be an HTTP(s) URL", name));
-        }
-        return s;
-    }
+    // public static String validateHttpUrl(String s, String name) throws JSONException {
+    //     s = StringUtils.strip(s);
+    //     if (!HTTP_URL_PATTERN.matcher(s).matches()) {
+    //         throw new ClientException("ValidationError", MessageFormat.format("{0} must be an HTTP(s) URL", name));
+    //     }
+    //     return s;
+    // }
 
     /**
      * Checks if the string uses only alphanumerical or underscore characters.
@@ -145,12 +145,12 @@ public class ValidationUtil {
      * @param name Name of the parameter
      * @throws JSONException
      */
-    public static void validateAlphanumeric(String s, String name) throws JSONException {
-        if (!ALPHANUMERIC_PATTERN.matcher(s).matches()) {
-            throw new ClientException("ValidationError",
-                    MessageFormat.format("{0} must have only alphanumeric or underscore characters", name));
-        }
-    }
+    // public static void validateAlphanumeric(String s, String name) throws JSONException {
+    //     if (!ALPHANUMERIC_PATTERN.matcher(s).matches()) {
+    //         throw new ClientException("ValidationError",
+    //                 MessageFormat.format("{0} must have only alphanumeric or underscore characters", name));
+    //     }
+    // }
 
     /**
      * Validates and parses a date.
@@ -228,3 +228,42 @@ public class ValidationUtil {
         return themeId;
     }
 }
+
+
+// public interface IValidator {
+//     void validate(String s, String name) throws JSONException;
+// }
+
+// public class EmailValidator implements IValidator {
+//     private static final Pattern EMAIL_PATTERN = Pattern.compile(".+@.+\\..+");
+
+//     @Override
+//     public void validate(String s, String name) throws JSONException {
+//         if (!EMAIL_PATTERN.matcher(s).matches()) {
+//             throw new ClientException("ValidationError", MessageFormat.format("{0} must be an email", name));
+//         }
+//     }
+// }
+
+// public class HttpUrlValidator implements IValidator {
+//     private static final Pattern HTTP_URL_PATTERN = Pattern.compile("https?://.+");
+
+//     @Override
+//     public void validate(String s, String name) throws JSONException {
+//         s = StringUtils.strip(s);
+//         if (!HTTP_URL_PATTERN.matcher(s).matches()) {
+//             throw new ClientException("ValidationError", MessageFormat.format("{0} must be an HTTP(s) URL", name));
+//         }
+//     }
+// }
+
+// public class AlphanumericValidator implements IValidator {
+//     private static final Pattern ALPHANUMERIC_PATTERN = Pattern.compile("[a-zA-Z0-9_]+");
+
+//     @Override
+//     public void validate(String s, String name) throws JSONException {
+//         if (!ALPHANUMERIC_PATTERN.matcher(s).matches()) {
+//             throw new ClientException("ValidationError", MessageFormat.format("{0} must have only alphanumeric or underscore characters", name));
+//         }
+//     }
+// }

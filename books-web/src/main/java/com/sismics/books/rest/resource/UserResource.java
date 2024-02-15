@@ -38,6 +38,9 @@ import com.sismics.books.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.AlphanumericValidator;
+import com.sismics.rest.util.EmailValidator;
+import com.sismics.rest.util.IValidator;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
@@ -73,11 +76,16 @@ public class UserResource extends BaseResource {
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Validate the input data
+        // Validate the input data
+        IValidator alphanumericValidator = new AlphanumericValidator();
+        IValidator emailValidator = new EmailValidator();
         username = ValidationUtil.validateLength(username, "username", 3, 50);
-        ValidationUtil.validateAlphanumeric(username, "username");
+        // ValidationUtil.validateAlphanumeric(username, "username");
+        alphanumericValidator.validate(username, "username");
         password = ValidationUtil.validateLength(password, "password", 8, 50);
         email = ValidationUtil.validateLength(email, "email", 3, 50);
-        ValidationUtil.validateEmail(email, "email");
+        // ValidationUtil.validateEmail(email, "email");
+        emailValidator.validate(email, "email");
 
         // Create the user
         User user = new User();

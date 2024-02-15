@@ -1,7 +1,8 @@
 package com.sismics.books.rest.util;
 
 import com.sismics.rest.exception.ClientException;
-import com.sismics.rest.util.ValidationUtil;
+import com.sismics.rest.util.HttpUrlValidator;
+import com.sismics.rest.util.IValidator;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -13,20 +14,21 @@ import org.junit.Test;
 public class TestValidationUtil {
     @Test
     public void testValidateHttpUrlFail() throws Exception {
-        ValidationUtil.validateHttpUrl("http://www.google.com", "url");
-        ValidationUtil.validateHttpUrl("https://www.google.com", "url");
-        ValidationUtil.validateHttpUrl(" https://www.google.com ", "url");
+        IValidator httpUrlValidator = new HttpUrlValidator();
+        httpUrlValidator.validate("http://www.google.com", "url");
+        httpUrlValidator.validate("https://www.google.com", "url");
+        httpUrlValidator.validate(" https://www.google.com ", "url");
         try {
-            ValidationUtil.validateHttpUrl("ftp://www.google.com", "url");
+            httpUrlValidator.validate("ftp://www.google.com", "url");
             Assert.fail();
         } catch (ClientException e) {
             // NOP
         }
         try {
-            ValidationUtil.validateHttpUrl("http://", "url");
+            httpUrlValidator.validate("http://", "url");
             Assert.fail();
         } catch (ClientException e) {
             // NOP
         }
     }
-}
+ }
