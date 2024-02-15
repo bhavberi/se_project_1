@@ -76,15 +76,12 @@ public class UserResource extends BaseResource {
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Validate the input data
-        // Validate the input data
         IValidator alphanumericValidator = new AlphanumericValidator();
         IValidator emailValidator = new EmailValidator();
         username = ValidationUtil.validateLength(username, "username", 3, 50);
-        // ValidationUtil.validateAlphanumeric(username, "username");
         alphanumericValidator.validate(username, "username");
-        password = ValidationUtil.validateLength(password, "password", 8, 50);
+        password = ValidationUtil.validatePassword(password, false);
         email = ValidationUtil.validateLength(email, "email", 3, 50);
-        // ValidationUtil.validateEmail(email, "email");
         emailValidator.validate(email, "email");
 
         // Create the user
@@ -140,7 +137,7 @@ public class UserResource extends BaseResource {
         }
 
         // Validate the input data
-        password = ValidationUtil.validateLength(password, "password", 8, 50, true);
+        password = ValidationUtil.validatePassword(password, true);
         email = ValidationUtil.validateLength(email, "email", null, 100, true);
         localeId = ValidationUtil.validateLocale(localeId, "locale", true);
         themeId = ValidationUtil.validateTheme(themeId, "theme", true);
@@ -201,7 +198,7 @@ public class UserResource extends BaseResource {
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Validate the input data
-        password = ValidationUtil.validateLength(password, "password", 8, 50, true);
+        password = ValidationUtil.validatePassword(password, true);
         email = ValidationUtil.validateLength(email, "email", null, 100, true);
         localeId = ValidationUtil.validateLocale(localeId, "locale", true);
         themeId = ValidationUtil.validateTheme(themeId, "theme", true);
