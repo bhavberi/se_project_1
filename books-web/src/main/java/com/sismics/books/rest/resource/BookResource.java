@@ -47,6 +47,7 @@ import com.sismics.books.core.model.jpa.Book;
 import com.sismics.books.core.model.jpa.Tag;
 import com.sismics.books.core.model.jpa.User;
 import com.sismics.books.core.model.jpa.UserBook;
+import com.sismics.books.core.service.ASearcher;
 import com.sismics.books.core.util.DirectoryUtil;
 import com.sismics.books.core.util.jpa.PaginatedList;
 import com.sismics.books.core.util.jpa.PaginatedLists;
@@ -518,7 +519,7 @@ public class BookResource extends BaseResource {
  
         // Download the new cover
         try {
-            AppContext.getInstance().getBookDataService().downloadThumbnail(book, imageUrl);
+            ASearcher.downloadThumbnail(book, imageUrl);
         } catch (Exception e) {
             throw new ClientException("DownloadCoverError", "Error downloading the cover image");
         }
