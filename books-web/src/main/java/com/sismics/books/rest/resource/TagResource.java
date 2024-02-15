@@ -32,6 +32,11 @@ import com.sismics.rest.util.ValidationUtil;
  */
 @Path("/tag")
 public class TagResource extends BaseResource {
+    // Magic Strings
+    private static final String TAG_NOT_FOUND = "TagNotFound";
+    private static final String TAG_ALREADY_EXISTS = "AlreadyExistingTag";
+    private static final String SPACES_NOT_ALLOWED = "SpacesNotAllowed";
+
     /**
      * Returns the list of all tags.
      * 
@@ -83,14 +88,14 @@ public class TagResource extends BaseResource {
 
         // Don't allow spaces
         if (name.contains(" ")) {
-            throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
+            throw new ClientException(SPACES_NOT_ALLOWED, "Spaces are not allowed in tag name");
         }
 
         // Get the tag
         TagDao tagDao = new TagDao();
         Tag tag = tagDao.getByName(principal.getId(), name);
         if (tag != null) {
-            throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
+            throw new ClientException(TAG_ALREADY_EXISTS, MessageFormat.format("Tag already exists: {0}", name));
         }
 
         // Create the tag
@@ -129,20 +134,20 @@ public class TagResource extends BaseResource {
 
         // Don't allow spaces
         if (name.contains(" ")) {
-            throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
+            throw new ClientException(SPACES_NOT_ALLOWED, "Spaces are not allowed in tag name");
         }
 
         // Get the tag
         TagDao tagDao = new TagDao();
         Tag tag = tagDao.getByTagId(principal.getId(), id);
         if (tag == null) {
-            throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
+            throw new ClientException(TAG_NOT_FOUND, MessageFormat.format("Tag not found: {0}", id));
         }
 
         // Check for name duplicate
         Tag tagDuplicate = tagDao.getByName(principal.getId(), name);
         if (tagDuplicate != null && !tagDuplicate.getId().equals(id)) {
-            throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
+            throw new ClientException(TAG_ALREADY_EXISTS, MessageFormat.format("Tag already exists: {0}", name));
         }
 
         // Update the tag
@@ -178,7 +183,7 @@ public class TagResource extends BaseResource {
         TagDao tagDao = new TagDao();
         Tag tag = tagDao.getByTagId(principal.getId(), tagId);
         if (tag == null) {
-            throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", tagId));
+            throw new ClientException(TAG_NOT_FOUND, MessageFormat.format("Tag not found: {0}", tagId));
         }
 
         // Delete the tag

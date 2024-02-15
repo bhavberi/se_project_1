@@ -46,6 +46,11 @@ import com.sismics.books.core.util.mime.MimeTypeUtil;
  */
 public class BookDataService extends AbstractIdleService {
     /**
+     * Timeout for HTTP requests. In Milliseconds.
+     */
+    private static final int CONNECT_TIMEOUT = 10000;
+
+    /**
      * Logger.
      */
     private static final Logger log = LoggerFactory.getLogger(BookDataService.class);
@@ -59,6 +64,11 @@ public class BookDataService extends AbstractIdleService {
      * Open Library API URL.
      */
     private static final String OPEN_LIBRARY_FORMAT = "http://openlibrary.org/api/volumes/brief/isbn/%s.json";
+
+    /**
+     * Parser for multiple date formats;
+     */
+    private static DateTimeFormatter formatter;
 
     /**
      * Executor for book API requests.
@@ -79,11 +89,6 @@ public class BookDataService extends AbstractIdleService {
      * API key Google.
      */
     private String apiKeyGoogle = null;
-
-    /**
-     * Parser for multiple date formats;
-     */
-    private static DateTimeFormatter formatter;
 
     static {
         // Initialize date parser
@@ -172,8 +177,8 @@ public class BookDataService extends AbstractIdleService {
         connection.setRequestProperty("Accept-Charset", "utf-8");
         connection.setRequestProperty("User-Agent",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(10000);
+        connection.setConnectTimeout(CONNECT_TIMEOUT);
+        connection.setReadTimeout(CONNECT_TIMEOUT);
         InputStream inputStream = connection.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readValue(inputStream, JsonNode.class);
@@ -233,8 +238,8 @@ public class BookDataService extends AbstractIdleService {
         connection.setRequestProperty("Accept-Charset", "utf-8");
         connection.setRequestProperty("User-Agent",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(10000);
+        connection.setConnectTimeout(CONNECT_TIMEOUT);
+        connection.setReadTimeout(CONNECT_TIMEOUT);
         InputStream inputStream = connection.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readValue(inputStream, JsonNode.class);
@@ -297,8 +302,8 @@ public class BookDataService extends AbstractIdleService {
         URLConnection imageConnection = new URL(imageUrl).openConnection();
         imageConnection.setRequestProperty("User-Agent",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
-        imageConnection.setConnectTimeout(10000);
-        imageConnection.setReadTimeout(10000);
+        imageConnection.setConnectTimeout(CONNECT_TIMEOUT);
+        imageConnection.setReadTimeout(CONNECT_TIMEOUT);
         try (InputStream inputStream = new BufferedInputStream(imageConnection.getInputStream())) {
             if (MimeTypeUtil.guessMimeType(inputStream) != MimeType.IMAGE_JPEG) {
                 throw new Exception("Only JPEG images are supported as thumbnails");
@@ -314,7 +319,7 @@ public class BookDataService extends AbstractIdleService {
     @Override
     protected void shutDown() throws Exception {
         executor.shutdown();
-        executor.awaitTermination(10, TimeUnit.SECONDS);
+        executor.awaitTermination(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
         if (log.isInfoEnabled()) {
             log.info("Book data service stopped");
         }
