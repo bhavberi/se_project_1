@@ -9,18 +9,50 @@ package com.sismics.books.rest.model;
  * @author jtremeaux
  */
 public class FacebookUser {
-    public String id;
+    private String id;
 
-    public String email;
+    private String email;
 
-    public String fullName;
+    private String fullName;
 
-    public String accessToken;
+    private String accessToken;
 
     public FacebookUser(String id, String email, String fullName, String accessToken) {
+        setId(id);
+        setEmail(email);
+        setFullName(fullName);
+        setAccessToken(accessToken);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    private void setId(String id) {
         this.id = id;
+    }
+
+    private void setEmail(String email) {
         this.email = email;
-        this.accessToken = accessToken;
+    }
+
+    private void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    private void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }
