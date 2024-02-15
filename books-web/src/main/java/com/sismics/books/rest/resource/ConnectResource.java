@@ -102,40 +102,37 @@ public class ConnectResource extends BaseResource {
 
         UserAppDao userAppDao = new UserAppDao();
         UserApp userApp = null;
-        switch (appId) {
-            case FACEBOOK:
-                // Delete old connection to this application
-                userAppDao.deleteByUserIdAndAppId(principal.getId(), appId.name());
+        if (appId == AppId.FACEBOOK) {
+            // Delete old connection to this application
+            userAppDao.deleteByUserIdAndAppId(principal.getId(), appId.name());
 
-                // Exchange the short lived token (2h) for a long lived one (60j)
-                final FacebookService facebookService = AppContext.getInstance().getFacebookService();
-                String extendedAccessToken = null;
-                try {
-                    extendedAccessToken = facebookService.getExtendedAccessToken(accessToken);
-                } catch (AuthenticationException e) {
-                    throw new ClientException("InvalidAuthenticationToken", "Error validating authentication token", e);
-                }
+            // Exchange the short lived token (2h) for a long lived one (60j)
+            final FacebookService facebookService = AppContext.getInstance().getFacebookService();
+            String extendedAccessToken = null;
+            try {
+                extendedAccessToken = facebookService.getExtendedAccessToken(accessToken);
+            } catch (AuthenticationException e) {
+                throw new ClientException("InvalidAuthenticationToken", "Error validating authentication token", e);
+            }
 
-                // Check permissions
-                try {
-                    facebookService.validatePermission(extendedAccessToken);
-                } catch (PermissionException e) {
-                    throw new ClientException("PermissionNotFound", e.getMessage(), e);
-                }
+            // Check permissions
+            try {
+                facebookService.validatePermission(extendedAccessToken);
+            } catch (PermissionException e) {
+                throw new ClientException("PermissionNotFound", e.getMessage(), e);
+            }
 
-                // Create the connection to the application
-                userApp = new UserApp();
-                userApp.setAppId(appId.name());
-                userApp.setAccessToken(extendedAccessToken);
-                userApp.setUserId(principal.getId());
-                userApp.setSharing(true);
+            // Create the connection to the application
+            userApp = new UserApp();
+            userApp.setAppId(appId.name());
+            userApp.setAccessToken(extendedAccessToken);
+            userApp.setUserId(principal.getId());
+            userApp.setSharing(true);
 
-                // Get user's personnal informations
-                facebookService.updateUserData(extendedAccessToken, userApp);
+            // Get user's personnal informations
+            facebookService.updateUserData(extendedAccessToken, userApp);
 
-                userAppDao.create(userApp);
-
-                break;
+            userAppDao.create(userApp);
         }
 
         // Raise a user app created event

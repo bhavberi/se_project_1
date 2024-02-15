@@ -81,10 +81,10 @@ public class TestConnectResource extends BaseJerseyTest {
                 testUser.getString("access_token"));
 
         // Carol is friend with Charlie
-        fbResponse = webRequestor.executePost("https://graph.facebook.com/" + carol.id + "/friends/" + charlie.id,
-                "method=post&access_token=" + carol.accessToken);
-        fbResponse = webRequestor.executePost("https://graph.facebook.com/" + charlie.id + "/friends/" + carol.id,
-                "method=post&access_token=" + charlie.accessToken);
+        fbResponse = webRequestor.executePost("https://graph.facebook.com/" + carol.getId() + "/friends/" + charlie.getId(),
+                "method=post&access_token=" + carol.getAccessToken());
+        fbResponse = webRequestor.executePost("https://graph.facebook.com/" + charlie.getId() + "/friends/" + carol.getId(),
+                "method=post&access_token=" + charlie.getAccessToken());
 
         // Create and connect user carol_fb
         clientUtil.createUser("carol_fb");
@@ -117,7 +117,7 @@ public class TestConnectResource extends BaseJerseyTest {
         connectResource = resource().path("/connect/facebook/add");
         connectResource.addFilter(new CookieAuthenticationFilter(carolFbAuthToken));
         postParams = new MultivaluedMapImpl();
-        postParams.putSingle("access_token", carol.accessToken);
+        postParams.putSingle("access_token", carol.getAccessToken());
         response = connectResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
 
@@ -143,8 +143,8 @@ public class TestConnectResource extends BaseJerseyTest {
         JSONArray contacts = json.getJSONArray("contacts");
         Assert.assertTrue(contacts.length() >= 1);
         JSONObject contact = (JSONObject) contacts.get(0);
-        Assert.assertEquals(charlie.id, contact.optString("external_id"));
-        Assert.assertEquals(charlie.fullName, contact.optString("full_name"));
+        Assert.assertEquals(charlie.getId(), contact.optString("external_id"));
+        Assert.assertEquals(charlie.getFullName(), contact.optString("full_name"));
 
         // Carol searches FB contacts : nothing
         contactListResource = resource().path("/connect/facebook/contact/list");
@@ -161,7 +161,7 @@ public class TestConnectResource extends BaseJerseyTest {
         contactListResource = resource().path("/connect/facebook/contact/list");
         contactListResource.addFilter(new CookieAuthenticationFilter(carolFbAuthToken));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("query", charlie.fullName);
+        getParams.putSingle("query", charlie.getFullName());
         response = contactListResource.queryParams(getParams).get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
@@ -217,9 +217,9 @@ public class TestConnectResource extends BaseJerseyTest {
         Assert.assertEquals("AppNotConnected", json.getString("type"));
 
         // Delete Facebook test users
-        fbResponse = webRequestor.executePost("https://graph.facebook.com/" + carol.id,
+        fbResponse = webRequestor.executePost("https://graph.facebook.com/" + carol.getId(),
                 "method=delete&access_token=" + appAccessToken);
-        fbResponse = webRequestor.executePost("https://graph.facebook.com/" + charlie.id,
+        fbResponse = webRequestor.executePost("https://graph.facebook.com/" + charlie.getId(),
                 "method=delete&access_token=" + appAccessToken);
     }
 }

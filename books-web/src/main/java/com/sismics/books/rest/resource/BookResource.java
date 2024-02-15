@@ -66,6 +66,12 @@ import com.sun.jersey.multipart.FormDataParam;
  */
 @Path("/book")
 public class BookResource extends BaseResource {
+    // Magic Strings
+    private static final String BOOK_NOT_FOUND = "BookNotFound";
+    private static final String BOOK_ALREADY_ADDED = "BookAlreadyAdded";
+    private static final String BOOK_ALREADY_ADDED_ERROR = "Book already added";
+    private static final String VALIDATION_ERROR = "ValidationError";
+
     /**
      * Creates a new book.
      * 
@@ -92,7 +98,7 @@ public class BookResource extends BaseResource {
             try {
                 book = AppContext.getInstance().getBookDataService().searchBook(isbn);
             } catch (Exception e) {
-                throw new ClientException("BookNotFound", e.getCause().getMessage(), e);
+                throw new ClientException(BOOK_NOT_FOUND, e.getCause().getMessage(), e);
             }
  
             // Save the new book in database
@@ -109,7 +115,7 @@ public class BookResource extends BaseResource {
             userBook.setCreateDate(new Date());
             userBookDao.create(userBook);
         } else {
-            throw new ClientException("BookAlreadyAdded", "Book already added");
+            throw new ClientException(BOOK_ALREADY_ADDED, BOOK_ALREADY_ADDED_ERROR);
         }
  
         JSONObject response = new JSONObject();
@@ -137,7 +143,7 @@ public class BookResource extends BaseResource {
         UserBookDao userBookDao = new UserBookDao();
         UserBook userBook = userBookDao.getUserBook(userBookId, principal.getId());
         if (userBook == null) {
-            throw new ClientException("BookNotFound", "Book not found with id " + userBookId);
+            throw new ClientException(BOOK_NOT_FOUND, "Book not found with id " + userBookId);
         }
  
         // Delete the user book
@@ -201,7 +207,7 @@ public class BookResource extends BaseResource {
  
     private static void validateISBN(String isbn10, String isbn13) throws JSONException {
         if (Strings.isNullOrEmpty(isbn10) && Strings.isNullOrEmpty(isbn13)) {
-            throw new ClientException("ValidationError", "At least one ISBN number is mandatory");
+            throw new ClientException(VALIDATION_ERROR, "At least one ISBN number is mandatory");
         }
     }
  
@@ -246,7 +252,7 @@ public class BookResource extends BaseResource {
         Book existingBookIsbn10 = bookDao.getByIsbn(book.getIsbn10());
         Book existingBookIsbn13 = bookDao.getByIsbn(book.getIsbn13());
         if (existingBookIsbn10 != null || existingBookIsbn13 != null) {
-            throw new ClientException("BookAlreadyAdded", "Book already added");
+            throw new ClientException(BOOK_ALREADY_ADDED, BOOK_ALREADY_ADDED_ERROR);
         }
         bookDao.create(book);
     }
@@ -327,7 +333,7 @@ public class BookResource extends BaseResource {
         UserBookDao userBookDao = new UserBookDao();
         UserBook userBook = userBookDao.getUserBook(userBookId, principal.getId());
         if (userBook == null) {
-            throw new ClientException("BookNotFound", "Book not found with id " + userBookId);
+            throw new ClientException(BOOK_NOT_FOUND, "Book not found with id " + userBookId);
         }
         return userBook;
     }
@@ -342,14 +348,14 @@ public class BookResource extends BaseResource {
         if (!Strings.isNullOrEmpty(isbn10) && book.getIsbn10() != null && !book.getIsbn10().equals(isbn10)) {
             Book bookIsbn10 = bookDao.getByIsbn(isbn10);
             if (bookIsbn10 != null) {
-                throw new ClientException("BookAlreadyAdded", "Book already added");
+                throw new ClientException(BOOK_ALREADY_ADDED, BOOK_ALREADY_ADDED_ERROR);
             }
         }
  
         if (!Strings.isNullOrEmpty(isbn13) && book.getIsbn13() != null && !book.getIsbn13().equals(isbn13)) {
             Book bookIsbn13 = bookDao.getByIsbn(isbn13);
             if (bookIsbn13 != null) {
-                throw new ClientException("BookAlreadyAdded", "Book already added");
+                throw new ClientException(BOOK_ALREADY_ADDED, BOOK_ALREADY_ADDED_ERROR);
             }
         }
     }
@@ -411,7 +417,7 @@ public class BookResource extends BaseResource {
         UserBookDao userBookDao = new UserBookDao();
         UserBook userBook = userBookDao.getUserBook(userBookId, principal.getId());
         if (userBook == null) {
-            throw new ClientException("BookNotFound", "Book not found with id " + userBookId);
+            throw new ClientException(BOOK_NOT_FOUND, "Book not found with id " + userBookId);
         }
  
         // Fetch the book
@@ -510,7 +516,7 @@ public class BookResource extends BaseResource {
         UserBookDao userBookDao = new UserBookDao();
         UserBook userBook = userBookDao.getUserBook(userBookId, principal.getId());
         if (userBook == null) {
-            throw new ClientException("BookNotFound", "Book not found with id " + userBookId);
+            throw new ClientException(BOOK_NOT_FOUND, "Book not found with id " + userBookId);
         }
  
         // Get the book

@@ -12,7 +12,6 @@ import org.joda.time.DateTime;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Utility class to validate parameters.
@@ -20,11 +19,9 @@ import java.util.regex.Pattern;
  * @author jtremeaux
  */
 public class ValidationUtil {
-    private static Pattern EMAIL_PATTERN = Pattern.compile(".+@.+\\..+");
-
-    private static Pattern HTTP_URL_PATTERN = Pattern.compile("https?://.+");
-
-    private static Pattern ALPHANUMERIC_PATTERN = Pattern.compile("[a-zA-Z0-9_]+");
+    // Constants
+    public static final int PASSWORD_MIN_LENGTH = 8;
+    public static final int PASSWORD_MAX_LENGTH = 50;
 
     /**
      * Checks that the argument is not null.
@@ -86,6 +83,18 @@ public class ValidationUtil {
     }
 
     /**
+     * Validate a password.
+     * 
+     * @param s        String to validate
+     * @param nullable True if the string can be empty or null
+     * @return String without white spaces
+     * @throws ClientException
+     */
+    public static String validatePassword(String s, boolean nullable) throws JSONException {
+        return validateLength(s, "password", PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH, nullable);
+    }
+
+    /**
      * Checks if the string is not null and is not only whitespaces.
      * 
      * @param s    String to validate
@@ -106,51 +115,8 @@ public class ValidationUtil {
      * @throws JSONException
      */
     public static void validateHexColor(String s, String name, boolean nullable) throws JSONException {
-        ValidationUtil.validateLength(s, "name", 7, 7, nullable);
+        ValidationUtil.validateLength(s, name, 7, 7, nullable);
     }
-
-    /**
-     * Checks if the string is an email.
-     * 
-     * @param s    String to validate
-     * @param name Name of the parameter
-     * @throws JSONException
-     */
-    // public static void validateEmail(String s, String name) throws JSONException {
-    //     if (!EMAIL_PATTERN.matcher(s).matches()) {
-    //         throw new ClientException("ValidationError", MessageFormat.format("{0} must be an email", name));
-    //     }
-    // }
-
-    /**
-     * Validates that the provided string matches an URL with HTTP or HTTPS scheme.
-     * 
-     * @param s    String to validate
-     * @param name Name of the parameter
-     * @return Stripped URL
-     * @throws JSONException
-     */
-    // public static String validateHttpUrl(String s, String name) throws JSONException {
-    //     s = StringUtils.strip(s);
-    //     if (!HTTP_URL_PATTERN.matcher(s).matches()) {
-    //         throw new ClientException("ValidationError", MessageFormat.format("{0} must be an HTTP(s) URL", name));
-    //     }
-    //     return s;
-    // }
-
-    /**
-     * Checks if the string uses only alphanumerical or underscore characters.
-     * 
-     * @param s    String to validate
-     * @param name Name of the parameter
-     * @throws JSONException
-     */
-    // public static void validateAlphanumeric(String s, String name) throws JSONException {
-    //     if (!ALPHANUMERIC_PATTERN.matcher(s).matches()) {
-    //         throw new ClientException("ValidationError",
-    //                 MessageFormat.format("{0} must have only alphanumeric or underscore characters", name));
-    //     }
-    // }
 
     /**
      * Validates and parses a date.
@@ -228,42 +194,3 @@ public class ValidationUtil {
         return themeId;
     }
 }
-
-
-// public interface IValidator {
-//     void validate(String s, String name) throws JSONException;
-// }
-
-// public class EmailValidator implements IValidator {
-//     private static final Pattern EMAIL_PATTERN = Pattern.compile(".+@.+\\..+");
-
-//     @Override
-//     public void validate(String s, String name) throws JSONException {
-//         if (!EMAIL_PATTERN.matcher(s).matches()) {
-//             throw new ClientException("ValidationError", MessageFormat.format("{0} must be an email", name));
-//         }
-//     }
-// }
-
-// public class HttpUrlValidator implements IValidator {
-//     private static final Pattern HTTP_URL_PATTERN = Pattern.compile("https?://.+");
-
-//     @Override
-//     public void validate(String s, String name) throws JSONException {
-//         s = StringUtils.strip(s);
-//         if (!HTTP_URL_PATTERN.matcher(s).matches()) {
-//             throw new ClientException("ValidationError", MessageFormat.format("{0} must be an HTTP(s) URL", name));
-//         }
-//     }
-// }
-
-// public class AlphanumericValidator implements IValidator {
-//     private static final Pattern ALPHANUMERIC_PATTERN = Pattern.compile("[a-zA-Z0-9_]+");
-
-//     @Override
-//     public void validate(String s, String name) throws JSONException {
-//         if (!ALPHANUMERIC_PATTERN.matcher(s).matches()) {
-//             throw new ClientException("ValidationError", MessageFormat.format("{0} must have only alphanumeric or underscore characters", name));
-//         }
-//     }
-// }

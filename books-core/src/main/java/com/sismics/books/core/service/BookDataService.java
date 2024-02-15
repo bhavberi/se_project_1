@@ -27,6 +27,11 @@ import com.sismics.books.core.util.TransactionUtil;
  */
 public class BookDataService extends AbstractIdleService {
     /**
+     * Timeout for HTTP requests. In Milliseconds.
+     */
+    private static final int CONNECT_TIMEOUT = 10000;
+
+    /**
      * Logger.
      */
     private static final Logger log = LoggerFactory.getLogger(BookDataService.class);
@@ -55,7 +60,7 @@ public class BookDataService extends AbstractIdleService {
      * Open Library API Object.
      */
     private ASearcher openLibrarysearcher = new BookSearchOpenLib();
-
+  
     static {
         // Initialize date parser
         DateTimeParser[] parsers = {
@@ -132,7 +137,7 @@ public class BookDataService extends AbstractIdleService {
     @Override
     protected void shutDown() throws Exception {
         executor.shutdown();
-        executor.awaitTermination(10, TimeUnit.SECONDS);
+        executor.awaitTermination(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
         if (log.isInfoEnabled()) {
             log.info("Book data service stopped");
         }
