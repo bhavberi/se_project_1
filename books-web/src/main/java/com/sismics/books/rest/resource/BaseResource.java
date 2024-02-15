@@ -42,9 +42,9 @@ public abstract class BaseResource {
      * @return True if the user is authenticated and not anonymous
      */
     protected boolean authenticate() {
-        Principal principal = (Principal) request.getAttribute(TokenBasedSecurityFilter.PRINCIPAL_ATTRIBUTE);
-        if (principal != null && principal instanceof IPrincipal) {
-            this.principal = (IPrincipal) principal;
+        Principal newPrincipal = (Principal) request.getAttribute(TokenBasedSecurityFilter.PRINCIPAL_ATTRIBUTE);
+        if (newPrincipal != null && newPrincipal instanceof IPrincipal) {
+            this.principal = (IPrincipal) newPrincipal;
             return !this.principal.isAnonymous();
         } else {
             return false;
