@@ -193,4 +193,38 @@ public class ValidationUtil {
         }
         return themeId;
     }
+
+    /**
+     * Validates the input data for a book.
+     * 
+     * @param title          The title of the book
+     * @param subtitle       The subtitle of the book
+     * @param author         The author of the book
+     * @param description    The description of the book
+     * @param isbn10         The ISBN-10 of the book
+     * @param isbn13         The ISBN-13 of the book
+     * @param language       The language of the book
+     * @param publishDateStr The publish date of the book as a string
+     * @param update         True if the data is being updated, false if it's a new
+     *                       book
+     * @return The parsed publish date as a Date object
+     * @throws JSONException If there is an error in the JSON data
+     */
+    public static Date validateInputData(String title, String subtitle, String author, String description,
+            String isbn10, String isbn13, String language, String publishDateStr, Boolean update) throws JSONException {
+        ValidationUtil.validateLength(title, "title", 1, 255, update);
+        ValidationUtil.validateLength(subtitle, "subtitle", 1, 255, true);
+        ValidationUtil.validateLength(author, "author", 1, 255, update);
+        ValidationUtil.validateLength(description, "description", 1, 4000, true);
+        ValidationUtil.validateLength(isbn10, "isbn10", 10, 10, true);
+        ValidationUtil.validateLength(isbn13, "isbn13", 13, 13, true);
+        ValidationUtil.validateLength(language, "language", 2, 2, true);
+        return ValidationUtil.validateDate(publishDateStr, "publish_date", update);
+    }
+
+    public static void validateISBN(String isbn10, String isbn13) throws JSONException {
+        if (Strings.isNullOrEmpty(isbn10) && Strings.isNullOrEmpty(isbn13)) {
+            throw new ClientException("ValidationError", "At least one ISBN number is mandatory");
+        }
+    }
 }
