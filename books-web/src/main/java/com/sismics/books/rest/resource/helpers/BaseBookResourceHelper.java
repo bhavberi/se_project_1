@@ -1,4 +1,4 @@
-package com.sismics.books.rest.resource;
+package com.sismics.books.rest.resource.helpers;
 
 import java.text.MessageFormat;
 import java.util.Date;
@@ -22,8 +22,7 @@ import com.sismics.books.core.model.jpa.UserBook;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.security.IPrincipal;
 
-public class BaseBookResourcehelper {
-
+public class BaseBookResourceHelper {
     protected static final String BOOK_NOT_FOUND = "BookNotFound";
     protected static final String BOOK_ALREADY_ADDED = "BookAlreadyAdded";
     protected static final String BOOK_ALREADY_ADDED_ERROR = "Book already added";
@@ -114,9 +113,12 @@ public class BaseBookResourcehelper {
         }
     }
 
-    protected static void updateBook(Book book, String title, String subtitle, String author, String description,
-            String isbn10,
-            String isbn13, Long pageCount, String language, Date publishDate) {
+    protected static void updateBook(
+            Book book, String title,
+            String subtitle, String author,
+            String description, String isbn10,
+            String isbn13, Long pageCount,
+            String language, Date publishDate) {
         if (title != null) {
             book.setTitle(title);
         }

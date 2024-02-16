@@ -1,4 +1,4 @@
-package com.sismics.books.rest.resource;
+package com.sismics.books.rest.resource.helpers;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,7 +27,7 @@ import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.IPrincipal;
 import com.sun.jersey.multipart.FormDataBodyPart;
 
-public class AddBookResource extends BaseBookResourcehelper {
+public class AddBookResourceHelper extends BaseBookResourceHelper {
 
     private static final String BOOK_NOT_FOUND = "BookNotFound";
     private static final String BOOK_ALREADY_ADDED = "BookAlreadyAdded";

@@ -1,4 +1,4 @@
-package com.sismics.books.rest.resource;
+package com.sismics.books.rest.resource.helpers;
 
 import javax.ws.rs.core.Response;
 
@@ -10,7 +10,7 @@ import com.sismics.books.core.model.jpa.UserBook;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.security.IPrincipal;
 
-public class DeleteBookResource extends BaseBookResourcehelper {
+public class DeleteBookResourceHelper extends BaseBookResourceHelper {
     private static final String BOOK_NOT_FOUND = "BookNotFound";
 
     /**

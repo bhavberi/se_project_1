@@ -1,4 +1,4 @@
-package com.sismics.books.rest.resource;
+package com.sismics.books.rest.resource.helpers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +34,7 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.security.IPrincipal;
 
-public class GetBookResource extends BaseBookResourcehelper {
+public class GetBookResourceHelpers extends BaseBookResourceHelper {
 
     // Magic Strings
     private static final String BOOK_NOT_FOUND = "BookNotFound";
@@ -113,7 +113,8 @@ public class GetBookResource extends BaseBookResourcehelper {
             if (file.exists()) {
                 inputStream = new FileInputStream(file);
             } else {
-                inputStream = new FileInputStream(new File(GetBookResource.class.getResource("/dummy.png").getFile()));
+                inputStream = new FileInputStream(new File(
+                        GetBookResourceHelpers.class.getResource("/dummy.png").getFile()));
             }
         } catch (FileNotFoundException e) {
             throw new ServerException("FileNotFound", "Cover file not found", e);
