@@ -20,7 +20,7 @@ import org.codehaus.jettison.json.JSONException;
 import com.sismics.books.rest.resource.helpers.AddBookResourceHelper;
 import com.sismics.books.rest.resource.helpers.DeleteBookResourceHelper;
 import com.sismics.books.rest.resource.helpers.GetBookResourceHelpers;
-
+import com.sismics.books.rest.resource.helpers.UpdateBookResourceHelper;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
 
@@ -118,8 +118,8 @@ public class BookResource extends BaseResource {
             @FormParam("tags") List<String> tagList) throws JSONException {
         authenticate();
 
-        return UpdateBookResource.update(userBookId, title, subtitle, author, description, isbn10, isbn13, pageCount,
-                language, publishDateStr, tagList, principal);
+        return UpdateBookResourceHelper.update(userBookId, title, subtitle, author, description, isbn10,
+                isbn13, pageCount, language, publishDateStr, tagList, principal);
     }
 
     /**
@@ -170,7 +170,7 @@ public class BookResource extends BaseResource {
             @FormParam("url") String imageUrl) throws JSONException {
         authenticate();
 
-        return UpdateBookResource.updateCover(userBookId, imageUrl, principal);
+        return UpdateBookResourceHelper.updateCover(userBookId, imageUrl, principal);
     }
 
     /**
@@ -229,6 +229,6 @@ public class BookResource extends BaseResource {
             @FormParam("read") boolean read) throws JSONException {
         authenticate();
 
-        return UpdateBookResource.read(userBookId, read, principal);
+        return UpdateBookResourceHelper.read(userBookId, read, principal);
     }
 }

@@ -1,28 +1,16 @@
-package com.sismics.books.rest.resource;
+package com.sismics.books.rest.resource.helpers;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.sismics.books.core.dao.jpa.AuthenticationTokenDao;
 import com.sismics.books.core.dao.jpa.UserDao;
-import com.sismics.books.core.model.jpa.AuthenticationToken;
 import com.sismics.books.core.model.jpa.User;
-import com.sismics.books.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
-import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.IPrincipal;
-import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 public class UpdateUserResourceHelper {
     /**

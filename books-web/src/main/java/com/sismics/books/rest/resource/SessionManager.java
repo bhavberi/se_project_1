@@ -5,11 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
@@ -75,7 +70,6 @@ public class SessionManager {
      */
 
     public static Response logout(HttpServletRequest request) throws JSONException {
-
         // Get the value of the session token
         String authToken = null;
         if (request.getCookies() != null) {
@@ -155,7 +149,6 @@ public class SessionManager {
      */
 
     public static Response deleteSession(HttpServletRequest request, IPrincipal principal) throws JSONException {
-
         // Get the value of the session token
         String authToken = null;
         if (request.getCookies() != null) {

@@ -1,11 +1,7 @@
-package com.sismics.books.rest.resource;
+package com.sismics.books.rest.resource.helpers;
 
 import java.util.Date;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
@@ -14,7 +10,6 @@ import org.codehaus.jettison.json.JSONObject;
 import com.sismics.books.core.constant.Constants;
 import com.sismics.books.core.dao.jpa.UserDao;
 import com.sismics.books.core.model.jpa.User;
-import com.sismics.books.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.AlphanumericValidator;
 import com.sismics.rest.util.EmailValidator;
@@ -32,7 +27,8 @@ public class AddUserResourceHelper {
      * @return Response
      * @throws JSONException
      */
-    public static Response register(String username,String password,String localeId,String email) throws JSONException {
+    public static Response register(String username, String password, String email)
+            throws JSONException {
         // Validate the input data
         IValidator alphanumericValidator = new AlphanumericValidator();
         IValidator emailValidator = new EmailValidator();
