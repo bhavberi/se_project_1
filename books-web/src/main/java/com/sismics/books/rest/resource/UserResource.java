@@ -45,6 +45,8 @@ import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 
+import com.sismics.books.rest.resource.AddUserResourceHelper;
+
 /**
  * User REST resources.
  * 
@@ -73,40 +75,42 @@ public class UserResource extends BaseResource {
         authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
-        // Validate the input data
-        IValidator alphanumericValidator = new AlphanumericValidator();
-        IValidator emailValidator = new EmailValidator();
-        username = ValidationUtil.validateLength(username, "username", 3, 50);
-        alphanumericValidator.validate(username, "username");
-        password = ValidationUtil.validatePassword(password, false);
-        email = ValidationUtil.validateLength(email, "email", 3, 50);
-        emailValidator.validate(email, "email");
+        return AddUserResourceHelper.register(username, password, localeId, email);
+        // // Validate the input data
+        // IValidator alphanumericValidator = new AlphanumericValidator();
+        // IValidator emailValidator = new EmailValidator();
+        // username = ValidationUtil.validateLength(username, "username", 3, 50);
+        // alphanumericValidator.validate(username, "username");
+        // password = ValidationUtil.validatePassword(password, false);
+        // email = ValidationUtil.validateLength(email, "email", 3, 50);
+        // emailValidator.validate(email, "email");
 
-        // Create the user
-        User user = new User();
-        user.setRoleId(Constants.DEFAULT_USER_ROLE);
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setEmail(email);
-        user.setCreateDate(new Date());
-        user.setLocaleId(Constants.DEFAULT_LOCALE_ID);
+        // // Create the user
+        // User user = new User();
+        // user.setRoleId(Constants.DEFAULT_USER_ROLE);
+        // user.setUsername(username);
+        // user.setPassword(password);
+        // user.setEmail(email);
+        // user.setCreateDate(new Date());
+        // user.setLocaleId(Constants.DEFAULT_LOCALE_ID);
 
-        // Create the user
-        UserDao userDao = new UserDao();
-        try {
-            userDao.create(user);
-        } catch (Exception e) {
-            if ("AlreadyExistingUsername".equals(e.getMessage())) {
-                throw new ServerException("AlreadyExistingUsername", "Login already used", e);
-            } else {
-                throw new ServerException("UnknownError", "Unknown Server Error", e);
-            }
-        }
+        // // Create the user
+        // UserDao userDao = new UserDao();
+        // try {
+        // userDao.create(user);
+        // } catch (Exception e) {
+        // if ("AlreadyExistingUsername".equals(e.getMessage())) {
+        // throw new ServerException("AlreadyExistingUsername", "Login already used",
+        // e);
+        // } else {
+        // throw new ServerException("UnknownError", "Unknown Server Error", e);
+        // }
+        // }
 
-        // Always return OK
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // // Always return OK
+        // JSONObject response = new JSONObject();
+        // response.put("status", "ok");
+        // return Response.ok().entity(response).build();
     }
 
     /**
@@ -132,39 +136,41 @@ public class UserResource extends BaseResource {
 
         authenticate();
 
-        // Validate the input data
-        password = ValidationUtil.validatePassword(password, true);
-        email = ValidationUtil.validateLength(email, "email", null, 100, true);
-        localeId = ValidationUtil.validateLocale(localeId, "locale", true);
-        themeId = ValidationUtil.validateTheme(themeId, "theme", true);
+        return UpdateUserResourceHelper.update(password, email, themeId, localeId, firstConnection,
+                hasBaseFunction(BaseFunction.ADMIN), principal);
+        // // Validate the input data
+        // password = ValidationUtil.validatePassword(password, true);
+        // email = ValidationUtil.validateLength(email, "email", null, 100, true);
+        // localeId = ValidationUtil.validateLocale(localeId, "locale", true);
+        // themeId = ValidationUtil.validateTheme(themeId, "theme", true);
 
-        // Update the user
-        UserDao userDao = new UserDao();
-        User user = userDao.getActiveByUsername(principal.getName());
-        if (email != null) {
-            user.setEmail(email);
-        }
-        if (themeId != null) {
-            user.setTheme(themeId);
-        }
-        if (localeId != null) {
-            user.setLocaleId(localeId);
-        }
-        if (firstConnection != null && hasBaseFunction(BaseFunction.ADMIN)) {
-            user.setFirstConnection(firstConnection);
-        }
+        // // Update the user
+        // UserDao userDao = new UserDao();
+        // User user = userDao.getActiveByUsername(principal.getName());
+        // if (email != null) {
+        // user.setEmail(email);
+        // }
+        // if (themeId != null) {
+        // user.setTheme(themeId);
+        // }
+        // if (localeId != null) {
+        // user.setLocaleId(localeId);
+        // }
+        // if (firstConnection != null && hasBaseFunction(BaseFunction.ADMIN)) {
+        // user.setFirstConnection(firstConnection);
+        // }
 
-        user = userDao.update(user);
+        // user = userDao.update(user);
 
-        if (StringUtils.isNotBlank(password)) {
-            user.setPassword(password);
-            userDao.updatePassword(user);
-        }
+        // if (StringUtils.isNotBlank(password)) {
+        // user.setPassword(password);
+        // userDao.updatePassword(user);
+        // }
 
-        // Always return "ok"
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // // Always return "ok"
+        // JSONObject response = new JSONObject();
+        // response.put("status", "ok");
+        // return Response.ok().entity(response).build();
     }
 
     /**
@@ -191,42 +197,43 @@ public class UserResource extends BaseResource {
         authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
+        return UpdateUserResourceHelper.update(username, password, email, themeId, localeId);
         // Validate the input data
-        password = ValidationUtil.validatePassword(password, true);
-        email = ValidationUtil.validateLength(email, "email", null, 100, true);
-        localeId = ValidationUtil.validateLocale(localeId, "locale", true);
-        themeId = ValidationUtil.validateTheme(themeId, "theme", true);
+        // password = ValidationUtil.validatePassword(password, true);
+        // email = ValidationUtil.validateLength(email, "email", null, 100, true);
+        // localeId = ValidationUtil.validateLocale(localeId, "locale", true);
+        // themeId = ValidationUtil.validateTheme(themeId, "theme", true);
 
-        // Check if the user exists
-        UserDao userDao = new UserDao();
-        User user = userDao.getActiveByUsername(username);
-        if (user == null) {
-            throw new ClientException("UserNotFound", "The user doesn't exist");
-        }
+        // // Check if the user exists
+        // UserDao userDao = new UserDao();
+        // User user = userDao.getActiveByUsername(username);
+        // if (user == null) {
+        // throw new ClientException("UserNotFound", "The user doesn't exist");
+        // }
 
-        // Update the user
-        if (email != null) {
-            user.setEmail(email);
-        }
-        if (themeId != null) {
-            user.setTheme(themeId);
-        }
-        if (localeId != null) {
-            user.setLocaleId(localeId);
-        }
+        // // Update the user
+        // if (email != null) {
+        // user.setEmail(email);
+        // }
+        // if (themeId != null) {
+        // user.setTheme(themeId);
+        // }
+        // if (localeId != null) {
+        // user.setLocaleId(localeId);
+        // }
 
-        user = userDao.update(user);
+        // user = userDao.update(user);
 
-        if (StringUtils.isNotBlank(password)) {
-            // Change the password
-            user.setPassword(password);
-            userDao.updatePassword(user);
-        }
+        // if (StringUtils.isNotBlank(password)) {
+        // // Change the password
+        // user.setPassword(password);
+        // userDao.updatePassword(user);
+        // }
 
-        // Always return "ok"
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // // Always return "ok"
+        // JSONObject response = new JSONObject();
+        // response.put("status", "ok");
+        // return Response.ok().entity(response).build();
     }
 
     /**
@@ -241,22 +248,23 @@ public class UserResource extends BaseResource {
     public Response checkUsername(
             @QueryParam("username") String username) throws JSONException {
 
-        UserDao userDao = new UserDao();
-        User user = userDao.getActiveByUsername(username);
+        return GetResourceHelper.checkUsername(username);
+        // UserDao userDao = new UserDao();
+        // User user = userDao.getActiveByUsername(username);
 
-        JSONObject response = new JSONObject();
-        if (user != null) {
-            response.put("status", "ko");
-            response.put("message", "Username already registered");
-        } else {
-            response.put("status", "ok");
-        }
+        // JSONObject response = new JSONObject();
+        // if (user != null) {
+        // response.put("status", "ko");
+        // response.put("message", "Username already registered");
+        // } else {
+        // response.put("status", "ok");
+        // }
 
-        return Response.ok().entity(response).build();
+        // return Response.ok().entity(response).build();
     }
 
     /**
-     * This resource is used to authenticate the user and create a user ession.
+     * This resource is used to authenticate the user and create a user session.
      * The "session" is only used to identify the user, no other data is stored in
      * the session.
      * 
@@ -273,31 +281,33 @@ public class UserResource extends BaseResource {
             @FormParam("password") String password,
             @FormParam("remember") boolean longLasted) throws JSONException {
 
-        // Validate the input data
-        username = StringUtils.strip(username);
-        password = StringUtils.strip(password);
+        return SessionManager.login(username, password, longLasted);
+        // // Validate the input data
+        // username = StringUtils.strip(username);
+        // password = StringUtils.strip(password);
 
-        // Get the user
-        UserDao userDao = new UserDao();
-        String userId = userDao.authenticate(username, password);
-        if (userId == null) {
-            throw new ForbiddenClientException();
-        }
+        // // Get the user
+        // UserDao userDao = new UserDao();
+        // String userId = userDao.authenticate(username, password);
+        // if (userId == null) {
+        // throw new ForbiddenClientException();
+        // }
 
-        // Create a new session token
-        AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
-        AuthenticationToken authenticationToken = new AuthenticationToken();
-        authenticationToken.setUserId(userId);
-        authenticationToken.setLongLasted(longLasted);
-        String token = authenticationTokenDao.create(authenticationToken);
+        // // Create a new session token
+        // AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
+        // AuthenticationToken authenticationToken = new AuthenticationToken();
+        // authenticationToken.setUserId(userId);
+        // authenticationToken.setLongLasted(longLasted);
+        // String token = authenticationTokenDao.create(authenticationToken);
 
-        // Cleanup old session tokens
-        authenticationTokenDao.deleteOldSessionToken(userId);
+        // // Cleanup old session tokens
+        // authenticationTokenDao.deleteOldSessionToken(userId);
 
-        JSONObject response = new JSONObject();
-        int maxAge = longLasted ? TokenBasedSecurityFilter.TOKEN_LONG_LIFETIME : -1;
-        NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, token, "/", null, null, maxAge, false);
-        return Response.ok().entity(response).cookie(cookie).build();
+        // JSONObject response = new JSONObject();
+        // int maxAge = longLasted ? TokenBasedSecurityFilter.TOKEN_LONG_LIFETIME : -1;
+        // NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, token,
+        // "/", null, null, maxAge, false);
+        // return Response.ok().entity(response).cookie(cookie).build();
     }
 
     /**
@@ -310,40 +320,41 @@ public class UserResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response logout() throws JSONException {
         authenticate();
+        return SessionManager.logout(request);
+        // // Get the value of the session token
+        // String authToken = null;
+        // if (request.getCookies() != null) {
+        // for (Cookie cookie : request.getCookies()) {
+        // if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
+        // authToken = cookie.getValue();
+        // }
+        // }
+        // }
 
-        // Get the value of the session token
-        String authToken = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
-                    authToken = cookie.getValue();
-                }
-            }
-        }
+        // AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
+        // AuthenticationToken authenticationToken = null;
+        // if (authToken != null) {
+        // authenticationToken = authenticationTokenDao.get(authToken);
+        // }
 
-        AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
-        AuthenticationToken authenticationToken = null;
-        if (authToken != null) {
-            authenticationToken = authenticationTokenDao.get(authToken);
-        }
+        // // No token : nothing to do
+        // if (authenticationToken == null) {
+        // throw new ForbiddenClientException();
+        // }
 
-        // No token : nothing to do
-        if (authenticationToken == null) {
-            throw new ForbiddenClientException();
-        }
+        // // Deletes the server token
+        // try {
+        // authenticationTokenDao.delete(authToken);
+        // } catch (Exception e) {
+        // throw new ServerException("AuthenticationTokenError", "Error deleting
+        // authentication token: " + authToken,
+        // e);
+        // }
 
-        // Deletes the server token
-        try {
-            authenticationTokenDao.delete(authToken);
-        } catch (Exception e) {
-            throw new ServerException("AuthenticationTokenError", "Error deleting authentication token: " + authToken,
-                    e);
-        }
-
-        // Deletes the client token in the HTTP response
-        JSONObject response = new JSONObject();
-        NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, null);
-        return Response.ok().entity(response).cookie(cookie).build();
+        // // Deletes the client token in the HTTP response
+        // JSONObject response = new JSONObject();
+        // NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, null);
+        // return Response.ok().entity(response).cookie(cookie).build();
     }
 
     /**
@@ -355,20 +366,21 @@ public class UserResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete() throws JSONException {
         authenticate();
+        return DeleteUserResourceHelper.delete(hasBaseFunction(BaseFunction.ADMIN), principal);
+        // // Ensure that the admin user is not deleted
+        // if (hasBaseFunction(BaseFunction.ADMIN)) {
+        // throw new ClientException("ForbiddenError", "The admin user cannot be
+        // deleted");
+        // }
 
-        // Ensure that the admin user is not deleted
-        if (hasBaseFunction(BaseFunction.ADMIN)) {
-            throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
-        }
+        // // Delete the user
+        // UserDao userDao = new UserDao();
+        // userDao.delete(principal.getName());
 
-        // Delete the user
-        UserDao userDao = new UserDao();
-        userDao.delete(principal.getName());
-
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // // Always return ok
+        // JSONObject response = new JSONObject();
+        // response.put("status", "ok");
+        // return Response.ok().entity(response).build();
     }
 
     /**
@@ -385,27 +397,29 @@ public class UserResource extends BaseResource {
         authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
-        // Check if the user exists
-        UserDao userDao = new UserDao();
-        User user = userDao.getActiveByUsername(username);
-        if (user == null) {
-            throw new ClientException("UserNotFound", "The user doesn't exist");
-        }
+        return DeleteUserResourceHelper.delete(username);
+        // // Check if the user exists
+        // UserDao userDao = new UserDao();
+        // User user = userDao.getActiveByUsername(username);
+        // if (user == null) {
+        // throw new ClientException("UserNotFound", "The user doesn't exist");
+        // }
 
-        // Ensure that the admin user is not deleted
-        RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
-        Set<String> baseFunctionSet = userBaseFuction.findByRoleId(user.getRoleId());
-        if (baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
-            throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
-        }
+        // // Ensure that the admin user is not deleted
+        // RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
+        // Set<String> baseFunctionSet = userBaseFuction.findByRoleId(user.getRoleId());
+        // if (baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
+        // throw new ClientException("ForbiddenError", "The admin user cannot be
+        // deleted");
+        // }
 
-        // Delete the user
-        userDao.delete(user.getUsername());
+        // // Delete the user
+        // userDao.delete(user.getUsername());
 
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // // Always return ok
+        // JSONObject response = new JSONObject();
+        // response.put("status", "ok");
+        // return Response.ok().entity(response).build();
     }
 
     /**
@@ -417,32 +431,36 @@ public class UserResource extends BaseResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response info() throws JSONException {
-        JSONObject response = new JSONObject();
-        if (!authenticateCheck()) {
-            response.put("anonymous", true);
+        return GetResourceHelper.info(authenticateCheck(), hasBaseFunction(BaseFunction.ADMIN), principal);
+        // JSONObject response = new JSONObject();
+        // if (!authenticateCheck()) {
+        // response.put("anonymous", true);
 
-            // Check if admin has the default password
-            UserDao userDao = new UserDao();
-            User adminUser = userDao.getById("admin");
-            if (adminUser != null && adminUser.getDeleteDate() == null) {
-                response.put("is_default_password", Constants.DEFAULT_ADMIN_PASSWORD.equals(adminUser.getPassword()));
-            }
-        } else {
-            response.put("anonymous", false);
-            UserDao userDao = new UserDao();
-            User user = userDao.getById(principal.getId());
-            response.put("username", user.getUsername());
-            response.put("email", user.getEmail());
-            response.put("theme", user.getTheme());
-            response.put("locale", user.getLocaleId());
-            response.put("first_connection", user.isFirstConnection());
-            JSONArray baseFunctions = new JSONArray(((UserPrincipal) principal).getBaseFunctionSet());
-            response.put("base_functions", baseFunctions);
-            response.put("is_default_password",
-                    hasBaseFunction(BaseFunction.ADMIN) && Constants.DEFAULT_ADMIN_PASSWORD.equals(user.getPassword()));
-        }
+        // // Check if admin has the default password
+        // UserDao userDao = new UserDao();
+        // User adminUser = userDao.getById("admin");
+        // if (adminUser != null && adminUser.getDeleteDate() == null) {
+        // response.put("is_default_password",
+        // Constants.DEFAULT_ADMIN_PASSWORD.equals(adminUser.getPassword()));
+        // }
+        // } else {
+        // response.put("anonymous", false);
+        // UserDao userDao = new UserDao();
+        // User user = userDao.getById(principal.getId());
+        // response.put("username", user.getUsername());
+        // response.put("email", user.getEmail());
+        // response.put("theme", user.getTheme());
+        // response.put("locale", user.getLocaleId());
+        // response.put("first_connection", user.isFirstConnection());
+        // JSONArray baseFunctions = new JSONArray(((UserPrincipal)
+        // principal).getBaseFunctionSet());
+        // response.put("base_functions", baseFunctions);
+        // response.put("is_default_password",
+        // hasBaseFunction(BaseFunction.ADMIN) &&
+        // Constants.DEFAULT_ADMIN_PASSWORD.equals(user.getPassword()));
+        // }
 
-        return Response.ok().entity(response).build();
+        // return Response.ok().entity(response).build();
     }
 
     /**
@@ -459,20 +477,21 @@ public class UserResource extends BaseResource {
         authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
-        JSONObject response = new JSONObject();
+        return GetResourceHelper.view(username);
+        // JSONObject response = new JSONObject();
 
-        UserDao userDao = new UserDao();
-        User user = userDao.getActiveByUsername(username);
-        if (user == null) {
-            throw new ClientException("UserNotFound", "The user doesn't exist");
-        }
+        // UserDao userDao = new UserDao();
+        // User user = userDao.getActiveByUsername(username);
+        // if (user == null) {
+        // throw new ClientException("UserNotFound", "The user doesn't exist");
+        // }
 
-        response.put("username", user.getUsername());
-        response.put("email", user.getEmail());
-        response.put("theme", user.getTheme());
-        response.put("locale", user.getLocaleId());
+        // response.put("username", user.getUsername());
+        // response.put("email", user.getEmail());
+        // response.put("theme", user.getTheme());
+        // response.put("locale", user.getLocaleId());
 
-        return Response.ok().entity(response).build();
+        // return Response.ok().entity(response).build();
     }
 
     /**
@@ -496,26 +515,27 @@ public class UserResource extends BaseResource {
         authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
-        JSONObject response = new JSONObject();
-        List<JSONObject> users = new ArrayList<>();
+        return GetResourceHelper.list(limit, offset, sortColumn, asc);
+        // JSONObject response = new JSONObject();
+        // List<JSONObject> users = new ArrayList<>();
 
-        PaginatedList<UserDto> paginatedList = PaginatedLists.create(limit, offset);
-        SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
+        // PaginatedList<UserDto> paginatedList = PaginatedLists.create(limit, offset);
+        // SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
 
-        UserDao userDao = new UserDao();
-        userDao.findAll(paginatedList, sortCriteria);
-        for (UserDto userDto : paginatedList.getResultList()) {
-            JSONObject user = new JSONObject();
-            user.put("id", userDto.getId());
-            user.put("username", userDto.getUsername());
-            user.put("email", userDto.getEmail());
-            user.put("create_date", userDto.getCreateTimestamp());
-            users.add(user);
-        }
-        response.put("total", paginatedList.getResultCount());
-        response.put("users", users);
+        // UserDao userDao = new UserDao();
+        // userDao.findAll(paginatedList, sortCriteria);
+        // for (UserDto userDto : paginatedList.getResultList()) {
+        // JSONObject user = new JSONObject();
+        // user.put("id", userDto.getId());
+        // user.put("username", userDto.getUsername());
+        // user.put("email", userDto.getEmail());
+        // user.put("create_date", userDto.getCreateTimestamp());
+        // users.add(user);
+        // }
+        // response.put("total", paginatedList.getResultCount());
+        // response.put("users", users);
 
-        return Response.ok().entity(response).build();
+        // return Response.ok().entity(response).build();
     }
 
     /**
@@ -529,34 +549,36 @@ public class UserResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response session() throws JSONException {
         authenticate();
+        return SessionManager.session(request, principal);
+        // // Get the value of the session token
+        // String authToken = null;
+        // if (request.getCookies() != null) {
+        // for (Cookie cookie : request.getCookies()) {
+        // if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
+        // authToken = cookie.getValue();
+        // }
+        // }
+        // }
 
-        // Get the value of the session token
-        String authToken = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
-                    authToken = cookie.getValue();
-                }
-            }
-        }
+        // JSONObject response = new JSONObject();
+        // List<JSONObject> sessions = new ArrayList<>();
 
-        JSONObject response = new JSONObject();
-        List<JSONObject> sessions = new ArrayList<>();
+        // AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
 
-        AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
+        // for (AuthenticationToken authenticationToken :
+        // authenticationTokenDao.getByUserId(principal.getId())) {
+        // JSONObject session = new JSONObject();
+        // session.put("create_date", authenticationToken.getCreationDate().getTime());
+        // if (authenticationToken.getLastConnectionDate() != null) {
+        // session.put("last_connection_date",
+        // authenticationToken.getLastConnectionDate().getTime());
+        // }
+        // session.put("current", authenticationToken.getId().equals(authToken));
+        // sessions.add(session);
+        // }
+        // response.put("sessions", sessions);
 
-        for (AuthenticationToken authenticationToken : authenticationTokenDao.getByUserId(principal.getId())) {
-            JSONObject session = new JSONObject();
-            session.put("create_date", authenticationToken.getCreationDate().getTime());
-            if (authenticationToken.getLastConnectionDate() != null) {
-                session.put("last_connection_date", authenticationToken.getLastConnectionDate().getTime());
-            }
-            session.put("current", authenticationToken.getId().equals(authToken));
-            sessions.add(session);
-        }
-        response.put("sessions", sessions);
-
-        return Response.ok().entity(response).build();
+        // return Response.ok().entity(response).build();
     }
 
     /**
@@ -571,23 +593,24 @@ public class UserResource extends BaseResource {
     public Response deleteSession() throws JSONException {
         authenticate();
 
-        // Get the value of the session token
-        String authToken = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
-                    authToken = cookie.getValue();
-                }
-            }
-        }
+        return SessionManager.deleteSession(request, principal);
+        // // Get the value of the session token
+        // String authToken = null;
+        // if (request.getCookies() != null) {
+        // for (Cookie cookie : request.getCookies()) {
+        // if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
+        // authToken = cookie.getValue();
+        // }
+        // }
+        // }
 
-        // Remove other tokens
-        AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
-        authenticationTokenDao.deleteByUserId(principal.getId(), authToken);
+        // // Remove other tokens
+        // AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
+        // authenticationTokenDao.deleteByUserId(principal.getId(), authToken);
 
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // // Always return ok
+        // JSONObject response = new JSONObject();
+        // response.put("status", "ok");
+        // return Response.ok().entity(response).build();
     }
 }
