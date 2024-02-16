@@ -33,7 +33,6 @@ import com.sismics.books.core.service.facebook.PermissionException;
 import com.sismics.books.core.util.jpa.PaginatedList;
 import com.sismics.books.core.util.jpa.PaginatedLists;
 import com.sismics.rest.exception.ClientException;
-import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 
 /**

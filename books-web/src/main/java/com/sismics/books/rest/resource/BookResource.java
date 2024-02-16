@@ -20,7 +20,6 @@ import org.codehaus.jettison.json.JSONException;
 import com.sismics.books.rest.resource.helpers.AddBookResourceHelper;
 import com.sismics.books.rest.resource.helpers.DeleteBookResourceHelper;
 import com.sismics.books.rest.resource.helpers.GetBookResourceHelpers;
-import com.sismics.rest.exception.ForbiddenClientException;
 
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;

@@ -26,7 +26,6 @@ import com.sismics.books.core.util.ConfigUtil;
 import com.sismics.books.core.util.jpa.PaginatedList;
 import com.sismics.books.core.util.jpa.PaginatedLists;
 import com.sismics.books.rest.constant.BaseFunction;
-import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.log4j.LogCriteria;
