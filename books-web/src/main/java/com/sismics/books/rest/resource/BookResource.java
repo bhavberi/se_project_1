@@ -17,6 +17,9 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 
+import com.sismics.books.rest.resource.helpers.AddBookResourceHelper;
+import com.sismics.books.rest.resource.helpers.DeleteBookResourceHelper;
+import com.sismics.books.rest.resource.helpers.GetBookResourceHelpers;
 import com.sismics.rest.exception.ForbiddenClientException;
 
 import com.sun.jersey.multipart.FormDataBodyPart;
@@ -41,12 +44,9 @@ public class BookResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(
             @FormParam("isbn") String isbn) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
-        return AddBookResource.add(isbn, principal);
-
+        return AddBookResourceHelper.add(isbn, principal);
     }
 
     /**
@@ -61,11 +61,8 @@ public class BookResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
             @PathParam("id") String userBookId) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        return DeleteBookResource.delete(userBookId, principal);
-
+        authenticate();
+        return DeleteBookResourceHelper.delete(userBookId, principal);
     }
 
     /**
@@ -90,12 +87,10 @@ public class BookResource extends BaseResource {
             @FormParam("language") String language,
             @FormParam("publish_date") String publishDateStr,
             @FormParam("tags") List<String> tagList) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
-        return AddBookResource.add_manual(title, subtitle, author, description, isbn10, isbn13, pageCount, language,
-                publishDateStr, tagList, principal);
+        return AddBookResourceHelper.add_manual(title, subtitle, author, description, isbn10, isbn13,
+                pageCount, language, publishDateStr, tagList, principal);
 
     }
 
@@ -122,9 +117,7 @@ public class BookResource extends BaseResource {
             @FormParam("language") String language,
             @FormParam("publish_date") String publishDateStr,
             @FormParam("tags") List<String> tagList) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         return UpdateBookResource.update(userBookId, title, subtitle, author, description, isbn10, isbn13, pageCount,
                 language, publishDateStr, tagList, principal);
@@ -142,11 +135,9 @@ public class BookResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(
             @PathParam("id") String userBookId) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
-        return GetBookResource.get(userBookId, principal);
+        return GetBookResourceHelpers.get(userBookId, principal);
     }
 
     /**
@@ -162,8 +153,7 @@ public class BookResource extends BaseResource {
     public Response cover(
             @PathParam("id") final String userBookId) throws JSONException {
 
-        return GetBookResource.cover(userBookId);
-
+        return GetBookResourceHelpers.cover(userBookId);
     }
 
     /**
@@ -179,12 +169,9 @@ public class BookResource extends BaseResource {
     public Response updateCover(
             @PathParam("id") String userBookId,
             @FormParam("url") String imageUrl) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         return UpdateBookResource.updateCover(userBookId, imageUrl, principal);
-
     }
 
     /**
@@ -206,10 +193,8 @@ public class BookResource extends BaseResource {
             @QueryParam("search") String search,
             @QueryParam("read") Boolean read,
             @QueryParam("tag") String tagName) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        return GetBookResource.list(limit, offset, sortColumn, asc, search, read, tagName, principal);
+        authenticate();
+        return GetBookResourceHelpers.list(limit, offset, sortColumn, asc, search, read, tagName, principal);
     }
 
     /**
@@ -224,12 +209,9 @@ public class BookResource extends BaseResource {
     @Path("import")
     public Response importFile(
             @FormDataParam("file") FormDataBodyPart fileBodyPart) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
-        return AddBookResource.importFile(fileBodyPart, principal);
-
+        return AddBookResourceHelper.importFile(fileBodyPart, principal);
     }
 
     /**
@@ -246,11 +228,8 @@ public class BookResource extends BaseResource {
     public Response read(
             @PathParam("id") final String userBookId,
             @FormParam("read") boolean read) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         return UpdateBookResource.read(userBookId, read, principal);
-
     }
 }

@@ -13,11 +13,12 @@ import com.sismics.books.core.dao.jpa.UserBookDao;
 import com.sismics.books.core.model.jpa.Book;
 import com.sismics.books.core.model.jpa.UserBook;
 import com.sismics.books.core.service.ASearcher;
+import com.sismics.books.rest.resource.helpers.BaseBookResourceHelper;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.IPrincipal;
 
-public class UpdateBookResource extends BaseBookResourcehelper {
+public class UpdateBookResource extends BaseBookResourceHelper {
 
     // Magic Strings
     private static final String BOOK_NOT_FOUND = "BookNotFound";

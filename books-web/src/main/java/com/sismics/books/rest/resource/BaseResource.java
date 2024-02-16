@@ -41,13 +41,19 @@ public abstract class BaseResource {
      * 
      * @return True if the user is authenticated and not anonymous
      */
-    protected boolean authenticate() {
+
+    protected boolean authenticateCheck(){
         Principal newPrincipal = (Principal) request.getAttribute(TokenBasedSecurityFilter.PRINCIPAL_ATTRIBUTE);
         if (newPrincipal != null && newPrincipal instanceof IPrincipal) {
             this.principal = (IPrincipal) newPrincipal;
             return !this.principal.isAnonymous();
-        } else {
-            return false;
+        }
+        return false;
+    }
+    
+    protected void authenticate() throws JSONException {        
+        if (!authenticateCheck()) {
+            throw new ForbiddenClientException();
         }
     }
 

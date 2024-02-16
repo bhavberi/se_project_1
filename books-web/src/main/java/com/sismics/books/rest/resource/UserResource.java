@@ -70,9 +70,7 @@ public class UserResource extends BaseResource {
             @FormParam("locale") String localeId,
             @FormParam("email") String email) throws JSONException {
 
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Validate the input data
@@ -132,9 +130,7 @@ public class UserResource extends BaseResource {
             @FormParam("locale") String localeId,
             @FormParam("first_connection") Boolean firstConnection) throws JSONException {
 
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Validate the input data
         password = ValidationUtil.validatePassword(password, true);
@@ -192,9 +188,7 @@ public class UserResource extends BaseResource {
             @FormParam("theme") String themeId,
             @FormParam("locale") String localeId) throws JSONException {
 
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Validate the input data
@@ -315,9 +309,7 @@ public class UserResource extends BaseResource {
     @Path("logout")
     @Produces(MediaType.APPLICATION_JSON)
     public Response logout() throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Get the value of the session token
         String authToken = null;
@@ -362,9 +354,7 @@ public class UserResource extends BaseResource {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete() throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Ensure that the admin user is not deleted
         if (hasBaseFunction(BaseFunction.ADMIN)) {
@@ -392,9 +382,7 @@ public class UserResource extends BaseResource {
     @Path("{username: [a-zA-Z0-9_]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("username") String username) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Check if the user exists
@@ -430,7 +418,7 @@ public class UserResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response info() throws JSONException {
         JSONObject response = new JSONObject();
-        if (!authenticate()) {
+        if (!authenticateCheck()) {
             response.put("anonymous", true);
 
             // Check if admin has the default password
@@ -468,9 +456,7 @@ public class UserResource extends BaseResource {
     @Path("{username: [a-zA-Z0-9_]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response view(@PathParam("username") String username) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
         JSONObject response = new JSONObject();
@@ -507,9 +493,7 @@ public class UserResource extends BaseResource {
             @QueryParam("offset") Integer offset,
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
         JSONObject response = new JSONObject();
@@ -544,9 +528,7 @@ public class UserResource extends BaseResource {
     @Path("session")
     @Produces(MediaType.APPLICATION_JSON)
     public Response session() throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Get the value of the session token
         String authToken = null;
@@ -587,9 +569,7 @@ public class UserResource extends BaseResource {
     @Path("session")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteSession() throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Get the value of the session token
         String authToken = null;

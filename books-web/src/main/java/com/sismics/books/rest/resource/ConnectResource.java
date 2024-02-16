@@ -53,9 +53,7 @@ public class ConnectResource extends BaseResource {
     @Path("list")
     @Produces(MediaType.APPLICATION_JSON)
     public Response list() throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Search connected applications
         UserAppDao userAppDao = new UserAppDao();
@@ -90,9 +88,7 @@ public class ConnectResource extends BaseResource {
     public Response add(
             @PathParam("id") String appIdString,
             @FormParam("access_token") String accessToken) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Validate input data
         accessToken = ValidationUtil.validateStringNotBlank(accessToken, "access_token");
@@ -158,9 +154,7 @@ public class ConnectResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response remove(
             @PathParam("id") String appIdString) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Get application to remove
         AppId appId = getAppId(appIdString);
@@ -189,9 +183,7 @@ public class ConnectResource extends BaseResource {
     public Response update(
             @PathParam("id") String appIdString,
             @FormParam("sharing") boolean sharing) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Get application to update
         AppId appId = getAppId(appIdString);
@@ -231,9 +223,7 @@ public class ConnectResource extends BaseResource {
             @QueryParam("query") String query,
             @QueryParam("limit") Integer limit,
             @QueryParam("offset") Integer offset) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Get application
         AppId appId = getAppId(appIdString);

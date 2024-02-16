@@ -49,9 +49,7 @@ public class AppResource extends BaseResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response info() throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         ResourceBundle configBundle = ConfigUtil.getConfigBundle();
         String currentVersion = configBundle.getString("api.current_version");
@@ -81,9 +79,7 @@ public class AppResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
             @FormParam("api_key_google") String apiKeyGoogle) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Validate input data
@@ -119,9 +115,7 @@ public class AppResource extends BaseResource {
             @QueryParam("message") String message,
             @QueryParam("limit") Integer limit,
             @QueryParam("offset") Integer offset) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Get the memory appender
