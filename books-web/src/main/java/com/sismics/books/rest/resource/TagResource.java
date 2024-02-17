@@ -37,6 +37,14 @@ public class TagResource extends BaseResource {
     private static final String TAG_ALREADY_EXISTS = "AlreadyExistingTag";
     private static final String SPACES_NOT_ALLOWED = "SpacesNotAllowed";
 
+    private Tag getTag(TagDao tagDao, String tagId) throws JSONException {
+        Tag tag = tagDao.getByTagId(principal.getId(), tagId);
+        if (tag == null) {
+            throw new ClientException(TAG_NOT_FOUND, MessageFormat.format("Tag not found: {0}", tagId));
+        }
+        return tag;
+    }
+
     /**
      * Returns the list of all tags.
      * 
@@ -91,15 +99,12 @@ public class TagResource extends BaseResource {
             throw new ClientException(SPACES_NOT_ALLOWED, "Spaces are not allowed in tag name");
         }
 
-        // Get the tag
+        // Get the tag for verification
         TagDao tagDao = new TagDao();
-        Tag tag = tagDao.getByName(principal.getId(), name);
-        if (tag != null) {
-            throw new ClientException(TAG_ALREADY_EXISTS, MessageFormat.format("Tag already exists: {0}", name));
-        }
+        getTag(tagDao, name);
 
         // Create the tag
-        tag = new Tag();
+        Tag tag = new Tag();
         tag.setName(name);
         tag.setColor(color);
         tag.setUserId(principal.getId());
@@ -139,10 +144,7 @@ public class TagResource extends BaseResource {
 
         // Get the tag
         TagDao tagDao = new TagDao();
-        Tag tag = tagDao.getByTagId(principal.getId(), id);
-        if (tag == null) {
-            throw new ClientException(TAG_NOT_FOUND, MessageFormat.format("Tag not found: {0}", id));
-        }
+        Tag tag = getTag(tagDao, id);
 
         // Check for name duplicate
         Tag tagDuplicate = tagDao.getByName(principal.getId(), name);
@@ -179,12 +181,9 @@ public class TagResource extends BaseResource {
             throw new ForbiddenClientException();
         }
 
-        // Get the tag
+        // Get the tag for verification
         TagDao tagDao = new TagDao();
-        Tag tag = tagDao.getByTagId(principal.getId(), tagId);
-        if (tag == null) {
-            throw new ClientException(TAG_NOT_FOUND, MessageFormat.format("Tag not found: {0}", tagId));
-        }
+        getTag(tagDao, tagId);
 
         // Delete the tag
         tagDao.delete(tagId);
