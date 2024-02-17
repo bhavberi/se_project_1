@@ -18,7 +18,11 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  * 
  * @author bgamard
  */
-public class TestTagResource extends BaseJerseyTest {
+public class TestTagResource {
+
+    BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
+    };
+
     /**
      * Test the tag resource.
      * 
@@ -27,11 +31,11 @@ public class TestTagResource extends BaseJerseyTest {
     @Test
     public void testTagResource() throws JSONException {
         // Login tag1
-        clientUtil.createUser("tag1");
-        String tag1Token = clientUtil.login("tag1");
+        baseJerseyTest.clientUtil.createUser("tag1");
+        String tag1Token = baseJerseyTest.clientUtil.login("tag1");
 
         // Create a tag
-        WebResource tagResource = resource().path("/tag");
+        WebResource tagResource = baseJerseyTest.resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
         postParams.add("name", "Tag3");
@@ -43,7 +47,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertNotNull(tag3Id);
 
         // Create a tag
-        tagResource = resource().path("/tag");
+        tagResource = baseJerseyTest.resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("name", "Tag4");
@@ -55,7 +59,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertNotNull(tag4Id);
 
         // Create a tag with space (not allowed)
-        tagResource = resource().path("/tag");
+        tagResource = baseJerseyTest.resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("name", "Tag 4");
@@ -63,7 +67,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
 
         // Create a book
-        WebResource bookResource = resource().path("/book");
+        WebResource bookResource = baseJerseyTest.resource().path("/book");
         bookResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("isbn", "9781468304930");
@@ -73,7 +77,7 @@ public class TestTagResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
 
         // Create a book
-        bookResource = resource().path("/book");
+        bookResource = baseJerseyTest.resource().path("/book");
         bookResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("isbn", "0553293400");
@@ -83,7 +87,7 @@ public class TestTagResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
 
         // Get all tags
-        tagResource = resource().path("/tag/list");
+        tagResource = baseJerseyTest.resource().path("/tag/list");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         response = tagResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -94,7 +98,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals("#00ff00", tags.getJSONObject(1).getString("color"));
 
         // Update a tag
-        tagResource = resource().path("/tag/" + tag4Id);
+        tagResource = baseJerseyTest.resource().path("/tag/" + tag4Id);
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("name", "UpdatedName");
@@ -105,7 +109,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(tag4Id, json.getString("id"));
 
         // Get all tags
-        tagResource = resource().path("/tag/list");
+        tagResource = baseJerseyTest.resource().path("/tag/list");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         response = tagResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -116,7 +120,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals("#0000ff", tags.getJSONObject(1).getString("color"));
 
         // Deletes a tag
-        tagResource = resource().path("/tag/" + tag4Id);
+        tagResource = baseJerseyTest.resource().path("/tag/" + tag4Id);
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         response = tagResource.delete(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -124,7 +128,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals("ok", json.getString("status"));
 
         // Get all tags
-        tagResource = resource().path("/tag/list");
+        tagResource = baseJerseyTest.resource().path("/tag/list");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         response = tagResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));

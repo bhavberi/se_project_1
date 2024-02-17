@@ -17,7 +17,11 @@ import org.junit.Test;
  * 
  * @author jtremeaux
  */
-public class TestAppResource extends BaseJerseyTest {
+public class TestAppResource {
+
+    BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
+    };
+
     /**
      * Test the app resource.
      * 
@@ -26,10 +30,10 @@ public class TestAppResource extends BaseJerseyTest {
     @Test
     public void testAppResource() throws JSONException {
         // Login admin
-        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        String adminAuthenticationToken = baseJerseyTest.clientUtil.login("admin", "admin", false);
 
         // Check the application info
-        WebResource appResource = resource().path("/app");
+        WebResource appResource = baseJerseyTest.resource().path("/app");
         appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
         ClientResponse response = appResource.get(ClientResponse.class);
         response = appResource.get(ClientResponse.class);
@@ -44,7 +48,7 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
 
         // Update config
-        appResource = resource().path("/app");
+        appResource = baseJerseyTest.resource().path("/app");
         appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
         postParams.add("api_key_google", json.getString("api_key_google"));
@@ -60,10 +64,10 @@ public class TestAppResource extends BaseJerseyTest {
     @Test
     public void testLogResource() throws JSONException {
         // Login admin
-        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        String adminAuthenticationToken = baseJerseyTest.clientUtil.login("admin", "admin", false);
 
         // Check the logs (page 1)
-        WebResource appResource = resource()
+        WebResource appResource = baseJerseyTest.resource()
                 .path("/app/log")
                 .queryParam("level", "DEBUG");
         ClientResponse response = appResource.get(ClientResponse.class);
@@ -78,7 +82,7 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertTrue(date1 > date2);
 
         // Check the logs (page 2)
-        appResource = resource()
+        appResource = baseJerseyTest.resource()
                 .path("/app/log")
                 .queryParam("offset", "10")
                 .queryParam("level", "DEBUG");
