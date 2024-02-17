@@ -16,7 +16,7 @@ import com.sismics.books.core.util.DirectoryUtil;
 import com.sismics.books.core.util.mime.MimeType;
 import com.sismics.books.core.util.mime.MimeTypeUtil;
 
-public abstract class ASearcher {
+public abstract class ASearcher extends MimeTypeUtil{
     public static void downloadThumbnail(Book book, String imageUrl) throws Exception {
         URLConnection imageConnection = new URL(imageUrl).openConnection();
         imageConnection.setRequestProperty("User-Agent",

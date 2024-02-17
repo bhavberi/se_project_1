@@ -10,7 +10,7 @@ import java.util.Locale;
  * @author jtremeaux
  */
 public class AnonymousPrincipal implements IPrincipal {
-    public static final String ANONYMOUS = "anonymous";
+    private static final String ANONYMOUS = "anonymous";
 
     /**
      * User locale.

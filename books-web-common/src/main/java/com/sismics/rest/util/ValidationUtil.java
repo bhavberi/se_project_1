@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class ValidationUtil {
     // Constants
-    public static final int PASSWORD_MIN_LENGTH = 8;
-    public static final int PASSWORD_MAX_LENGTH = 50;
+    private static final int PASSWORD_MIN_LENGTH = 8;
+    private static final int PASSWORD_MAX_LENGTH = 50;
 
     /**
      * Checks that the argument is not null.
