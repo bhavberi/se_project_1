@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!-- saved from url=(0142)file:///B:/College/Semester-6/Software%20Engineering/project/books-core_new/codemr/books-core_new/html/main_report/htmlx/Xdonut.html?param1=C3 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<style id="mainStyleSheet">
+path.slice{
+	stroke-width:2px;
+}
+polyline{
+	opacity: .3;
+	stroke: black;
+	stroke-width: 2px;
+	fill: none;
+} 
+svg text.percent{
+	fill:white;
+	text-anchor:middle;
+	font-size:12px;
+}
+
+
+#tooltip {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 10px;
+  background-color: white;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  
+}
+
+#tooltip.hidden {
+  display: none;
+}
+
+#tooltip p {
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+</style>
+</head><body>
+
+
+<table style="width:100%">
+	<tbody><tr>
+		<td>
+			<svg id="chartarea" width="320" height="320"><g id="quotesDonut"><g transform="translate(150,150)" class="slices"><path class="innerSlice" d="M 0 0 A 0 0 0 0 1 0 0 L 0 0 A 0 0 0 0 0 0 0 z" style="fill: rgb(178, 0, 0);"></path><path class="innerSlice" d="M 0 0 A 0 0 0 0 1 0 0 L 0 0 A 0 0 0 0 0 0 0 z" style="fill: rgb(213, 65, 0);"></path><path class="innerSlice" d="M 0 0 A 0 0 0 0 1 0 0 L 0 0 A 0 0 0 0 0 0 0 z" style="fill: rgb(199, 156, 0);"></path><path class="innerSlice" d="M 0 0 A 0 0 0 0 1 0 0 L 0 0 A 0 0 0 0 0 0 0 z" style="fill: rgb(76, 149, 19);"></path><path class="innerSlice" d="M 0 0 A 0 0 0 0 1 0 0 L 0 0 A 0 0 0 0 0 0 0 z" style="fill: rgb(0, 99, 28);"></path><path class="topSlice" d="M 0 0" style="fill: rgb(229, 0, 0); stroke: rgb(229, 0, 0);"></path><path class="topSlice" d="M 0 0" style="fill: rgb(255, 91, 19); stroke: rgb(255, 91, 19);"></path><path class="topSlice" d="M 150 0 A 150 150 0 0 1 144.62915003699214 39.779504265101316 L 0 0 A 0 0 0 0 0 0 0 z" style="fill: rgb(255, 200, 0); stroke: rgb(255, 200, 0);"></path><path class="topSlice" d="M 0 0" style="fill: rgb(98, 191, 24); stroke: rgb(98, 191, 24);"></path><path class="topSlice" d="M 144.62915003699214 39.779504265101316 A 150 150 0 1 1 150 -3.6739403974420595e-14 L 0 0 A 0 0 0 1 0 0 0 z" style="fill: rgb(0, 127, 36); stroke: rgb(0, 127, 36);"></path><path class="outerSlice" d="M 149.5 0 A 149.5 149.5 0 0 1 149.5 0 L 149.5 0 A 149.5 149.5 0 0 0 149.5 0 z" style="fill: rgb(178, 0, 0);"></path><path class="outerSlice" d="M 149.5 0 A 149.5 149.5 0 0 1 149.5 0 L 149.5 0 A 149.5 149.5 0 0 0 149.5 0 z" style="fill: rgb(213, 65, 0);"></path><path class="outerSlice" d="M 149.5 0 A 149.5 149.5 0 0 1 144.14705287020217 39.64690591755098 L 144.14705287020217 39.64690591755098 A 149.5 149.5 0 0 0 149.5 0 z" style="fill: rgb(199, 156, 0);"></path><path class="outerSlice" d="M 144.14705287020217 39.64690591755098 A 149.5 149.5 0 0 1 144.14705287020217 39.64690591755098 L 144.14705287020217 39.64690591755098 A 149.5 149.5 0 0 0 144.14705287020217 39.64690591755098 z" style="fill: rgb(76, 149, 19);"></path><path class="outerSlice" d="M 144.14705287020217 39.64690591755098 A 149.5 149.5 0 0 1 -149.5 1.830846964725293e-14 L -149.5 1.830846964725293e-14 A 149.5 149.5 0 0 0 144.14705287020217 39.64690591755098 z" style="fill: rgb(0, 99, 28);"></path><text class="percent" x="90" y="0"></text><text class="percent" x="90" y="0"></text><text class="percent" x="89.1907341095407" y="12.042132244798342">1</text><text class="percent" x="86.7774900221953" y="23.867702559060792"></text><text class="percent" x="-89.1907341095407" y="-12.042132244798319">73</text></g></g></svg>
+		</td>
+  </tr>
+</tbody></table>
+
+<script src="./d3.min.js.download"></script>  
+<script src="./d3.tip.v0.6.3.js.download"></script>
+<!--script src="../../main_report/html/js/eq.js"></script-->
+
+<script src="./donut3d.js.download"></script>
+<link href="./helptip.css" rel="stylesheet" type="text/css">
+
+<script src="./summary_data.js.download"></script>
+
+<script>
+
+/*
+var EQ_COLOR_OF_LEVELS = ["#1F77B4","#007F24","#62BF18","#FFC800","#FF5B13","#E50000"];
+var metricData=[
+	{label:"high coupling, high complexity, low cohesion", color:EQ_COLOR_OF_LEVELS[5],value:10, count:10, useCount:true},
+	{label:"high coupling, high complexity", color: EQ_COLOR_OF_LEVELS[4], value:15,count:100},
+	{label:"high coupling", color:EQ_COLOR_OF_LEVELS[3] ,value:12,count:10},
+	{label:"high complexity", color:EQ_COLOR_OF_LEVELS[2],value:13,count:10},
+	{label:"the rest", color:EQ_COLOR_OF_LEVELS[1],value:10,count:10},	
+];
+*/
+Donut3D.optionUseCountForPieText = true;
+	//optionUuseCountForPieCalculation:false,
+	//optionSortData:true
+EQ_SELECTED_CLASS_METRIC = "";
+var svg = d3.select("#chartarea");
+//svg.append("g").attr("id","metricDonut");
+svg.append("g").attr("id","quotesDonut");
+
+//	Donut3D.draw=function(id, data, 
+//							center x,  center y, rx/*radius x*/, ry/*radius y*/, h/*height*/, ir/*inner radius*/){
+Donut3D.draw("quotesDonut", getChartData(), 
+							150, 150, 150, 150, 0, 0);
+	
+
+function getChartData(){
+	return EQ_summaryInfo;
+}
+
+
+</script>
+
+
+<div id="tooltip" class="" style="left: 135px; top: 219px; right: 285px; width: 150px;">
+  <p><span id="line1">73 classes with</span></p> 
+  <p><span id="line2"></span></p>
+  <p><span id="line3">fair quality attributes </span></p>
+</div></body></html>
