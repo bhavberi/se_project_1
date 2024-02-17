@@ -96,7 +96,8 @@ public class AddBookResourceHelper extends BaseBookResourceHelper {
             Long pageCount,
             String language,
             String publishDateStr,
-            List<String> tagList, IPrincipal Principal) throws JSONException {
+            List<String> tagList,
+            IPrincipal principal) throws JSONException {
 
         Date publishDate = ValidationUtil.validateInputData(title, subtitle, author, description,
                 isbn10, isbn13, language, publishDateStr, false);
@@ -104,8 +105,8 @@ public class AddBookResourceHelper extends BaseBookResourceHelper {
 
         Book book = createBook(title, subtitle, author, description, isbn10, isbn13, pageCount, language, publishDate);
         saveBook(book);
-        UserBook userBook = createUserBook(book, Principal);
-        updateTags(userBook.getId(), tagList, Principal);
+        UserBook userBook = createUserBook(book, principal);
+        updateTags(userBook.getId(), tagList, principal);
 
         return buildResponse(userBook.getId());
     }

@@ -22,7 +22,6 @@ import org.codehaus.jettison.json.JSONObject;
 import com.sismics.books.core.dao.jpa.TagDao;
 import com.sismics.books.core.model.jpa.Tag;
 import com.sismics.rest.exception.ClientException;
-import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 
 /**
