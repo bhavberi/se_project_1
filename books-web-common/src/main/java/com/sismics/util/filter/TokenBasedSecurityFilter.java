@@ -6,7 +6,6 @@ import com.sismics.books.core.dao.jpa.RoleBaseFunctionDao;
 import com.sismics.books.core.dao.jpa.UserDao;
 import com.sismics.books.core.model.jpa.AuthenticationToken;
 import com.sismics.books.core.model.jpa.User;
-import com.sismics.security.AnonymousPrincipal;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.LocaleUtil;
 import org.joda.time.DateTimeZone;
@@ -48,17 +47,17 @@ public class TokenBasedSecurityFilter implements Filter {
      * Name of the attribute containing the principal.
      */
     public static final String PRINCIPAL_ATTRIBUTE = "principal";
-
+    
     /**
      * Lifetime of the authentication token in seconds, since login.
      */
     public static final int TOKEN_LONG_LIFETIME = 3600 * 24 * 365 * 20;
-
+    
     /**
      * Lifetime of the authentication token in seconds, since last connection.
      */
     public static final int TOKEN_SESSION_LIFETIME = 3600 * 24;
-
+    
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         // NOP
@@ -82,14 +81,14 @@ public class TokenBasedSecurityFilter implements Filter {
                 }
             }
         }
-
+        
         // Get the corresponding server token
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
         AuthenticationToken authenticationToken = null;
         if (authToken != null) {
             authenticationToken = authenticationTokenDao.get(authToken);
         }
-
+        
         if (authenticationToken == null) {
             injectAnonymousUser(request);
         } else {
@@ -111,7 +110,7 @@ public class TokenBasedSecurityFilter implements Filter {
                 User user = userDao.getById(authenticationToken.getUserId());
                 if (user != null && user.getDeleteDate() == null) {
                     injectAuthenticatedUser(request, user);
-
+                    
                     // Update the last connection date
                     authenticationTokenDao.updateLastConnectionDate(authenticationToken.getId());
                 } else {
@@ -119,10 +118,10 @@ public class TokenBasedSecurityFilter implements Filter {
                 }
             }
         }
-
+        
         filterChain.doFilter(request, response);
     }
-
+    
     /**
      * Returns true if the token is expired.
      * 
@@ -154,12 +153,12 @@ public class TokenBasedSecurityFilter implements Filter {
         // Add locale
         Locale locale = LocaleUtil.getLocale(user.getLocaleId());
         userPrincipal.setLocale(locale);
-
+        
         // Add base functions
         RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
         Set<String> baseFunctionSet = userBaseFuction.findByRoleId(user.getRoleId());
         userPrincipal.setBaseFunctionSet(baseFunctionSet);
-
+        
         request.setAttribute(PRINCIPAL_ATTRIBUTE, userPrincipal);
     }
 
@@ -169,7 +168,7 @@ public class TokenBasedSecurityFilter implements Filter {
      * @param request HTTP request
      */
     private static void injectAnonymousUser(HttpServletRequest request) {
-        AnonymousPrincipal anonymousPrincipal = new AnonymousPrincipal();
+        UserPrincipal anonymousPrincipal = new UserPrincipal();
         anonymousPrincipal.setLocale(request.getLocale());
         anonymousPrincipal.setDateTimeZone(DateTimeZone.forID(Constants.DEFAULT_TIMEZONE_ID));
 
