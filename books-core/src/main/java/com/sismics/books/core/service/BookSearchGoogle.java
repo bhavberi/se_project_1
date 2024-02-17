@@ -7,17 +7,16 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.UUID;
 
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.sismics.books.core.constant.Constants;
 import com.sismics.books.core.model.jpa.Book;
 
-
-public class BookSearchGoogle extends ASearcher{
+public class BookSearchGoogle extends ASearcher {
     /**
      * Google Books API Search URL.
      */
@@ -37,8 +36,8 @@ public class BookSearchGoogle extends ASearcher{
         connection.setRequestProperty("Accept-Charset", "utf-8");
         connection.setRequestProperty("User-Agent",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(10000);
+        connection.setConnectTimeout(Constants.DEFAULT_CONNECTION_TIMEOUT);
+        connection.setReadTimeout(Constants.DEFAULT_CONNECTION_TIMEOUT);
         InputStream inputStream = connection.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readValue(inputStream, JsonNode.class);

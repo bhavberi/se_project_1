@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.sismics.books.core.constant.ConfigType;
+import com.sismics.books.core.constant.Constants;
 import com.sismics.books.core.model.jpa.Book;
 import com.sismics.books.core.util.ConfigUtil;
 import com.sismics.books.core.util.TransactionUtil;
@@ -26,11 +27,6 @@ import com.sismics.books.core.util.TransactionUtil;
  * @author bgamard
  */
 public class BookDataService extends AbstractIdleService {
-    /**
-     * Timeout for HTTP requests. In Milliseconds.
-     */
-    private static final int CONNECT_TIMEOUT = 10000;
-
     /**
      * Logger.
      */
@@ -60,7 +56,7 @@ public class BookDataService extends AbstractIdleService {
      * Open Library API Object.
      */
     private ASearcher openLibrarysearcher = new BookSearchOpenLib();
-  
+
     static {
         // Initialize date parser
         DateTimeParser[] parsers = {
@@ -137,7 +133,7 @@ public class BookDataService extends AbstractIdleService {
     @Override
     protected void shutDown() throws Exception {
         executor.shutdown();
-        executor.awaitTermination(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
+        executor.awaitTermination(Constants.DEFAULT_CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
         if (log.isInfoEnabled()) {
             log.info("Book data service stopped");
         }

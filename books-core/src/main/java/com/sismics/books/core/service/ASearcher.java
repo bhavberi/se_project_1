@@ -11,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 
 import org.joda.time.format.DateTimeFormatter;
 
+import com.sismics.books.core.constant.Constants;
 import com.sismics.books.core.model.jpa.Book;
 import com.sismics.books.core.util.DirectoryUtil;
 import com.sismics.books.core.util.mime.MimeType;
@@ -21,8 +22,8 @@ public abstract class ASearcher extends MimeTypeUtil{
         URLConnection imageConnection = new URL(imageUrl).openConnection();
         imageConnection.setRequestProperty("User-Agent",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
-        imageConnection.setConnectTimeout(10000);
-        imageConnection.setReadTimeout(10000);
+        imageConnection.setConnectTimeout(Constants.DEFAULT_CONNECTION_TIMEOUT);
+        imageConnection.setReadTimeout(Constants.DEFAULT_CONNECTION_TIMEOUT);
         try (InputStream inputStream = new BufferedInputStream(imageConnection.getInputStream())) {
             if (MimeTypeUtil.guessMimeType(inputStream) != MimeType.IMAGE_JPEG) {
                 throw new Exception("Only JPEG images are supported as thumbnails");
