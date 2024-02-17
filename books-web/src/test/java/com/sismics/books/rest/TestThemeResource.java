@@ -14,7 +14,11 @@ import org.junit.Test;
  * 
  * @author jtremeaux
  */
-public class TestThemeResource extends BaseJerseyTest {
+public class TestThemeResource{
+
+    BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
+    };
+
     /**
      * Test the theme resource.
      * 
@@ -22,7 +26,7 @@ public class TestThemeResource extends BaseJerseyTest {
      */
     @Test
     public void testThemeResource() throws JSONException {
-        WebResource themeResource = resource().path("/theme");
+        WebResource themeResource = baseJerseyTest.resource().path("/theme");
         ClientResponse response = themeResource.get(ClientResponse.class);
         response = themeResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));

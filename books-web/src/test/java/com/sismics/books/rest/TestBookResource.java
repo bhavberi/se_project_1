@@ -25,7 +25,11 @@ import com.sun.jersey.multipart.FormDataMultiPart;
  * 
  * @author bgamard
  */
-public class TestBookResource extends BaseJerseyTest {
+public class TestBookResource {
+
+    BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
+    };
+
     /**
      * Test the book resource.
      * 
@@ -34,11 +38,11 @@ public class TestBookResource extends BaseJerseyTest {
     @Test
     public void testBookResource() throws Exception {
         // Login book1
-        clientUtil.createUser("book1");
-        String book1Token = clientUtil.login("book1");
+        baseJerseyTest.clientUtil.createUser("book1");
+        String book1Token = baseJerseyTest.clientUtil.login("book1");
 
         // Create a tag
-        WebResource tagResource = resource().path("/tag");
+        WebResource tagResource = baseJerseyTest.resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(book1Token));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
         postParams.add("name", "Tag3");
@@ -50,7 +54,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertNotNull(tag3Id);
 
         // Add a book
-        WebResource bookResource = resource().path("/book");
+        WebResource bookResource = baseJerseyTest.resource().path("/book");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("isbn", "9780345376596");
@@ -61,7 +65,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertNotNull(book1Id);
 
         // Add the same book (KO)
-        bookResource = resource().path("/book");
+        bookResource = baseJerseyTest.resource().path("/book");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("isbn", "9780345376596");
@@ -69,7 +73,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
 
         // Update a book
-        bookResource = resource().path("/book/" + book1Id);
+        bookResource = baseJerseyTest.resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("tags", tag3Id);
@@ -80,7 +84,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
 
         // Create the same book manually (KO)
-        bookResource = resource().path("/book/manual");
+        bookResource = baseJerseyTest.resource().path("/book/manual");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("title", "Fake title");
@@ -94,7 +98,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
 
         // Create a new book manually without ISBN (KO)
-        bookResource = resource().path("/book/manual");
+        bookResource = baseJerseyTest.resource().path("/book/manual");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("title", "Fake title");
@@ -107,7 +111,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
 
         // Create a new book manually
-        bookResource = resource().path("/book/manual");
+        bookResource = baseJerseyTest.resource().path("/book/manual");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("title", "Fake title");
@@ -122,7 +126,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
 
         // Set a book as read
-        bookResource = resource().path("/book/" + book1Id + "/read");
+        bookResource = baseJerseyTest.resource().path("/book/" + book1Id + "/read");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("read", true);
@@ -130,7 +134,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
 
         // Update the book cover
-        bookResource = resource().path("/book/" + book1Id + "/cover");
+        bookResource = baseJerseyTest.resource().path("/book/" + book1Id + "/cover");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("url", "http://covers.openlibrary.org/b/id/976764-M.jpg");
@@ -138,7 +142,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
 
         // Get the book
-        bookResource = resource().path("/book/" + book1Id);
+        bookResource = baseJerseyTest.resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         response = bookResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -156,7 +160,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertNotNull(json.getLong("read_date"));
 
         // Set a book as unread
-        bookResource = resource().path("/book/" + book1Id + "/read");
+        bookResource = baseJerseyTest.resource().path("/book/" + book1Id + "/read");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("read", false);
@@ -164,7 +168,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
 
         // Get the book
-        bookResource = resource().path("/book/" + book1Id);
+        bookResource = baseJerseyTest.resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         response = bookResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -172,7 +176,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertFalse(json.has("read_date"));
 
         // Get the book cover
-        bookResource = resource().path("/book/" + book1Id + "/cover");
+        bookResource = baseJerseyTest.resource().path("/book/" + book1Id + "/cover");
         response = bookResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = response.getEntityInputStream();
@@ -180,7 +184,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(14951, fileBytes.length);
 
         // List all books
-        bookResource = resource().path("/book/list");
+        bookResource = baseJerseyTest.resource().path("/book/list");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         MultivaluedMapImpl getParams = new MultivaluedMapImpl();
         response = bookResource.queryParams(getParams).get(ClientResponse.class);
@@ -190,7 +194,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(2, books.length());
 
         // Search the book
-        bookResource = resource().path("/book/list");
+        bookResource = baseJerseyTest.resource().path("/book/list");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         getParams = new MultivaluedMapImpl();
         getParams.add("tag", "Tag3");
@@ -203,13 +207,13 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(1, books.length());
 
         // Delete the book
-        bookResource = resource().path("/book/" + book1Id);
+        bookResource = baseJerseyTest.resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         response = bookResource.delete(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
 
         // List all books
-        bookResource = resource().path("/book/list");
+        bookResource = baseJerseyTest.resource().path("/book/list");
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         getParams = new MultivaluedMapImpl();
         response = bookResource.queryParams(getParams).get(ClientResponse.class);
@@ -227,11 +231,11 @@ public class TestBookResource extends BaseJerseyTest {
     @Test
     public void testBookImportResource() throws Exception {
         // Login bookimport1
-        clientUtil.createUser("bookimport1");
-        String bookImport1Token = clientUtil.login("bookimport1");
+        baseJerseyTest.clientUtil.createUser("bookimport1");
+        String bookImport1Token = baseJerseyTest.clientUtil.login("bookimport1");
 
         // Import a Goodreads CSV
-        WebResource bookResource = resource().path("/book/import");
+        WebResource bookResource = baseJerseyTest.resource().path("/book/import");
         bookResource.addFilter(new CookieAuthenticationFilter(bookImport1Token));
         FormDataMultiPart form = new FormDataMultiPart();
         InputStream goodreadsImport = this.getClass().getResourceAsStream("/import/goodreads.csv");
@@ -243,7 +247,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
 
         // List all books
-        bookResource = resource().path("/book/list");
+        bookResource = baseJerseyTest.resource().path("/book/list");
         bookResource.addFilter(new CookieAuthenticationFilter(bookImport1Token));
         MultivaluedMapImpl getParams = new MultivaluedMapImpl();
         getParams.add("limit", 15);
@@ -256,7 +260,7 @@ public class TestBookResource extends BaseJerseyTest {
         Assert.assertEquals("owned", books.getJSONObject(2).getJSONArray("tags").getJSONObject(0).getString("name"));
 
         // Get all tags
-        WebResource tagResource = resource().path("/tag/list");
+        WebResource tagResource = baseJerseyTest.resource().path("/tag/list");
         tagResource.addFilter(new CookieAuthenticationFilter(bookImport1Token));
         response = tagResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
