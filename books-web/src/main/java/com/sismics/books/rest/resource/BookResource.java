@@ -1,20 +1,7 @@
 package com.sismics.books.rest.resource;
- 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
+
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
- 
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -27,38 +14,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
- 
-import org.apache.commons.io.IOUtils;
+
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
- 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.sismics.books.core.dao.jpa.BookDao;
-import com.sismics.books.core.dao.jpa.TagDao;
-import com.sismics.books.core.dao.jpa.UserBookDao;
-import com.sismics.books.core.dao.jpa.UserDao;
-import com.sismics.books.core.dao.jpa.criteria.UserBookCriteria;
-import com.sismics.books.core.dao.jpa.dto.TagDto;
-import com.sismics.books.core.dao.jpa.dto.UserBookDto;
-import com.sismics.books.core.event.BookImportedEvent;
-import com.sismics.books.core.model.context.AppContext;
-import com.sismics.books.core.model.jpa.Book;
-import com.sismics.books.core.model.jpa.Tag;
-import com.sismics.books.core.model.jpa.User;
-import com.sismics.books.core.model.jpa.UserBook;
-import com.sismics.books.core.service.ASearcher;
-import com.sismics.books.core.util.DirectoryUtil;
-import com.sismics.books.core.util.jpa.PaginatedList;
-import com.sismics.books.core.util.jpa.PaginatedLists;
-import com.sismics.books.core.util.jpa.SortCriteria;
-import com.sismics.rest.exception.ClientException;
-import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.exception.ServerException;
-import com.sismics.rest.util.ValidationUtil;
+
+import com.sismics.books.rest.resource.helpers.AddBookResourceHelper;
+import com.sismics.books.rest.resource.helpers.DeleteBookResourceHelper;
+import com.sismics.books.rest.resource.helpers.GetBookResourceHelpers;
+import com.sismics.books.rest.resource.helpers.UpdateBookResourceHelper;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
- 
+
 /**
  * Book REST resources.
  * 
@@ -66,11 +31,6 @@ import com.sun.jersey.multipart.FormDataParam;
  */
 @Path("/book")
 public class BookResource extends BaseResource {
-    // Magic Strings
-    private static final String BOOK_NOT_FOUND = "BookNotFound";
-    private static final String BOOK_ALREADY_ADDED = "BookAlreadyAdded";
-    private static final String BOOK_ALREADY_ADDED_ERROR = "Book already added";
-    private static final String VALIDATION_ERROR = "ValidationError";
 
     /**
      * Creates a new book.
@@ -83,46 +43,11 @@ public class BookResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(
             @FormParam("isbn") String isbn) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
- 
-        // Validate input data
-        ValidationUtil.validateRequired(isbn, "isbn");
- 
-        // Fetch the book
-        BookDao bookDao = new BookDao();
-        Book book = bookDao.getByIsbn(isbn);
-        if (book == null) {
-            // Try to get the book from a public API
-            try {
-                book = AppContext.getInstance().getBookDataService().searchBook(isbn);
-            } catch (Exception e) {
-                throw new ClientException(BOOK_NOT_FOUND, e.getCause().getMessage(), e);
-            }
- 
-            // Save the new book in database
-            bookDao.create(book);
-        }
- 
-        // Create the user book if needed
-        UserBookDao userBookDao = new UserBookDao();
-        UserBook userBook = userBookDao.getByBook(book.getId(), principal.getId());
-        if (userBook == null) {
-            userBook = new UserBook();
-            userBook.setUserId(principal.getId());
-            userBook.setBookId(book.getId());
-            userBook.setCreateDate(new Date());
-            userBookDao.create(userBook);
-        } else {
-            throw new ClientException(BOOK_ALREADY_ADDED, BOOK_ALREADY_ADDED_ERROR);
-        }
- 
-        JSONObject response = new JSONObject();
-        response.put("id", userBook.getId());
-        return Response.ok().entity(response).build();
+        authenticate();
+
+        return AddBookResourceHelper.add(isbn, principal);
     }
- 
+
     /**
      * Deletes a book.
      * 
@@ -135,26 +60,10 @@ public class BookResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
             @PathParam("id") String userBookId) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
- 
-        // Get the user book
-        UserBookDao userBookDao = new UserBookDao();
-        UserBook userBook = userBookDao.getUserBook(userBookId, principal.getId());
-        if (userBook == null) {
-            throw new ClientException(BOOK_NOT_FOUND, "Book not found with id " + userBookId);
-        }
- 
-        // Delete the user book
-        userBookDao.delete(userBook.getId());
- 
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        authenticate();
+        return DeleteBookResourceHelper.delete(userBookId, principal);
     }
- 
+
     /**
      * Add a book book manually.
      * 
@@ -177,116 +86,13 @@ public class BookResource extends BaseResource {
             @FormParam("language") String language,
             @FormParam("publish_date") String publishDateStr,
             @FormParam("tags") List<String> tagList) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
- 
-        Date publishDate = validateInputData(title, subtitle, author, description,
-                isbn10, isbn13, language, publishDateStr, false);
-        validateISBN(isbn10, isbn13);
- 
-        Book book = createBook(title, subtitle, author, description, isbn10, isbn13, pageCount, language, publishDate);
-        saveBook(book);
-        UserBook userBook = createUserBook(book);
-        updateTags(userBook.getId(), tagList);
- 
-        return buildResponse(userBook.getId());
+        authenticate();
+
+        return AddBookResourceHelper.add_manual(title, subtitle, author, description, isbn10, isbn13,
+                pageCount, language, publishDateStr, tagList, principal);
+
     }
- 
-    private static Date validateInputData(String title, String subtitle, String author, String description,
-            String isbn10, String isbn13, String language, String publishDateStr, Boolean update) throws JSONException {
-        ValidationUtil.validateLength(title, "title", 1, 255, update);
-        ValidationUtil.validateLength(subtitle, "subtitle", 1, 255, true);
-        ValidationUtil.validateLength(author, "author", 1, 255, update);
-        ValidationUtil.validateLength(description, "description", 1, 4000, true);
-        ValidationUtil.validateLength(isbn10, "isbn10", 10, 10, true);
-        ValidationUtil.validateLength(isbn13, "isbn13", 13, 13, true);
-        ValidationUtil.validateLength(language, "language", 2, 2, true);
-        return ValidationUtil.validateDate(publishDateStr, "publish_date", update);
-    }
- 
-    private static void validateISBN(String isbn10, String isbn13) throws JSONException {
-        if (Strings.isNullOrEmpty(isbn10) && Strings.isNullOrEmpty(isbn13)) {
-            throw new ClientException(VALIDATION_ERROR, "At least one ISBN number is mandatory");
-        }
-    }
- 
-    private static Book createBook(String title, String subtitle, String author, String description, String isbn10,
-            String isbn13, Long pageCount, String language, Date publishDate) {
-        Book book = new Book();
-        book.setId(UUID.randomUUID().toString());
- 
-        if (title != null) {
-            book.setTitle(title);
-        }
-        if (subtitle != null) {
-            book.setSubtitle(subtitle);
-        }
-        if (author != null) {
-            book.setAuthor(author);
-        }
-        if (description != null) {
-            book.setDescription(description);
-        }
-        if (isbn10 != null) {
-            book.setIsbn10(isbn10);
-        }
-        if (isbn13 != null) {
-            book.setIsbn13(isbn13);
-        }
-        if (pageCount != null) {
-            book.setPageCount(pageCount);
-        }
-        if (language != null) {
-            book.setLanguage(language);
-        }
-        if (publishDate != null) {
-            book.setPublishDate(publishDate);
-        }
- 
-        return book;
-    }
- 
-    private static void saveBook(Book book) throws JSONException {
-        BookDao bookDao = new BookDao();
-        Book existingBookIsbn10 = bookDao.getByIsbn(book.getIsbn10());
-        Book existingBookIsbn13 = bookDao.getByIsbn(book.getIsbn13());
-        if (existingBookIsbn10 != null || existingBookIsbn13 != null) {
-            throw new ClientException(BOOK_ALREADY_ADDED, BOOK_ALREADY_ADDED_ERROR);
-        }
-        bookDao.create(book);
-    }
- 
-    private UserBook createUserBook(Book book) {
-        UserBookDao userBookDao = new UserBookDao();
-        UserBook userBook = new UserBook();
-        userBook.setUserId(principal.getId());
-        userBook.setBookId(book.getId());
-        userBook.setCreateDate(new Date());
-        userBookDao.create(userBook);
-        return userBook;
-    }
- 
-    private void updateTags(String userBookId, List<String> tagList) throws JSONException {
-        if (tagList != null) {
-            TagDao tagDao = new TagDao();
-            Set<String> tagSet = new HashSet<>();
-            Set<String> tagIdSet = new HashSet<>();
-            List<Tag> tagDbList = tagDao.getByUserId(principal.getId());
- 
-            for (Tag tagDb : tagDbList) {
-                tagIdSet.add(tagDb.getId());
-            }
-            for (String tagId : tagList) {
-                if (!tagIdSet.contains(tagId)) {
-                    throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", tagId));
-                }
-                tagSet.add(tagId);
-            }
-            tagDao.updateTagList(userBookId, tagSet);
-        }
-    }
- 
+
     /**
      * Updates the book.
      * 
@@ -310,93 +116,12 @@ public class BookResource extends BaseResource {
             @FormParam("language") String language,
             @FormParam("publish_date") String publishDateStr,
             @FormParam("tags") List<String> tagList) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
- 
-        Date publishDate = validateInputData(title, subtitle, author, description, isbn10, isbn13, language,
-                publishDateStr, true);
- 
-        UserBook userBook = getUserBook(userBookId);
-        Book book = getBook(userBook);
- 
-        checkISBNNumbers(book, isbn10, isbn13);
- 
-        updateBook(book, title, subtitle, author, description, isbn10, isbn13, pageCount, language, publishDate);
- 
-        updateTags(userBookId, tagList);
- 
-        return buildResponse(userBookId);
+        authenticate();
+
+        return UpdateBookResourceHelper.update(userBookId, title, subtitle, author, description, isbn10,
+                isbn13, pageCount, language, publishDateStr, tagList, principal);
     }
- 
-    private UserBook getUserBook(String userBookId) throws JSONException {
-        UserBookDao userBookDao = new UserBookDao();
-        UserBook userBook = userBookDao.getUserBook(userBookId, principal.getId());
-        if (userBook == null) {
-            throw new ClientException(BOOK_NOT_FOUND, "Book not found with id " + userBookId);
-        }
-        return userBook;
-    }
- 
-    private static Book getBook(UserBook userBook) {
-        BookDao bookDao = new BookDao();
-        return bookDao.getById(userBook.getBookId());
-    }
- 
-    private static void checkISBNNumbers(Book book, String isbn10, String isbn13) throws JSONException {
-        BookDao bookDao = new BookDao();
-        if (!Strings.isNullOrEmpty(isbn10) && book.getIsbn10() != null && !book.getIsbn10().equals(isbn10)) {
-            Book bookIsbn10 = bookDao.getByIsbn(isbn10);
-            if (bookIsbn10 != null) {
-                throw new ClientException(BOOK_ALREADY_ADDED, BOOK_ALREADY_ADDED_ERROR);
-            }
-        }
- 
-        if (!Strings.isNullOrEmpty(isbn13) && book.getIsbn13() != null && !book.getIsbn13().equals(isbn13)) {
-            Book bookIsbn13 = bookDao.getByIsbn(isbn13);
-            if (bookIsbn13 != null) {
-                throw new ClientException(BOOK_ALREADY_ADDED, BOOK_ALREADY_ADDED_ERROR);
-            }
-        }
-    }
- 
-    private static void updateBook(Book book, String title, String subtitle, String author, String description, String isbn10,
-            String isbn13, Long pageCount, String language, Date publishDate) {
-        if (title != null) {
-            book.setTitle(title);
-        }
-        if (subtitle != null) {
-            book.setSubtitle(subtitle);
-        }
-        if (author != null) {
-            book.setAuthor(author);
-        }
-        if (description != null) {
-            book.setDescription(description);
-        }
-        if (isbn10 != null) {
-            book.setIsbn10(isbn10);
-        }
-        if (isbn13 != null) {
-            book.setIsbn13(isbn13);
-        }
-        if (pageCount != null) {
-            book.setPageCount(pageCount);
-        }
-        if (language != null) {
-            book.setLanguage(language);
-        }
-        if (publishDate != null) {
-            book.setPublishDate(publishDate);
-        }
-    }
- 
-    private static Response buildResponse(String userBookId) throws JSONException {
-        JSONObject response = new JSONObject();
-        response.put("id", userBookId);
-        return Response.ok().entity(response).build();
-    }
- 
+
     /**
      * Get a book.
      * 
@@ -409,56 +134,11 @@ public class BookResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(
             @PathParam("id") String userBookId) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
- 
-        // Fetch the user book
-        UserBookDao userBookDao = new UserBookDao();
-        UserBook userBook = userBookDao.getUserBook(userBookId, principal.getId());
-        if (userBook == null) {
-            throw new ClientException(BOOK_NOT_FOUND, "Book not found with id " + userBookId);
-        }
- 
-        // Fetch the book
-        BookDao bookDao = new BookDao();
-        Book bookDb = bookDao.getById(userBook.getBookId());
- 
-        // Return book data
-        JSONObject book = new JSONObject();
-        book.put("id", userBook.getId());
-        book.put("title", bookDb.getTitle());
-        book.put("subtitle", bookDb.getSubtitle());
-        book.put("author", bookDb.getAuthor());
-        book.put("page_count", bookDb.getPageCount());
-        book.put("description", bookDb.getDescription());
-        book.put("isbn10", bookDb.getIsbn10());
-        book.put("isbn13", bookDb.getIsbn13());
-        book.put("language", bookDb.getLanguage());
-        if (bookDb.getPublishDate() != null) {
-            book.put("publish_date", bookDb.getPublishDate().getTime());
-        }
-        book.put("create_date", userBook.getCreateDate().getTime());
-        if (userBook.getReadDate() != null) {
-            book.put("read_date", userBook.getReadDate().getTime());
-        }
- 
-        // Add tags
-        TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.getByUserBookId(userBookId);
-        List<JSONObject> tags = new ArrayList<>();
-        for (TagDto tagDto : tagDtoList) {
-            JSONObject tag = new JSONObject();
-            tag.put("id", tagDto.getId());
-            tag.put("name", tagDto.getName());
-            tag.put("color", tagDto.getColor());
-            tags.add(tag);
-        }
-        book.put("tags", tags);
- 
-        return Response.ok().entity(book).build();
+        authenticate();
+
+        return GetBookResourceHelpers.get(userBookId, principal);
     }
- 
+
     /**
      * Returns a book cover.
      * 
@@ -471,30 +151,10 @@ public class BookResource extends BaseResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response cover(
             @PathParam("id") final String userBookId) throws JSONException {
-        // Get the user book
-        UserBookDao userBookDao = new UserBookDao();
-        UserBook userBook = userBookDao.getUserBook(userBookId);
- 
-        // Get the cover image
-        File file = Paths.get(DirectoryUtil.getBookDirectory().getPath(), userBook.getBookId()).toFile();
-        InputStream inputStream = null;
-        try {
-            if (file.exists()) {
-                inputStream = new FileInputStream(file);
-            } else {
-                inputStream = new FileInputStream(new File(getClass().getResource("/dummy.png").getFile()));
-            }
-        } catch (FileNotFoundException e) {
-            throw new ServerException("FileNotFound", "Cover file not found", e);
-        }
- 
-        return Response.ok(inputStream)
-                .header("Content-Type", "image/jpeg")
-                .header("Expires",
-                        new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date().getTime() + 3600000))
-                .build();
+
+        return GetBookResourceHelpers.cover(userBookId);
     }
- 
+
     /**
      * Updates a book cover.
      * 
@@ -508,34 +168,11 @@ public class BookResource extends BaseResource {
     public Response updateCover(
             @PathParam("id") String userBookId,
             @FormParam("url") String imageUrl) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
- 
-        // Get the user book
-        UserBookDao userBookDao = new UserBookDao();
-        UserBook userBook = userBookDao.getUserBook(userBookId, principal.getId());
-        if (userBook == null) {
-            throw new ClientException(BOOK_NOT_FOUND, "Book not found with id " + userBookId);
-        }
- 
-        // Get the book
-        BookDao bookDao = new BookDao();
-        Book book = bookDao.getById(userBook.getBookId());
- 
-        // Download the new cover
-        try {
-            ASearcher.downloadThumbnail(book, imageUrl);
-        } catch (Exception e) {
-            throw new ClientException("DownloadCoverError", "Error downloading the cover image");
-        }
- 
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok(response).build();
+        authenticate();
+
+        return UpdateBookResourceHelper.updateCover(userBookId, imageUrl, principal);
     }
- 
+
     /**
      * Returns all books.
      * 
@@ -555,64 +192,10 @@ public class BookResource extends BaseResource {
             @QueryParam("search") String search,
             @QueryParam("read") Boolean read,
             @QueryParam("tag") String tagName) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
- 
-        JSONObject response = new JSONObject();
-        List<JSONObject> books = new ArrayList<>();
- 
-        UserBookDao userBookDao = new UserBookDao();
-        TagDao tagDao = new TagDao();
-        PaginatedList<UserBookDto> paginatedList = PaginatedLists.create(limit, offset);
-        SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
-        UserBookCriteria criteria = new UserBookCriteria();
-        criteria.setSearch(search);
-        criteria.setRead(read);
-        criteria.setUserId(principal.getId());
-        if (!Strings.isNullOrEmpty(tagName)) {
-            Tag tag = tagDao.getByName(principal.getId(), tagName);
-            if (tag != null) {
-                criteria.setTagIdList(Lists.newArrayList(tag.getId()));
-            }
-        }
-        try {
-            userBookDao.findByCriteria(paginatedList, criteria, sortCriteria);
-        } catch (Exception e) {
-            throw new ServerException("SearchError", "Error searching in books", e);
-        }
- 
-        for (UserBookDto userBookDto : paginatedList.getResultList()) {
-            JSONObject book = new JSONObject();
-            book.put("id", userBookDto.getId());
-            book.put("title", userBookDto.getTitle());
-            book.put("subtitle", userBookDto.getSubtitle());
-            book.put("author", userBookDto.getAuthor());
-            book.put("language", userBookDto.getLanguage());
-            book.put("publish_date", userBookDto.getPublishTimestamp());
-            book.put("create_date", userBookDto.getCreateTimestamp());
-            book.put("read_date", userBookDto.getReadTimestamp());
- 
-            // Get tags
-            List<TagDto> tagDtoList = tagDao.getByUserBookId(userBookDto.getId());
-            List<JSONObject> tags = new ArrayList<>();
-            for (TagDto tagDto : tagDtoList) {
-                JSONObject tag = new JSONObject();
-                tag.put("id", tagDto.getId());
-                tag.put("name", tagDto.getName());
-                tag.put("color", tagDto.getColor());
-                tags.add(tag);
-            }
-            book.put("tags", tags);
- 
-            books.add(book);
-        }
-        response.put("total", paginatedList.getResultCount());
-        response.put("books", books);
- 
-        return Response.ok().entity(response).build();
+        authenticate();
+        return GetBookResourceHelpers.list(limit, offset, sortColumn, asc, search, read, tagName, principal);
     }
- 
+
     /**
      * Imports books.
      * 
@@ -625,44 +208,11 @@ public class BookResource extends BaseResource {
     @Path("import")
     public Response importFile(
             @FormDataParam("file") FormDataBodyPart fileBodyPart) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
- 
-        // Validate input data
-        ValidationUtil.validateRequired(fileBodyPart, "file");
- 
-        UserDao userDao = new UserDao();
-        User user = userDao.getById(principal.getId());
- 
-        InputStream in = fileBodyPart.getValueAs(InputStream.class);
-        File importFile = null;
-        try {
-            // Copy the incoming stream content into a temporary file
-            importFile = File.createTempFile("books_import", null);
-            IOUtils.copy(in, new FileOutputStream(importFile));
- 
-            BookImportedEvent event = new BookImportedEvent();
-            event.setUser(user);
-            event.setImportFile(importFile);
-            AppContext.getInstance().getImportEventBus().post(event);
- 
-            // Always return ok
-            JSONObject response = new JSONObject();
-            response.put("status", "ok");
-            return Response.ok().entity(response).build();
-        } catch (Exception e) {
-            if (importFile != null) {
-                try {
-                    importFile.delete();
-                } catch (SecurityException e2) {
-                    // NOP
-                }
-            }
-            throw new ServerException("ImportError", "Error importing books", e);
-        }
+        authenticate();
+
+        return AddBookResourceHelper.importFile(fileBodyPart, principal);
     }
- 
+
     /**
      * Set a book as read/unread.
      * 
@@ -677,20 +227,8 @@ public class BookResource extends BaseResource {
     public Response read(
             @PathParam("id") final String userBookId,
             @FormParam("read") boolean read) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
- 
-        // Get the user book
-        UserBookDao userBookDao = new UserBookDao();
-        UserBook userBook = userBookDao.getUserBook(userBookId, principal.getId());
- 
-        // Update the read date
-        userBook.setReadDate(read ? new Date() : null);
- 
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        authenticate();
+
+        return UpdateBookResourceHelper.read(userBookId, read, principal);
     }
 }

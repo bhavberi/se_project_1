@@ -22,7 +22,6 @@ import org.codehaus.jettison.json.JSONObject;
 import com.sismics.books.core.dao.jpa.TagDao;
 import com.sismics.books.core.model.jpa.Tag;
 import com.sismics.rest.exception.ClientException;
-import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 
 /**
@@ -47,9 +46,7 @@ public class TagResource extends BaseResource {
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
     public Response list() throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         TagDao tagDao = new TagDao();
         List<Tag> tagList = tagDao.getByUserId(principal.getId());
@@ -78,9 +75,7 @@ public class TagResource extends BaseResource {
     public Response add(
             @FormParam("name") String name,
             @FormParam("color") String color) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, false);
@@ -124,9 +119,7 @@ public class TagResource extends BaseResource {
             @PathParam("id") String id,
             @FormParam("name") String name,
             @FormParam("color") String color) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, true);
@@ -175,9 +168,7 @@ public class TagResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
             @PathParam("id") String tagId) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
 
         // Get the tag
         TagDao tagDao = new TagDao();
