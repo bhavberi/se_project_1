@@ -11,36 +11,42 @@ import java.util.Set;
  * @author jtremeaux
  */
 public class UserPrincipal implements IPrincipal {
+    public static final String ANONYMOUS = "anonymous";
+    /**
+     * anonymity status of the user.
+     */
+    private boolean anonymous;
+
     /**
      * ID of the user.
      */
     private String id;
-
+    
     /**
      * Username of the user.
      */
     private String name;
-
+    
     /**
      * Locale of the principal.
      */
     private Locale locale;
-
+    
     /**
      * Timezone of the principal.
      */
     private DateTimeZone dateTimeZone;
-
+    
     /**
      * Email of the principal.
      */
     private String email;
-
+    
     /**
      * User base functions.
      */
     private Set<String> baseFunctionSet;
-
+    
     /**
      * Constructor of UserPrincipal.
      * 
@@ -50,16 +56,31 @@ public class UserPrincipal implements IPrincipal {
     public UserPrincipal(String id, String name) {
         this.id = id;
         this.name = name;
+        this.anonymous = false;
     }
 
+    /**
+     * Constructor of AnonymousPrincipal.
+     * 
+     * @param id ID of the user
+     * @param name Usrename of the user
+     */
+    public UserPrincipal() {
+        this.anonymous = true;
+    }
+    
     @Override
     public boolean isAnonymous() {
-        return false;
+        return anonymous;
     }
 
     @Override
     public String getId() {
-        return id;
+        if (anonymous) {
+            return null;
+        } else {
+            return id;
+        }
     }
 
     /**
@@ -73,7 +94,11 @@ public class UserPrincipal implements IPrincipal {
 
     @Override
     public String getName() {
-        return name;
+        if (anonymous) {
+            return ANONYMOUS;
+        } else {
+            return name;
+        }
     }
 
     /**
@@ -115,9 +140,13 @@ public class UserPrincipal implements IPrincipal {
 
     @Override
     public String getEmail() {
-        return email;
+        if (anonymous) {
+            return null;
+        } else {
+            return email;
+        }
     }
-
+    
     /**
      * Setter of email.
      *
