@@ -132,7 +132,9 @@ public class AddBookResourceHelper extends BaseBookResourceHelper {
         try {
             // Copy the incoming stream content into a temporary file
             importFile = File.createTempFile("books_import", null);
-            IOUtils.copy(in, new FileOutputStream(importFile));
+            FileOutputStream out = new FileOutputStream(importFile);
+            IOUtils.copy(in, out);
+            out.close();
 
             BookImportedEvent event = new BookImportedEvent();
             event.setUser(user);

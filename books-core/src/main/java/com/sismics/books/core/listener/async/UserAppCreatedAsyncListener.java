@@ -40,13 +40,11 @@ public class UserAppCreatedAsyncListener {
             public void run() {
                 try {
                     AppId appId = AppId.valueOf(userApp.getAppId());
-                    switch (appId) {
-                        case FACEBOOK:
-                            // Synchronize friends contact
-                            final FacebookService facebookService = AppContext.getInstance().getFacebookService();
-                            String facebookAccessToken = userApp.getAccessToken();
-                            facebookService.synchronizeContact(facebookAccessToken, userApp.getUserId());
-                            break;
+                    if (appId == AppId.FACEBOOK) {
+                        // Synchronize friends contact
+                        final FacebookService facebookService = AppContext.getInstance().getFacebookService();
+                        String facebookAccessToken = userApp.getAccessToken();
+                        facebookService.synchronizeContact(facebookAccessToken, userApp.getUserId());
                     }
                 } catch (Exception e) {
                     if (log.isErrorEnabled()) {

@@ -157,7 +157,7 @@ public class TestUserResource extends BaseJerseyTest {
         response = userResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(true, json.getBoolean("anonymous"));
+        Assert.assertTrue(json.getBoolean("anonymous"));
 
         // Check alice user information
         userResource = resource().path("/user");

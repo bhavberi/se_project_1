@@ -187,7 +187,7 @@ public class TestBookResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONArray books = json.getJSONArray("books");
-        Assert.assertTrue(books.length() == 2);
+        Assert.assertEquals(2, books.length());
 
         // Search the book
         bookResource = resource().path("/book/list");
@@ -200,7 +200,7 @@ public class TestBookResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         books = json.getJSONArray("books");
-        Assert.assertTrue(books.length() == 1);
+        Assert.assertEquals(1, books.length());
 
         // Delete the book
         bookResource = resource().path("/book/" + book1Id);
@@ -216,7 +216,7 @@ public class TestBookResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         books = json.getJSONArray("books");
-        Assert.assertTrue(books.length() == 1);
+        Assert.assertEquals(1, books.length());
     }
 
     /**

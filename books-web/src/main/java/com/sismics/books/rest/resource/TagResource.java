@@ -35,6 +35,8 @@ public class TagResource extends BaseResource {
     private static final String TAG_NOT_FOUND = "TagNotFound";
     private static final String TAG_ALREADY_EXISTS = "AlreadyExistingTag";
     private static final String SPACES_NOT_ALLOWED = "SpacesNotAllowed";
+    private static final int MAX_TAG_NAME_LENGTH = 36;
+    private static final int MIN_TAG_NAME_LENGTH = 1;
 
     private Tag getTag(TagDao tagDao, String tagId) throws JSONException {
         Tag tag = tagDao.getByTagId(principal.getId(), tagId);
@@ -86,7 +88,7 @@ public class TagResource extends BaseResource {
         authenticate();
 
         // Validate input data
-        name = ValidationUtil.validateLength(name, "name", 1, 36, false);
+        name = ValidationUtil.validateLength(name, "name", MIN_TAG_NAME_LENGTH, MAX_TAG_NAME_LENGTH, false);
         ValidationUtil.validateHexColor(color, "color", true);
 
         // Don't allow spaces
@@ -127,7 +129,7 @@ public class TagResource extends BaseResource {
         authenticate();
 
         // Validate input data
-        name = ValidationUtil.validateLength(name, "name", 1, 36, true);
+        name = ValidationUtil.validateLength(name, "name", MIN_TAG_NAME_LENGTH, MAX_TAG_NAME_LENGTH, true);
         ValidationUtil.validateHexColor(color, "color", true);
 
         // Don't allow spaces

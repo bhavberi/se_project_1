@@ -124,26 +124,24 @@ public class RequestContextFilter implements Filter {
 
         // No error processing the request : commit / rollback the current transaction
         // depending on the HTTP code
-        if (em.isOpen()) {
-            if (em.getTransaction() != null && em.getTransaction().isActive()) {
-                HttpServletResponse r = (HttpServletResponse) response;
-                int statusClass = r.getStatus() / 100;
-                if (statusClass == 2 || statusClass == 3) {
-                    try {
-                        em.getTransaction().commit();
-                    } catch (Exception e) {
-                        log.error("Error during commit", e);
-                        r.sendError(500);
-                    }
-                } else {
-                    em.getTransaction().rollback();
-                }
-
+        if (em.isOpen() && (em.getTransaction() != null && em.getTransaction().isActive())) {
+            HttpServletResponse r = (HttpServletResponse) response;
+            int statusClass = r.getStatus() / 100;
+            if (statusClass == 2 || statusClass == 3) {
                 try {
-                    em.close();
+                    em.getTransaction().commit();
                 } catch (Exception e) {
-                    log.error("Error closing entity manager", e);
+                    log.error("Error during commit", e);
+                    r.sendError(500);
                 }
+            } else {
+                em.getTransaction().rollback();
+            }
+
+            try {
+                em.close();
+            } catch (Exception e) {
+                log.error("Error closing entity manager", e);
             }
         }
     }

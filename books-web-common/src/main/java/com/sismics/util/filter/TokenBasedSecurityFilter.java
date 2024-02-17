@@ -129,7 +129,7 @@ public class TokenBasedSecurityFilter implements Filter {
      * @param authenticationToken Authentication token
      * @return Token expired
      */
-    private boolean isTokenExpired(AuthenticationToken authenticationToken) {
+    private static boolean isTokenExpired(AuthenticationToken authenticationToken) {
         final long now = new Date().getTime();
         final long creationDate = authenticationToken.getCreationDate().getTime();
         if (authenticationToken.isLongLasted()) {
@@ -148,7 +148,7 @@ public class TokenBasedSecurityFilter implements Filter {
      * @param request HTTP request
      * @param user    User to inject
      */
-    private void injectAuthenticatedUser(HttpServletRequest request, User user) {
+    private static void injectAuthenticatedUser(HttpServletRequest request, User user) {
         UserPrincipal userPrincipal = new UserPrincipal(user.getId(), user.getUsername());
 
         // Add locale
@@ -168,7 +168,7 @@ public class TokenBasedSecurityFilter implements Filter {
      * 
      * @param request HTTP request
      */
-    private void injectAnonymousUser(HttpServletRequest request) {
+    private static void injectAnonymousUser(HttpServletRequest request) {
         AnonymousPrincipal anonymousPrincipal = new AnonymousPrincipal();
         anonymousPrincipal.setLocale(request.getLocale());
         anonymousPrincipal.setDateTimeZone(DateTimeZone.forID(Constants.DEFAULT_TIMEZONE_ID));

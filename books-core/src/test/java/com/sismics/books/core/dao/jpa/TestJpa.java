@@ -5,7 +5,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.sismics.books.BaseTransactionalTest;
-import com.sismics.books.core.dao.jpa.UserDao;
 import com.sismics.books.core.model.jpa.User;
 import com.sismics.books.core.util.TransactionUtil;
 

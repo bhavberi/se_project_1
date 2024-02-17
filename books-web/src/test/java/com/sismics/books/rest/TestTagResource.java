@@ -130,6 +130,6 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         tags = json.getJSONArray("tags");
-        Assert.assertTrue(tags.length() == 1);
+        Assert.assertEquals(1, tags.length());
     }
 }
