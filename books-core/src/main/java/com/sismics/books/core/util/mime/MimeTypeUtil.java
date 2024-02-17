@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
  *
  * @author jtremeaux
  */
-public class MimeTypeUtil {
+public class MimeTypeUtil extends MimeType {
     /**
      * Try to guess the MIME type of a file by its magic number (header).
      * 
