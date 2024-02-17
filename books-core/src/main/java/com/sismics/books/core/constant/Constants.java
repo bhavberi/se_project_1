@@ -30,4 +30,10 @@ public class Constants {
      * Default generic user role.
      */
     public static final String DEFAULT_USER_ROLE = "user";
+
+    /**
+     * Default Connection Timeout.
+     */
+
+    public static final int DEFAULT_CONNECTION_TIMEOUT = 10000;
 }

@@ -12,6 +12,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.sismics.books.core.constant.Constants;
 import com.neovisionaries.i18n.LanguageCode;
 import com.sismics.books.core.model.jpa.Book;
 
@@ -42,8 +43,8 @@ public class BookSearchOpenLib extends ASearcher {
         connection.setRequestProperty("Accept-Charset", "utf-8");
         connection.setRequestProperty("User-Agent",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(10000);
+        connection.setConnectTimeout(Constants.DEFAULT_CONNECTION_TIMEOUT);
+        connection.setReadTimeout(Constants.DEFAULT_CONNECTION_TIMEOUT);
         InputStream inputStream = connection.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readValue(inputStream, JsonNode.class);
@@ -82,10 +83,8 @@ public class BookSearchOpenLib extends ASearcher {
             throw new Exception("Book without publication date for ISBN: " + isbn);
         }
         book.setPublishDate(
-            formatter.parseDateTime(
-                details.get("publish_date").getTextValue()
-                ).toDate()
-                );
+                formatter.parseDateTime(
+                        details.get("publish_date").getTextValue()).toDate());
 
         // Download the thumbnail
         if (details.has("covers") && details.get("covers").size() > 0) {
