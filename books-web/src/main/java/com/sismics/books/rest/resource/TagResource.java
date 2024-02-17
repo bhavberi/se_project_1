@@ -36,12 +36,19 @@ public class TagResource extends BaseResource {
     private static final String TAG_ALREADY_EXISTS = "AlreadyExistingTag";
     private static final String SPACES_NOT_ALLOWED = "SpacesNotAllowed";
 
-    private Tag getTag(TagDao tagDao, String tagId) throws JSONException {
+    private Tag getTagById(TagDao tagDao, String tagId) throws JSONException {
         Tag tag = tagDao.getByTagId(principal.getId(), tagId);
         if (tag == null) {
             throw new ClientException(TAG_NOT_FOUND, MessageFormat.format("Tag not found: {0}", tagId));
         }
         return tag;
+    }
+
+    private void checkTagName(TagDao tagDao, String tagName) throws JSONException {
+        Tag tag = tagDao.getByName(principal.getId(), tagName);
+        if (tag != null) {
+            throw new ClientException(TAG_ALREADY_EXISTS, MessageFormat.format("Tag already exists: {0}", tagName));
+        }
     }
 
     /**
@@ -96,7 +103,7 @@ public class TagResource extends BaseResource {
 
         // Get the tag for verification
         TagDao tagDao = new TagDao();
-        getTag(tagDao, name);
+        checkTagName(tagDao, name);
 
         // Create the tag
         Tag tag = new Tag();
@@ -137,7 +144,7 @@ public class TagResource extends BaseResource {
 
         // Get the tag
         TagDao tagDao = new TagDao();
-        Tag tag = getTag(tagDao, id);
+        Tag tag = getTagById(tagDao, id);
 
         // Check for name duplicate
         Tag tagDuplicate = tagDao.getByName(principal.getId(), name);
@@ -174,7 +181,7 @@ public class TagResource extends BaseResource {
 
         // Get the tag for verification
         TagDao tagDao = new TagDao();
-        getTag(tagDao, tagId);
+        getTagById(tagDao, tagId);
 
         // Delete the tag
         tagDao.delete(tagId);
