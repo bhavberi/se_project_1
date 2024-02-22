@@ -6,11 +6,11 @@ on:
       - master
 
 jobs:
-  clone_repository:
+  auto-refactor:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       
       - name: Clone the utils repository
         run: |
@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '11'
+          distribution: 'zulu'
       
       - name: Compile and run Java file
         run: |
@@ -42,9 +43,6 @@ jobs:
         run: |
           rm -rf utils
           rm -rf results
-
-      - name: Checkout repository
-        uses: actions/checkout@v2
       
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
