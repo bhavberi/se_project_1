@@ -1,0 +1,56 @@
+name: Auto Refactor Master Branch
+on:
+  push:
+# mentioning which branch should be used to build the experiment
+    branches: 
+      - master
+
+jobs:
+  clone_repository:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Clone the utils repository
+        run: |
+          git clone https://github.com/bhavberi/se_project_utils.git utils
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+      
+      - name: Compile and run Java file
+        run: |
+          java -jar utils/DesigniteJava.jar -i ./ -o results
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r utils/requirements.txt
+      
+      - name: Run Python file
+        run: python utils/openai_refactor.py
+      
+      - name: Remove the extra files
+        run: |
+          rm -rf utils
+          rm -rf results
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Auto Refactor
+          title: Auto Refactor
+          body: This PR is linked to a automatic refactoring solution.
+  
