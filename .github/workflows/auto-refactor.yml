@@ -47,24 +47,24 @@ jobs:
       - name: Read PR body from file
         id: read_body
         run: |
+          # To read the file with spaces/newlines
           IFSBAK=$IFS
           IFS=" "
           body=$(cat pr_body.txt)
+          body="${body//'%'/'%25'}"
+          body="${body//$'\n'/'%0A'}"
+          body="${body//$'\r'/'%0D'}"
           echo $body
-          echo "body=$(cat pr_body.txt)" >> $GITHUB_OUTPUT
+          echo -e "body=$body" >> $GITHUB_OUTPUT
           rm pr_body.txt
           IFS=$IFSBAK
       
       - name: Read PR title from file
         id: read_title
         run: |
-          # To read the file with spaces/newlines
-          IFSBAK=$IFS
-          IFS=" "
           title=$(cat pr_title.txt)
-          echo "title=$(cat pr_title.txt)" >> $GITHUB_OUTPUT
+          echo -e "title=$title\n" >> $GITHUB_OUTPUT
           rm pr_title.txt
-          IFS=$IFSBAK
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
