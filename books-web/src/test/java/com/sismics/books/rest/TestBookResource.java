@@ -27,8 +27,7 @@ import com.sun.jersey.multipart.FormDataMultiPart;
  */
 public class TestBookResource {
 
-    BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
-    };
+    BaseJerseyTest baseJerseyTest = new BaseJerseyTest();
 
     /**
      * Test the book resource.

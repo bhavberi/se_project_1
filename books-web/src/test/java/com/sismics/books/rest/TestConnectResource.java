@@ -28,8 +28,6 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 public class TestConnectResource {
 
-
-        BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {};
     /**
      * Test of connected application list.
      * 
@@ -37,6 +35,7 @@ public class TestConnectResource {
      */
     @Test
     public void testListApp() throws JSONException {
+        BaseJerseyTest baseJerseyTest = new BaseJerseyTest();
         // Create and connect user connect_list
         baseJerseyTest.clientUtil.createUser("connect_list");
         String connectListAuthToken = baseJerseyTest.clientUtil.login("connect_list");
@@ -55,16 +54,17 @@ public class TestConnectResource {
     /**
      * Test of Facebook connection.
      * 
-     * @throws JSONException
+     * @throws Exception
      */
     @Test
     public void testFacebook() throws Exception {
+        BaseJerseyTest baseJerseyTest = new BaseJerseyTest();
         ResourceBundle configBundle = ConfigUtil.getConfigBundle();
         String facebookAppId = configBundle.getString("app_key.facebook.id");
         String facebookAppSecret = configBundle.getString("app_key.facebook.secret");
         FacebookClient facebookClient = new DefaultFacebookClient();
         String appAccessToken = facebookClient.obtainAppAccessToken(facebookAppId, facebookAppSecret)
-                                .getAccessToken();
+                .getAccessToken();
         WebRequestor webRequestor = new DefaultWebRequestor();
 
         // Create Carol
@@ -74,25 +74,25 @@ public class TestConnectResource {
                         + appAccessToken);
         JSONObject testUser = new JSONObject(fbResponse.getBody());
         FacebookUser carol = new FacebookUser(testUser.getString("id"), testUser.getString("email"),
-                                "Carol Oneill",
+                "Carol Oneill",
                 testUser.getString("access_token"));
 
         // Create Charlie
         fbResponse = webRequestor.executePost(
-                                "https://graph.facebook.com/" + facebookAppId + "/accounts/test-users",
+                "https://graph.facebook.com/" + facebookAppId + "/accounts/test-users",
                 "installed=true&permissions=email,publish_stream,read_stream&name=Charlie Dylan&method=post&access_token="
                         + appAccessToken);
         testUser = new JSONObject(fbResponse.getBody());
         FacebookUser charlie = new FacebookUser(testUser.getString("id"), testUser.getString("email"),
-                                "Charlie Dylan",
+                "Charlie Dylan",
                 testUser.getString("access_token"));
 
         // Carol is friend with Charlie
         fbResponse = webRequestor.executePost(
-                                "https://graph.facebook.com/" + carol.getId() + "/friends/" + charlie.getId(),
+                "https://graph.facebook.com/" + carol.getId() + "/friends/" + charlie.getId(),
                 "method=post&access_token=" + carol.getAccessToken());
         fbResponse = webRequestor.executePost(
-                                "https://graph.facebook.com/" + charlie.getId() + "/friends/" + carol.getId(),
+                "https://graph.facebook.com/" + charlie.getId() + "/friends/" + carol.getId(),
                 "method=post&access_token=" + charlie.getAccessToken());
 
         // Create and connect user carol_fb
