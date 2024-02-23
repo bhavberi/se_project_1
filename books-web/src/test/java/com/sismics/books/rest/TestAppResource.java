@@ -19,8 +19,7 @@ import org.junit.Test;
  */
 public class TestAppResource {
 
-    BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
-    };
+    BaseJerseyTest baseJerseyTest = new BaseJerseyTest();
 
     /**
      * Test the app resource.

@@ -5,6 +5,7 @@ import com.sismics.books.core.model.jpa.Locale;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -20,6 +21,9 @@ import java.util.List;
  */
 @Path("/locale")
 public class LocaleResource extends BaseResource {
+    @Inject
+    private LocaleDao localeDao;
+
     /**
      * Returns the list of all locales.
      * 
@@ -29,7 +33,6 @@ public class LocaleResource extends BaseResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list() throws JSONException {
-        LocaleDao localeDao = new LocaleDao();
         List<Locale> localeList = localeDao.findAll();
         JSONObject response = new JSONObject();
         List<JSONObject> items = new ArrayList<>();

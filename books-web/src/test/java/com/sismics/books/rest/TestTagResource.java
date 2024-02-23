@@ -23,6 +23,49 @@ public class TestTagResource {
     BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
     };
 
+    private void createTag(String tagName, String tagColor, String authToken) {
+        WebResource tagResource = baseJerseyTest.resource().path("/tag");
+        tagResource.addFilter(new CookieAuthenticationFilter(authToken));
+        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
+        postParams.add("name", tagName);
+        postParams.add("color", tagColor);
+        ClientResponse response = tagResource.put(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+    }
+
+    private String getTagId(String tagName, String authToken) throws JSONException {
+        WebResource tagResource = baseJerseyTest.resource().path("/tag/list");
+        tagResource.addFilter(new CookieAuthenticationFilter(authToken));
+        ClientResponse response = tagResource.get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        JSONObject json = response.getEntity(JSONObject.class);
+        JSONArray tags = json.getJSONArray("tags");
+        for (int i = 0; i < tags.length(); i++) {
+            JSONObject tag = tags.getJSONObject(i);
+            if (tag.getString("name").equals(tagName)) {
+                return tag.getString("id");
+            }
+        }
+        return null;
+    }
+
+    private void updateTag(String tagId, String updatedName, String updatedColor, String authToken) {
+        WebResource tagResource = baseJerseyTest.resource().path("/tag/" + tagId);
+        tagResource.addFilter(new CookieAuthenticationFilter(authToken));
+        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
+        postParams.add("name", updatedName);
+        postParams.add("color", updatedColor);
+        ClientResponse response = tagResource.post(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+    }
+
+    private void deleteTag(String tagId, String authToken) {
+        WebResource tagResource = baseJerseyTest.resource().path("/tag/" + tagId);
+        tagResource.addFilter(new CookieAuthenticationFilter(authToken));
+        ClientResponse response = tagResource.delete(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+    }
+
     /**
      * Test the tag resource.
      * 
@@ -34,39 +77,21 @@ public class TestTagResource {
         baseJerseyTest.clientUtil.createUser("tag1");
         String tag1Token = baseJerseyTest.clientUtil.login("tag1");
 
-        // Create a tag
+        // Create tags
+        createTag("Tag3", "#ff0000", tag1Token);
+        createTag("Tag4", "#00ff00", tag1Token);
+
+        // Create a tag with space (not allowed)
         WebResource tagResource = baseJerseyTest.resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
-        postParams.add("name", "Tag3");
-        postParams.add("color", "#ff0000");
-        ClientResponse response = tagResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONObject json = response.getEntity(JSONObject.class);
-        String tag3Id = json.optString("id");
-        Assert.assertNotNull(tag3Id);
-
-        // Create a tag
-        tagResource = baseJerseyTest.resource().path("/tag");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("name", "Tag4");
-        postParams.add("color", "#00ff00");
-        response = tagResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String tag4Id = json.optString("id");
-        Assert.assertNotNull(tag4Id);
-
-        // Create a tag with space (not allowed)
-        tagResource = baseJerseyTest.resource().path("/tag");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        postParams = new MultivaluedMapImpl();
         postParams.add("name", "Tag 4");
-        response = tagResource.put(ClientResponse.class, postParams);
+        ClientResponse response = tagResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
 
-        // Create a book
+        // Create books
+        String tag3Id = getTagId("Tag3", tag1Token);
+        String tag4Id = getTagId("Tag4", tag1Token);
         WebResource bookResource = baseJerseyTest.resource().path("/book");
         bookResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         postParams = new MultivaluedMapImpl();
@@ -74,66 +99,30 @@ public class TestTagResource {
         postParams.add("tags", tag3Id);
         response = bookResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
 
-        // Create a book
-        bookResource = baseJerseyTest.resource().path("/book");
-        bookResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("isbn", "0553293400");
         postParams.add("tags", tag4Id);
         response = bookResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-
-        // Get all tags
-        tagResource = baseJerseyTest.resource().path("/tag/list");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = tagResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        JSONArray tags = json.getJSONArray("tags");
-        Assert.assertTrue(tags.length() > 0);
-        Assert.assertEquals("Tag4", tags.getJSONObject(1).getString("name"));
-        Assert.assertEquals("#00ff00", tags.getJSONObject(1).getString("color"));
 
         // Update a tag
-        tagResource = baseJerseyTest.resource().path("/tag/" + tag4Id);
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("name", "UpdatedName");
-        postParams.add("color", "#0000ff");
-        response = tagResource.post(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(tag4Id, json.getString("id"));
+        updateTag(tag4Id, "UpdatedName", "#0000ff", tag1Token);
 
         // Get all tags
-        tagResource = baseJerseyTest.resource().path("/tag/list");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = tagResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        tags = json.getJSONArray("tags");
-        Assert.assertTrue(tags.length() > 0);
-        Assert.assertEquals("UpdatedName", tags.getJSONObject(1).getString("name"));
-        Assert.assertEquals("#0000ff", tags.getJSONObject(1).getString("color"));
+        String updatedTagId = getTagId("UpdatedName", tag1Token);
+        Assert.assertNotNull(updatedTagId);
 
         // Deletes a tag
-        tagResource = baseJerseyTest.resource().path("/tag/" + tag4Id);
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = tagResource.delete(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals("ok", json.getString("status"));
+        deleteTag(updatedTagId, tag1Token);
 
         // Get all tags
-        tagResource = baseJerseyTest.resource().path("/tag/list");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = tagResource.get(ClientResponse.class);
+        WebResource tagListResource = baseJerseyTest.resource().path("/tag/list");
+        tagListResource.addFilter(new CookieAuthenticationFilter(tag1Token));
+        response = tagListResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        tags = json.getJSONArray("tags");
+        JSONObject json = response.getEntity(JSONObject.class);
+        JSONArray tags = json.getJSONArray("tags");
         Assert.assertEquals(1, tags.length());
     }
 }

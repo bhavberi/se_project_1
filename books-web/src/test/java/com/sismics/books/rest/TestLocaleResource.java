@@ -16,8 +16,7 @@ import org.junit.Test;
  */
 public class TestLocaleResource {
 
-    BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
-    };
+    BaseJerseyTest baseJerseyTest = new BaseJerseyTest();
 
     /**
      * Test the locale resource.

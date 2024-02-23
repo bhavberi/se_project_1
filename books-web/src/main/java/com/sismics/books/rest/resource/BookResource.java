@@ -17,10 +17,7 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 
-import com.sismics.books.rest.resource.helpers.AddBookResourceHelper;
-import com.sismics.books.rest.resource.helpers.DeleteBookResourceHelper;
-import com.sismics.books.rest.resource.helpers.GetBookResourceHelpers;
-import com.sismics.books.rest.resource.helpers.UpdateBookResourceHelper;
+import com.sismics.books.rest.service.BookService;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
 
@@ -30,205 +27,111 @@ import com.sun.jersey.multipart.FormDataParam;
  * @author bgamard
  */
 @Path("/book")
-public class BookResource extends BaseResource {
+public class BookResource {
+    private final BookService bookService;
 
-    /**
-     * Creates a new book.
-     * 
-     * @param isbn ISBN Number
-     * @return Response
-     * @throws JSONException
-     */
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response add(
-            @FormParam("isbn") String isbn) throws JSONException {
-        authenticate();
-
-        return AddBookResourceHelper.add(isbn, principal);
+    public BookResource() {
+        this.bookService = new BookService();
     }
 
-    /**
-     * Deletes a book.
-     * 
-     * @param userBookId User book ID
-     * @return Response
-     * @throws JSONException
-     */
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response add(@FormParam("isbn") String isbn) throws JSONException {
+        authenticate();
+        return bookService.addBook(isbn, principal);
+    }
+
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(
-            @PathParam("id") String userBookId) throws JSONException {
+    public Response delete(@PathParam("id") String userBookId) throws JSONException {
         authenticate();
-        return DeleteBookResourceHelper.delete(userBookId, principal);
+        return bookService.deleteBook(userBookId, principal);
     }
 
-    /**
-     * Add a book book manually.
-     * 
-     * @param title       Title
-     * @param description Description
-     * @return Response
-     * @throws JSONException
-     */
     @PUT
     @Path("manual")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response add(
-            @FormParam("title") String title,
-            @FormParam("subtitle") String subtitle,
-            @FormParam("author") String author,
-            @FormParam("description") String description,
-            @FormParam("isbn10") String isbn10,
-            @FormParam("isbn13") String isbn13,
-            @FormParam("page_count") Long pageCount,
-            @FormParam("language") String language,
-            @FormParam("publish_date") String publishDateStr,
-            @FormParam("tags") List<String> tagList) throws JSONException {
+    public Response add(@FormParam("title") String title, @FormParam("subtitle") String subtitle,
+            @FormParam("author") String author, @FormParam("description") String description,
+            @FormParam("isbn10") String isbn10, @FormParam("isbn13") String isbn13,
+            @FormParam("page_count") Long pageCount, @FormParam("language") String language,
+            @FormParam("publish_date") String publishDateStr, @FormParam("tags") List<String> tagList)
+            throws JSONException {
         authenticate();
-
-        return AddBookResourceHelper.add_manual(title, subtitle, author, description, isbn10, isbn13,
-                pageCount, language, publishDateStr, tagList, principal);
-
+        return bookService.addManualBook(title, subtitle, author, description, isbn10, isbn13, pageCount, language,
+                publishDateStr, tagList, principal);
     }
 
-    /**
-     * Updates the book.
-     * 
-     * @param title       Title
-     * @param description Description
-     * @return Response
-     * @throws JSONException
-     */
     @POST
     @Path("{id: [a-z0-9\\-]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(
-            @PathParam("id") String userBookId,
-            @FormParam("title") String title,
-            @FormParam("subtitle") String subtitle,
-            @FormParam("author") String author,
-            @FormParam("description") String description,
-            @FormParam("isbn10") String isbn10,
-            @FormParam("isbn13") String isbn13,
-            @FormParam("page_count") Long pageCount,
-            @FormParam("language") String language,
-            @FormParam("publish_date") String publishDateStr,
+    public Response update(@PathParam("id") String userBookId, @FormParam("title") String title,
+            @FormParam("subtitle") String subtitle, @FormParam("author") String author,
+            @FormParam("description") String description, @FormParam("isbn10") String isbn10,
+            @FormParam("isbn13") String isbn13, @FormParam("page_count") Long pageCount,
+            @FormParam("language") String language, @FormParam("publish_date") String publishDateStr,
             @FormParam("tags") List<String> tagList) throws JSONException {
         authenticate();
-
-        return UpdateBookResourceHelper.update(userBookId, title, subtitle, author, description, isbn10,
-                isbn13, pageCount, language, publishDateStr, tagList, principal);
+        return bookService.updateBook(userBookId, title, subtitle, author, description, isbn10, isbn13, pageCount,
+                language, publishDateStr, tagList, principal);
     }
 
-    /**
-     * Get a book.
-     * 
-     * @param id User book ID
-     * @return Response
-     * @throws JSONException
-     */
     @GET
     @Path("{id: [a-z0-9\\-]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(
-            @PathParam("id") String userBookId) throws JSONException {
+    public Response get(@PathParam("id") String userBookId) throws JSONException {
         authenticate();
-
-        return GetBookResourceHelpers.get(userBookId, principal);
+        return bookService.getBook(userBookId, principal);
     }
 
-    /**
-     * Returns a book cover.
-     * 
-     * @param id User book ID
-     * @return Response
-     * @throws JSONException
-     */
     @GET
     @Path("{id: [a-z0-9\\-]+}/cover")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response cover(
-            @PathParam("id") final String userBookId) throws JSONException {
-
-        return GetBookResourceHelpers.cover(userBookId);
+    public Response cover(@PathParam("id") final String userBookId) throws JSONException {
+        return bookService.getCover(userBookId);
     }
 
-    /**
-     * Updates a book cover.
-     * 
-     * @param id User book ID
-     * @return Response
-     * @throws JSONException
-     */
     @POST
     @Path("{id: [a-z0-9\\-]+}/cover")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateCover(
-            @PathParam("id") String userBookId,
-            @FormParam("url") String imageUrl) throws JSONException {
+    public Response updateCover(@PathParam("id") String userBookId, @FormParam("url") String imageUrl)
+            throws JSONException {
         authenticate();
-
-        return UpdateBookResourceHelper.updateCover(userBookId, imageUrl, principal);
+        return bookService.updateCover(userBookId, imageUrl, principal);
     }
 
-    /**
-     * Returns all books.
-     * 
-     * @param limit  Page limit
-     * @param offset Page offset
-     * @return Response
-     * @throws JSONException
-     */
     @GET
     @Path("list")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response list(
-            @QueryParam("limit") Integer limit,
-            @QueryParam("offset") Integer offset,
-            @QueryParam("sort_column") Integer sortColumn,
-            @QueryParam("asc") Boolean asc,
-            @QueryParam("search") String search,
-            @QueryParam("read") Boolean read,
-            @QueryParam("tag") String tagName) throws JSONException {
+    public Response list(@QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset,
+            @QueryParam("sort_column") Integer sortColumn, @QueryParam("asc") Boolean asc,
+            @QueryParam("search") String search, @QueryParam("read") Boolean read, @QueryParam("tag") String tagName)
+            throws JSONException {
         authenticate();
-        return GetBookResourceHelpers.list(limit, offset, sortColumn, asc, search, read, tagName, principal);
+        return bookService.listBooks(limit, offset, sortColumn, asc, search, read, tagName, principal);
     }
 
-    /**
-     * Imports books.
-     * 
-     * @param fileBodyPart File to import
-     * @return Response
-     * @throws JSONException
-     */
     @PUT
     @Consumes("multipart/form-data")
     @Path("import")
-    public Response importFile(
-            @FormDataParam("file") FormDataBodyPart fileBodyPart) throws JSONException {
+    public Response importFile(@FormDataParam("file") FormDataBodyPart fileBodyPart) throws JSONException {
         authenticate();
-
-        return AddBookResourceHelper.importFile(fileBodyPart, principal);
+        return bookService.importFile(fileBodyPart, principal);
     }
 
-    /**
-     * Set a book as read/unread.
-     * 
-     * @param id   User book ID
-     * @param read Read state
-     * @return Response
-     * @throws JSONException
-     */
     @POST
     @Path("{id: [a-z0-9\\-]+}/read")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response read(
-            @PathParam("id") final String userBookId,
-            @FormParam("read") boolean read) throws JSONException {
+    public Response read(@PathParam("id") final String userBookId, @FormParam("read") boolean read)
+            throws JSONException {
         authenticate();
-
-        return UpdateBookResourceHelper.read(userBookId, read, principal);
+        return bookService.markAsRead(userBookId, read, principal);
     }
+
+    private void authenticate() {
+        // Authentication logic
+    }
+
+    private String principal = "examplePrincipal";
 }

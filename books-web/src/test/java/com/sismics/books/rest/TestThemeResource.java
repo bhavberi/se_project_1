@@ -14,10 +14,9 @@ import org.junit.Test;
  * 
  * @author jtremeaux
  */
-public class TestThemeResource{
+public class TestThemeResource {
 
-    BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
-    };
+    BaseJerseyTest baseJerseyTest = new BaseJerseyTest();
 
     /**
      * Test the theme resource.

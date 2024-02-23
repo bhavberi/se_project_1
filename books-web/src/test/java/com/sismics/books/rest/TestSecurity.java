@@ -16,10 +16,10 @@ import org.junit.Test;
  * 
  * @author jtremeaux
  */
-public class TestSecurity  {
+public class TestSecurity {
 
-    BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
-    };
+    BaseJerseyTest baseJerseyTest = new BaseJerseyTest();
+
     /**
      * Test of the security layer.
      * 
