@@ -44,11 +44,27 @@ jobs:
           rm -rf utils
           rm -rf results
       
+      - name: Read PR body from file
+        id: read_body
+        run: |
+          body=$(IFS=''; cat pr_body.txt)
+          rm pr_body.txt
+          echo body
+          echo "::set-output name=body::$body"
+      
+      - name: Read PR title from file
+        id: read_title
+        run: |
+          title=$(IFS=''; cat pr_title.txt)
+          rm pr_title.txt
+          echo "::set-output name=title::$title"
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Auto Refactor
-          title: Auto Refactor
-          body: This PR is linked to a automatic refactoring solution.
+          title: ${{ steps.read_title.outputs.title }}
+          body: ${{ steps.read_body.outputs.body }}
+          labels: refactor
   
