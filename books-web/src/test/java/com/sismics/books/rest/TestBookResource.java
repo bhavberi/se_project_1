@@ -5,14 +5,11 @@ import java.io.InputStream;
 
 import javax.ws.rs.core.MediaType;
 
-import junit.framework.Assert;
-
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
-import com.sismics.books.rest.filter.CookieAuthenticationFilter;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.WebResource;
