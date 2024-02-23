@@ -27,8 +27,7 @@ import com.sun.jersey.multipart.FormDataMultiPart;
  */
 public class TestBookResource {
 
-    BaseJerseyTest baseJerseyTest = new BaseJerseyTest() {
-    };
+    BaseJerseyTest baseJerseyTest = new BaseJerseyTest();
 
     /**
      * Test the book resource.
@@ -48,7 +47,7 @@ public class TestBookResource {
         postParams.add("name", "Tag3");
         postParams.add("color", "#ff0000");
         ClientResponse response = tagResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
         JSONObject json = response.getEntity(JSONObject.class);
         String tag3Id = json.optString("id");
         Assert.assertNotNull(tag3Id);
@@ -59,7 +58,7 @@ public class TestBookResource {
         postParams = new MultivaluedMapImpl();
         postParams.add("isbn", "9780345376596");
         response = bookResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
         json = response.getEntity(JSONObject.class);
         String book1Id = json.optString("id");
         Assert.assertNotNull(book1Id);
@@ -70,7 +69,7 @@ public class TestBookResource {
         postParams = new MultivaluedMapImpl();
         postParams.add("isbn", "9780345376596");
         response = bookResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.BAD_REQUEST, response.getClientResponseStatus());
 
         // Update a book
         bookResource = baseJerseyTest.resource().path("/book/" + book1Id);
@@ -81,7 +80,7 @@ public class TestBookResource {
         postParams.add("author", "C. Sagan");
         postParams.add("isbn13", "9780345376596");
         response = bookResource.post(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
 
         // Create the same book manually (KO)
         bookResource = baseJerseyTest.resource().path("/book/manual");
@@ -95,7 +94,7 @@ public class TestBookResource {
         postParams.add("author", "C. Sagan");
         postParams.add("isbn13", "9780345376596");
         response = bookResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.BAD_REQUEST, response.getClientResponseStatus());
 
         // Create a new book manually without ISBN (KO)
         bookResource = baseJerseyTest.resource().path("/book/manual");
@@ -108,7 +107,7 @@ public class TestBookResource {
         postParams.add("page_count", 300);
         postParams.add("author", "C. Sagan");
         response = bookResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.BAD_REQUEST, response.getClientResponseStatus());
 
         // Create a new book manually
         bookResource = baseJerseyTest.resource().path("/book/manual");
@@ -123,7 +122,7 @@ public class TestBookResource {
         postParams.add("title", "Fake book");
         postParams.add("isbn13", "0123456789012");
         response = bookResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
 
         // Set a book as read
         bookResource = baseJerseyTest.resource().path("/book/" + book1Id + "/read");
@@ -131,7 +130,7 @@ public class TestBookResource {
         postParams = new MultivaluedMapImpl();
         postParams.add("read", true);
         response = bookResource.post(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
 
         // Update the book cover
         bookResource = baseJerseyTest.resource().path("/book/" + book1Id + "/cover");
@@ -139,13 +138,13 @@ public class TestBookResource {
         postParams = new MultivaluedMapImpl();
         postParams.add("url", "http://covers.openlibrary.org/b/id/976764-M.jpg");
         response = bookResource.post(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
 
         // Get the book
         bookResource = baseJerseyTest.resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         response = bookResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("Pale Blue Dot", json.getString("title"));
         Assert.assertEquals("A Vision of the Human Future in Space", json.getString("subtitle"));
@@ -165,20 +164,20 @@ public class TestBookResource {
         postParams = new MultivaluedMapImpl();
         postParams.add("read", false);
         response = bookResource.post(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
 
         // Get the book
         bookResource = baseJerseyTest.resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         response = bookResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
         json = response.getEntity(JSONObject.class);
         Assert.assertFalse(json.has("read_date"));
 
         // Get the book cover
         bookResource = baseJerseyTest.resource().path("/book/" + book1Id + "/cover");
         response = bookResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
         InputStream is = response.getEntityInputStream();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(14951, fileBytes.length);
@@ -189,7 +188,7 @@ public class TestBookResource {
         MultivaluedMapImpl getParams = new MultivaluedMapImpl();
         response = bookResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
         JSONArray books = json.getJSONArray("books");
         Assert.assertEquals(2, books.length());
 
@@ -202,7 +201,7 @@ public class TestBookResource {
         getParams.add("read", false);
         response = bookResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
         books = json.getJSONArray("books");
         Assert.assertEquals(1, books.length());
 
@@ -210,7 +209,7 @@ public class TestBookResource {
         bookResource = baseJerseyTest.resource().path("/book/" + book1Id);
         bookResource.addFilter(new CookieAuthenticationFilter(book1Token));
         response = bookResource.delete(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
 
         // List all books
         bookResource = baseJerseyTest.resource().path("/book/list");
@@ -218,7 +217,7 @@ public class TestBookResource {
         getParams = new MultivaluedMapImpl();
         response = bookResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
         books = json.getJSONArray("books");
         Assert.assertEquals(1, books.length());
     }
@@ -244,7 +243,7 @@ public class TestBookResource {
                 MediaType.APPLICATION_OCTET_STREAM_TYPE);
         form.bodyPart(fdp);
         ClientResponse response = bookResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
 
         // List all books
         bookResource = baseJerseyTest.resource().path("/book/list");
@@ -254,7 +253,7 @@ public class TestBookResource {
         getParams.add("sort_column", 1);
         response = bookResource.queryParams(getParams).get(ClientResponse.class);
         JSONObject json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
         JSONArray books = json.getJSONArray("books");
         Assert.assertEquals(10, books.length());
         Assert.assertEquals("owned", books.getJSONObject(2).getJSONArray("tags").getJSONObject(0).getString("name"));
@@ -263,7 +262,7 @@ public class TestBookResource {
         WebResource tagResource = baseJerseyTest.resource().path("/tag/list");
         tagResource.addFilter(new CookieAuthenticationFilter(bookImport1Token));
         response = tagResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, response.getClientResponseStatus());
         json = response.getEntity(JSONObject.class);
         JSONArray tags = json.getJSONArray("tags");
         Assert.assertEquals(2, tags.length());
