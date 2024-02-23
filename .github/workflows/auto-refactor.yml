@@ -44,11 +44,34 @@ jobs:
           rm -rf utils
           rm -rf results
       
+      - name: Read PR body from file
+        id: read_body
+        run: |
+          IFSBAK=$IFS
+          IFS=" "
+          body=$(cat pr_body.txt)
+          echo $body
+          echo "body=$(cat pr_body.txt)" >> $GITHUB_OUTPUT
+          rm pr_body.txt
+          IFS=$IFSBAK
+      
+      - name: Read PR title from file
+        id: read_title
+        run: |
+          # To read the file with spaces/newlines
+          IFSBAK=$IFS
+          IFS=" "
+          title=$(cat pr_title.txt)
+          echo "title=$(cat pr_title.txt)" >> $GITHUB_OUTPUT
+          rm pr_title.txt
+          IFS=$IFSBAK
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Auto Refactor
-          title: Auto Refactor
-          body: This PR is linked to a automatic refactoring solution.
+          title: ${{ steps.read_title.outputs.title }}
+          body: ${{ steps.read_body.outputs.body }}
+          labels: refactor
   
